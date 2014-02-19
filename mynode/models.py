@@ -21,6 +21,7 @@ class Comments(models.Model):
         db_table = 'comments'
 
 class Friends(models.Model):
+    request_id = models.CharField(primary_key=True, max_length=36)
     requester = models.ForeignKey('Users', db_column='requester')
     friend = models.ForeignKey('Users', db_column='friend')
     accepted = models.IntegerField(blank=True, null=True)
