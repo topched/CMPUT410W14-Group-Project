@@ -11,6 +11,15 @@ CREATE TABLE users (
  -- This way, we can set a default privacy level for each post
 );
 
+CREATE TABLE images (
+    image_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    author VARCHAR(36) NOT NULL,
+    filename VARCHAR(128) NOT NULL, -- I assume we'll probably store them in a folder somewhere
+    visibility INT,
+    image_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (author) REFERENCES users(user_id)
+);
+
 CREATE TABLE posts (
     post_id VARCHAR(36) NOT NULL PRIMARY KEY,
     author VARCHAR(36) NOT NULL,
@@ -42,11 +51,3 @@ CREATE TABLE friends (
     FOREIGN KEY (friend) REFERENCES users(user_id)
 );
 
-CREATE TABLE images (
-    image_id VARCHAR(36) NOT NULL PRIMARY KEY,
-    author VARCHAR(36) NOT NULL,
-    filename VARCHAR(128) NOT NULL, -- I assume we'll probably store them in a folder somewhere
-    visibility INT,
-    image_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author) REFERENCES users(user_id)
-);
