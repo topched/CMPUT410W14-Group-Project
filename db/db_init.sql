@@ -17,6 +17,7 @@ CREATE TABLE posts (
     content LONGTEXT,
     content_type INT, -- Whether the content is text, HTML, or markdown. 
     visibility INT,
+    post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author) REFERENCES users(user_id)
 );
 
