@@ -16,6 +16,7 @@ class Comments(models.Model):
     parent_post = models.ForeignKey('Posts', db_column='parent_post')
     author = models.ForeignKey('Users', db_column='author')
     content = models.TextField(blank=True)
+    comment_date = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'comments'
@@ -34,6 +35,7 @@ class Images(models.Model):
     author = models.ForeignKey('Users', db_column='author')
     filename = models.CharField(max_length=128)
     visibility = models.IntegerField(blank=True, null=True)
+    image_date = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'images'
@@ -41,6 +43,7 @@ class Images(models.Model):
 class Posts(models.Model):
     post_id = models.CharField(primary_key=True, max_length=36)
     author = models.ForeignKey('Users', db_column='author')
+    image = models.ForeignKey(Images, blank=True, null=True)
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True)
