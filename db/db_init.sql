@@ -30,13 +30,12 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE friends (
-    -- redundent request_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    request_id VARCHAR(36) NOT NULL PRIMARY KEY,
     requester VARCHAR(36) NOT NULL,
     friend VARCHAR(36) NOT NULL,
     accepted TINYINT(1), -- A boolean to represent whether the status of the request is still "follow" or has been accepted
     FOREIGN KEY (requester) REFERENCES users(user_id),
-    FOREIGN KEY (friend) REFERENCES users(user_id),
-    PRIMARY KEY (requester,friend)
+    FOREIGN KEY (friend) REFERENCES users(user_id)
 );
 
 CREATE TABLE images (
