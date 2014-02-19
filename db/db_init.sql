@@ -14,11 +14,13 @@ CREATE TABLE users (
 CREATE TABLE posts (
     post_id VARCHAR(36) NOT NULL PRIMARY KEY,
     author VARCHAR(36) NOT NULL,
+    image_id VARCHAR(36),
     content LONGTEXT,
     content_type INT, -- Whether the content is text, HTML, or markdown. 
     visibility INT,
     post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author) REFERENCES users(user_id)
+    FOREIGN KEY (author) REFERENCES users(user_id),
+    FOREIGN KEY (image_id) REFERENCES images(image_id)
 );
 
 CREATE TABLE comments (
