@@ -44,6 +44,7 @@ class Posts(models.Model):
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True)
+    post_date = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'posts'
