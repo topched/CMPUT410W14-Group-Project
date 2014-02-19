@@ -26,6 +26,7 @@ CREATE TABLE comments (
     parent_post VARCHAR(36) NOT NULL,
     author VARCHAR(36) NOT NULL,
     content LONGTEXT,
+    comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author) REFERENCES users(user_id),
     FOREIGN KEY (parent_post) REFERENCES posts(post_id)
 );
@@ -44,5 +45,6 @@ CREATE TABLE images (
     author VARCHAR(36) NOT NULL,
     filename VARCHAR(128) NOT NULL, -- I assume we'll probably store them in a folder somewhere
     visibility INT,
+    image_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author) REFERENCES users(user_id)
 );
