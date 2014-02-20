@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head><title>MyNode Friends</title></head>
+
+<body>
+
+<div class="sidebar">
+    {% for page in page_list %}
+        <li>{{ page }}</li>
+    {% endfor %}
+</div>
+
+<h1>Friend Requests</h1>
+
+<ul>
+{% for friend_request in friend_request_list %}
+    <li>{{ friend_request }}</li>
+{% endfor %}
+</ul>
+
+<h1>People You Follow</h1>
+
+<ul>
+{% for friend in friend_list %}
+    <li>{{ friend }}</li>
+{% endfor %}
+</ul>
+
+<h1>Following You</h1>
+
+<ul>
+{% for follower in follower_list %}
+    <li>{{ follower }}</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
