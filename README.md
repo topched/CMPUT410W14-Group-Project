@@ -8,5 +8,6 @@ Then to view in the browser run:"./ngrok 8080"
 It will then give you a forwarding url something like this (ex. http://647473cf4.ngrok.com). You can paste this into the browser to access the project. NOTE: The ngrok url will change everytime
 
 To hit the admin page: http://{ ngrok addy }/admin
+
 To hit the main page: http://{ ngrok addy}/mynode
 
