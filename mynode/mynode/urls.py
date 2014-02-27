@@ -7,7 +7,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mynode.views.home', name='home'),
-    url(r'^feed/', include('app.urls')),
-    url(r'^friends/', include('app.urls')),
+    #url(r'^feed/', include('app.urls')),
+    #url(r'^friends/', include('app.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^mynode/', include('app.urls')),
+
 )

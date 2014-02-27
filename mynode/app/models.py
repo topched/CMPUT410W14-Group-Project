@@ -22,12 +22,13 @@ class Comments(models.Model):
 
 class Friends(models.Model):
     request_id = models.CharField(primary_key=True, max_length=36)
-    requester = models.ForeignKey('Users', db_column='requester')
-    friend = models.ForeignKey('Users', db_column='friend')
+    requester = models.ForeignKey('Users', db_column='requester', related_name='requester_related')
+    friend = models.ForeignKey('Users', db_column='friend', related_name='friend_related')
     accepted = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'friends'
+
 
 class Images(models.Model):
     image_id = models.CharField(primary_key=True, max_length=36)
