@@ -9,5 +9,5 @@ It will then give you a forwarding url something like this (ex. http://647473cf4
 
 To hit the admin page: http://{ ngrok addy }/admin
 
-To hit the main page: http://{ ngrok addy}/mynode
+To hit the main page: http://{ ngrok addy }/mynode
 
