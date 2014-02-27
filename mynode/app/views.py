@@ -12,6 +12,14 @@ def index(request):
     latest_posts = Posts.objects.all()
     context = RequestContext(request)
     return render_to_response ('stream_page.html', {'posts': latest_posts}, context)
+    
+    
+def login(request):
+	context = RequestContext(request)
+	
+	#TODO: if not logged in return login_page else return stream_page
+	
+	return render_to_response ('login_page.html', context)
 
 # Proper response once models are working.
 # def friends(request):
