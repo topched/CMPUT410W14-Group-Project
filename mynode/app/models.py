@@ -11,37 +11,37 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-class Comments(models.Model):
+class Comment(models.Model):
     comment_id = models.CharField(primary_key=True, max_length=36)
-    parent_post = models.ForeignKey('Posts', db_column='parent_post')
-    author = models.ForeignKey('Users', db_column='author')
+    parent_post = models.ForeignKey('Post', db_column='parent_post')
+    author = models.ForeignKey('User', db_column='author')
     content = models.TextField(blank=True)
     class Meta:
         managed = False
         db_table = 'comments'
 
-class Friends(models.Model):
+class Friend(models.Model):
     request_id = models.CharField(primary_key=True, max_length=36)
-    requester = models.ForeignKey('Users', db_column='requester', related_name='requester_related')
-    friend = models.ForeignKey('Users', db_column='friend', related_name='friend_related')
+    requester = models.ForeignKey('User', db_column='requester', related_name='requester_related')
+    friend = models.ForeignKey('User', db_column='friend', related_name='friend_related')
     accepted = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'friends'
 
 
-class Images(models.Model):
+class Image(models.Model):
     image_id = models.CharField(primary_key=True, max_length=36)
-    author = models.ForeignKey('Users', db_column='author')
+    author = models.ForeignKey('User', db_column='author')
     filename = models.CharField(max_length=128)
     visibility = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'images'
 
-class Posts(models.Model):
+class Post(models.Model):
     post_id = models.CharField(primary_key=True, max_length=36)
-    author = models.ForeignKey('Users', db_column='author')
+    author = models.ForeignKey('User', db_column='author')
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True)
@@ -49,7 +49,7 @@ class Posts(models.Model):
         managed = False
         db_table = 'posts'
 
-class Users(models.Model):
+class User(models.Model):
     user_id = models.CharField(primary_key=True, max_length=36)
     display_name = models.CharField(max_length=128)
     password = models.CharField(max_length=128)

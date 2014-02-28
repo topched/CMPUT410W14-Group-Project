@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
-from app.models import Comments, Friends, Images, Posts, Users
+from app.models import *
 
 
 def index(request):
