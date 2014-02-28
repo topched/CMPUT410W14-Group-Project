@@ -10,55 +10,50 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
 class Comment(models.Model):
     comment_id = models.CharField(primary_key=True, max_length=36)
     parent_post = models.ForeignKey('Post', db_column='parent_post')
-    author = models.ForeignKey('User', db_column='author')
+    author = models.ForeignKey('Users', db_column='author')
     content = models.TextField(blank=True)
     class Meta:
-        managed = False
-        db_table = 'comments'
+        app_label='app'
 
 class Friend(models.Model):
     request_id = models.CharField(primary_key=True, max_length=36)
-    requester = models.ForeignKey('User', db_column='requester', related_name='requester_related')
-    friend = models.ForeignKey('User', db_column='friend', related_name='friend_related')
+    requester = models.ForeignKey('Users', db_column='requester', related_name='requester_userid')
+    friend = models.ForeignKey('Users', db_column='friend', related_name='friend_userid')
     accepted = models.IntegerField(blank=True, null=True)
     class Meta:
-        managed = False
-        db_table = 'friends'
+        app_label='app'
 
 
 class Image(models.Model):
     image_id = models.CharField(primary_key=True, max_length=36)
-    author = models.ForeignKey('User', db_column='author')
+    author = models.ForeignKey('Users', db_column='author')
     filename = models.CharField(max_length=128)
     visibility = models.IntegerField(blank=True, null=True)
     class Meta:
-        managed = False
-        db_table = 'images'
+        app_label='app'
+
 
 class Post(models.Model):
     post_id = models.CharField(primary_key=True, max_length=36)
-    author = models.ForeignKey('User', db_column='author')
+    author = models.ForeignKey('Users', db_column='author')
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True)
     class Meta:
-        managed = False
-        db_table = 'posts'
+        app_label='app'
+        
 
-class User(models.Model):
-    user_id = models.CharField(primary_key=True, max_length=36)
+class Users(models.Model):
     display_name = models.CharField(max_length=128)
-    password = models.CharField(max_length=128)
-    first_name = models.CharField(max_length=128, blank=True)
-    last_name = models.CharField(max_length=128, blank=True)
     git_url = models.CharField(max_length=256, blank=True)
-    email = models.CharField(max_length=256)
     default_post_visibility = models.IntegerField(blank=True, null=True)
+    approved = models.BooleanField(default=False)
+    user = models.ForeignKey(User, unique=True)
     class Meta:
-        managed = False
-        db_table = 'users'
+        app_label='app'
 

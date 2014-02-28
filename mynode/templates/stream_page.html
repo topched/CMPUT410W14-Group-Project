@@ -5,6 +5,8 @@
 
 <body>
 
+{% csrf_token %}
+
 <div class="sidebar">
     {% for page in page_list %}
         <li>{{ page }}</li>

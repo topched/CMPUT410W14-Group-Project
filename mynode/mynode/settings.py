@@ -53,6 +53,13 @@ ROOT_URLCONF = 'mynode.urls'
 
 WSGI_APPLICATION = 'mynode.wsgi.application'
 
+AUTH_PROFILE_MODULE = 'mynode.user'
+
+LOGIN_REDIRECT_URL = 'stream/'
+
+DEFAULT_INDEX_TABLESPACE = 'mynode'
+
+DEFAULT_TABLESPACE = 'mynode'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
