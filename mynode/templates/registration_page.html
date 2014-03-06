@@ -1,0 +1,29 @@
+<!DOCTYPE>
+{% load static %}
+<html>
+    <head>
+        <title>Mynode - Register</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" media="all" />
+        <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    </head>
+	<body>
+	{% if form.errors %}
+		<p> Invalid username/password combination, please try again </p>
+	{% endif %}
+
+        <h1>Registration Page</h1>
+		<form  action="/mynode/register/" method="post">
+		{% csrf_token %}
+			Username: <input type="username" name="username" /><br />
+            Password: <input type="password" name="pwd" /><br />
+			Name: <input type="name" name="surname" /><br />
+			Last Name: <input type="last_name" name="names" /><br />
+			Date of Birth: <input type="date of birth" name="dob" /><br />
+			Email: <input type="email" name="email" /><br />
+			<input type="submit" id="submit" name="submit" value="Register" />
+			<input type="hidden" name="next" value="{{ next }}" />
+		</form>
+
+
+	</body>
+</html>

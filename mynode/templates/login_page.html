@@ -11,15 +11,19 @@
 		<p> Invalid username/password combination, please try again </p>
 	{% endif %}
 	
-		<h1>Login Page</h1>
-		<form  action="{% url "django.contrib.auth.views.login" %}" method="post">
-		{% csrf_token %}
-			{{ form.username.label_tag }}{{ form.username }}
-			{{ form.password.label_tag }}{{ form.password }}
-			<input type="submit" id="submit" name="submit" value="Sign in" />
-			<input type="hidden" name="next" value="{{ next }}" />
-		</form>
+	<h1>Login Page</h1>
+	<form  action="{% url "django.contrib.auth.views.login" %}" method="post">
+	{% csrf_token %}
+		{{ form.username.label_tag }}{{ form.username }}
+		{{ form.password.label_tag }}{{ form.password }}
+		<input type="submit" id="submit" name="submit" value="Sign in" />
+		<input type="hidden" name="next" value="{{ next }}" />
+	</form>
 
+    <form action="/mynode/register/" method="get">
+    <input type="submit" value="Register"
+         name="Submit" id="register" />
+    </form>
 
 	</body>
 </html>

@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from app.models import *
 
 
@@ -29,6 +30,7 @@ def login(request):
 #       context = {'friends': friends}
 #       return render(request, './friends.html', context)
 
+
 def stream(request, template_name):
 	context = RequestContext(request)
 	return render_to_response('stream_page.html', context)
@@ -36,6 +38,24 @@ def stream(request, template_name):
 	
 def friends(request, template_name):
     return HttpResponse("You've requested your friends but you don't have any.")
+
+def register(request, template_name):
+    context = RequestContext(request)
+
+    if request.method == 'GET':
+        return render_to_response('registration_page.html', context)
+    else:
+        # A POST request @TODO: Validation, OR switch to forms
+        form = request.POST # Bind data from request.POST into a PostForm
+        user = User.objects.create_user(request.POST['username'],
+                                        request.POST['email'],
+                                        request.POST['pwd'])
+        user.save()
+        app_user = Users.objects.create(user = user)
+        app_user.save()
+
+        return render_to_response('registration_page.html', context)
+
 
 def validateLogin(request):
     context = RequestContext(request)
