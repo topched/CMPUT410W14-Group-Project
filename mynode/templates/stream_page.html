@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+{% load static %}
 <html>
-<head><title>MyNode Stream</title></head>
-
+    <head>
+    <title>MyNode Stream</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="all" />
+    
+    </head>
 <body>
 
 {% csrf_token %}
@@ -13,13 +17,36 @@
 </div>
 
 
-<h1>What is happening:</h1>
+<div class=stream>
+<h1>Stream</h1>
+<form  action="/mynode/stream/" method="POST">
+{% csrf_token %}
+    <div class=text_filled>
+        <textarea rows="5" cols="80" id="content" name='content'></textarea>
+        </br></div>
+    <div class=buttons>
+        <input type="submit" id="post" name="post" value="Post" />
+    </div>
+
+</form>
 
 <ul>
-{% for feed_item in feed_item_list %}
-    <li>{{ feed_item }}</li>
-{% endfor %}
+    {% for post in posts %}
+        <li>
+            <div class=post>
+                <p> {{ post.content }} </p>
+                <div class=caption>Post by: {{ post.author.user }} </div> </br>
+            </div>
+            <div class=buttons>
+                {% if post.author == current_user %}
+                <input type="button" id="delete" name="delete" value="Delete" />
+                {% endif %}
+                <input type="button" id="comment" name="comment" value="Comment" />
+            </div>
+        </li>
+    {% endfor %}
 </ul>
+</div>
 
 </body>
 </html>

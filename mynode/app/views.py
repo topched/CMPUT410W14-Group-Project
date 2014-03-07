@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from app.models import *
 
 
@@ -31,11 +32,18 @@ def login(request):
 #       return render(request, './friends.html', context)
 
 
+@login_required
 def stream(request, template_name):
-	context = RequestContext(request)
-	return render_to_response('stream_page.html', context)
-	
-	
+    context = RequestContext(request)
+    #TODO: narrow this down to show only allowed posts, not all posts
+    posts = Post.objects.all()
+    current_user = Users.objects.get(user=request.user)
+    if request.method == 'POST':
+        post = Post.objects.create(author=current_user, content=request.POST['content']);
+        post.save()
+    return render_to_response('stream_page.html', {'posts':posts, 'current_user':current_user}, context)
+
+@login_required
 def friends(request, template_name):
     return HttpResponse("You've requested your friends but you don't have any.")
 
@@ -54,7 +62,7 @@ def register(request, template_name):
         app_user = Users.objects.create(user = user)
         app_user.save()
 
-        return render_to_response('registration_page.html', context)
+        return render_to_response('stream_page.html', context)
 
 
 def validateLogin(request):
