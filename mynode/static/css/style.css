@@ -1,17 +1,9 @@
-.sidebar {
-    position: relative;
-    float: left;
-    width: 100px;
+body {
+    padding-top: 50px;
 }
-
-.container{
-    width: 400px;
-    margin: 50px auto;    
+h2 {
+    text-align: center ;
 }
-
-.post {
-}
-
 
 .text_filled {
     display: block;
