@@ -1,17 +1,36 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
+{% load static %}
 <html>
-<head><title>MyNode Friends</title></head>
+    <head><title>MyNode Friends</title>
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    </head>
 
 <body>
+{% csrf_token %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">MyNode</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="/mynode/stream/">Stream</a></li>
+              <li><a href="/mynode/friends/">Friends</a></li>
+              <li><a href="/mynode/profile/">Profile</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
 
-<div class="sidebar">
-    {% for page in page_list %}
-        <li>{{ page }}</li>
-    {% endfor %}
-</div>
 
-<h1>Friend Requests</h1>
+
+<div class=container>
+<h2>Friend Requests</h2>
 
 <ul>
 {% for friend_request in friend_request_list %}
@@ -19,7 +38,7 @@
 {% endfor %}
 </ul>
 
-<h1>People You Follow</h1>
+<h2>People You Follow</h2>
 
 <ul>
 {% for friend in friend_list %}
@@ -27,13 +46,13 @@
 {% endfor %}
 </ul>
 
-<h1>Following You</h1>
+<h2>Following You</h2>
 
 <ul>
 {% for follower in follower_list %}
     <li>{{ follower }}</li>
 {% endfor %}
 </ul>
-
+</div>
 </body>
 </html>

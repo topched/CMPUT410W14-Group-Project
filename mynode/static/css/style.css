@@ -1,4 +1,10 @@
-.stream {
+.sidebar {
+    position: relative;
+    float: left;
+    width: 100px;
+}
+
+.container{
     width: 400px;
     margin: 50px auto;    
 }

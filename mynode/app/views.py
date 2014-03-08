@@ -45,7 +45,8 @@ def stream(request, template_name):
 
 @login_required
 def friends(request, template_name):
-    return HttpResponse("You've requested your friends but you don't have any.")
+    context = RequestContext(request)
+    return render_to_response('friend_page.html', context)
 
 def register(request, template_name):
     context = RequestContext(request)
@@ -72,7 +73,7 @@ def validateLogin(request):
     user = authenticate(username=username, password=pwd)
     
     #if user is not None:
-    	
+    
      #   if user.is_active:
             #login(request,user)
     		#temp redirect for testing
