@@ -24,7 +24,8 @@
 
         <div class="container">
             {% if form.errors %}
-            <p> Invalid username/password combination, please try again </p>
+                <br><br>
+                <p> Invalid username/password combination, please try again </p>
             {% endif %}
             <form class="form-signin" role="form" action="{% url "django.contrib.auth.views.login" %}" method="post">
                 {% csrf_token %}

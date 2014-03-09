@@ -28,8 +28,6 @@ def register(request):
     if request.method == 'GET':
         return render_to_response('registration_page.html', context)
     else:
-        # A POST request @TODO: Validation, OR switch to forms
-        form = request.POST # Bind data from request.POST into a PostForm
         user = User.objects.create_user(username=request.POST['username'],
                 email=request.POST['email'],
                 password=request.POST['pwd'],
@@ -40,6 +38,30 @@ def register(request):
         app_user.save()
 
         return HttpResponseRedirect("/")
+
+@login_required
+def profile(request):
+    context = RequestContext(request)
+    if request.user.is_authenticated():
+        auth_user = request.user
+
+    user = User.objects.get(id=auth_user.id)
+    app_user = Users.objects.get(user_id=auth_user.id)
+
+    if request.method == 'GET':
+        return render_to_response('profile_page.html',{'user': user, 'app_user':app_user}, context)
+    else:
+        user.email = request.POST['email']
+        user.set_password(request.POST['pwd'])
+        user.first_name = request.POST['surname']
+        user.last_name = request.POST['lastname']
+        user.save()
+
+        app_user.git_url = request.POST['git']
+        app_user.save()
+
+        return redirect('app.views.stream')
+
 
 def validateLogin(request):
     context = RequestContext(request)
