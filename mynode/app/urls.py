@@ -2,9 +2,8 @@ from django.conf.urls import patterns, url
 from app import views
 
 urlpatterns = patterns('',
+    url(r'^$', 'django.contrib.auth.views.login', {'template_name': 'login_page.html'}),
     url(r'^register/$', views.register),
-    url(r'^$', 'django.contrib.auth.views.login'),
-
     url(r'^stream/$', views.stream),
     url(r'^stream/post/(\d+)/$', views.post_details),
     url(r'^stream/post/(\d+)/delete/$', views.delete_post),
