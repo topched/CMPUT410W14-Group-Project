@@ -2,18 +2,18 @@
 
 {% load static %}
 <html>
-    <head><title>MyNode Stream</title>
-        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-        <link href="{% static 'css/style.css' %}" rel="stylesheet">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+  <head><title>MyNode Stream</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 
-    </head>
+  </head>
 
-<body>
+  <body>
     {% csrf_token %}
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -29,64 +29,103 @@
             <li class="active"><a href="/mynode/stream/">Stream</a></li>
             <li><a href="/mynode/friends/">Friends</a></li>
             <li><a href="/mynode/profile/">Profile</a></li>
-        </ul>
-    </div><!--/.nav-collapse -->
-</div>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
     </div>
 
     <div class=container>
-        <div class=stream>
-            <h1>Stream</h1>
-            <!-- Post Input Box -->
-            <form  action="{% url 'app.views.create_post' %}" method="POST">
-                {% csrf_token %}
-                <div class=text_filled>
-                    <textarea rows="5" cols="80" id="content" name='content'></textarea>
-                    </br>
-                </div>
-                <div class=buttons>
-                    <input type="submit" id="post" name="post" value="Post" />
-                </div>
-            </form>
+      <div class=stream>
+        <h1>Stream</h1>
+        <!-- Post Input Box -->
+        <form  action="{% url 'app.views.create_post' %}" method="POST">
+          {% csrf_token %}
+          <div class=text_filled>
+            <textarea rows="5" cols="80" id="content" name='content'></textarea>
             </br>
+          </div>
+          <div class=buttons>
+            <input type="submit" id="post" name="post" value="Post" />
+          </div>
+        </form>
+      </div>
+    </div>
 
-            <!-- Post Stream -->
-            {% for post in posts %}
-            <div class="row">
-                <p> {{ post.content }} </p>
-                <div class=caption>Post by: {{ post.author.user }} </div> </br>
-                <div class="post_buttons">
-                    <form  action="{% url 'app.views.delete_post' post.id %}" method="POST" name='_method' value='DELETE' class='delete-comment-form'>
-                    <input type="button" value="Comment" class='comment-link'></input>
-                    {% if post.author == current_user %}
-                        {% csrf_token %}
-                        <input type="submit" value="Delete" />
-                    </form>
-                    {% endif %}
-                </div>
-                <div class="comment_area" style="display:none">
-                    <textarea>
+    <!-- Post Stream -->
+    {% for post in posts %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-1">
+        <p> {{ post.content }} </p>
+        <div class=caption>Post by: {{ post.author.user }} </div> </br>
+      </div>
+    </div>
 
-                    </textarea>
-                </div>
-            </div>
-            {% endfor %}
+    {% for comment in comments %}
+    {% if post == comment.parent_post %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-2">
+        <p> {{ comment.content }} </p>
+        <div class=caption>Comment by: {{ post.author.user }} </div> </br>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <!-- Post Buttons Row -->
+    <div class="row">
+      <div class="col-md-6 col-md-offset-1">
+        <div class="post_buttons">
+          <form  action="{% url 'app.views.delete_post' post.id%}" method="POST">
+            {% csrf_token %}
+            <input type="button" value="Comment" class='comment-link' />
+            {% if post.author == current_user %}
+            <input type="submit" value="Delete" />
+          </form>
+          {% endif %}
         </div>
+      </div>
+      <!-- Comment Row -->
+      <div class="row">
+        <div class="col-md-6 col-md-offset-1">
+          <div class="comment_area" style="display:none">
+            <form  action="{% url 'app.views.create_comment' post.id %}" method="POST">
+              {% csrf_token %}
+              <textarea name='content'>
 
-        <!-- Dynamic Comments -->
-        <script type="text/javascript">
-            $(function() {
-                    $('.delete-comment-form').submit(function() {
-                        return confirm("Are you sure you want to delete this?");
-                        });
-                    $('.comment-link').click(function() {
-                        $(this).closest(".row").find(".comment_area").show();
-                        $(this).closest(".row").find(".post_buttons").hide();
-                        $(this).closest(".row").find(".comment_area textarea").focus();
-                        $(this).closest(".row").find(".comment_buttons").show();
-                        return false;
-                        });
-                    });
-                </script>
-            </body>
-        </html>
+              </textarea>
+              <div class="comment_buttons">
+                <input type="button" value="Cancel" class='cancel-link' />
+                <input type="submit" id="post" name="post" value="Comment" />
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Dynamic Comments -->
+<script type="text/javascript">
+  $(function() {
+      $('.delete-comment-form').submit(function() {
+        return confirm("Are you sure you want to delete this?");
+        });
+      $('.comment-link').click(function() {
+        $(this).closest(".row").find(".comment_area").show();
+        $(this).closest(".row").find(".post_buttons").hide();
+        $(this).closest(".row").find(".comment_area textarea").focus();
+        $(this).closest(".row").find(".comment_buttons").show();
+        return false;
+        });
+      $('.cancel-link').click(function() {
+        $(this).closest(".row").find(".post_buttons").show();
+        $(this).closest(".row").find(".comment_area").hide();
+        $(this).closest(".row").find(".comment_buttons").hide();
+        });
+      });
+</script>
+  </body>
+</html>

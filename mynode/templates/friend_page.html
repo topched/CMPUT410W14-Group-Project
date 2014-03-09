@@ -39,7 +39,7 @@
 <h2>Friend Requests</h2>
 
 <ul>
-{% for friend_request in friend_request_list %}
+{% for friend_request in friend_requests %}
     <li>{{ friend_request }}</li>
 {% endfor %}
 </ul>
@@ -47,7 +47,7 @@
 <h2>People You Follow</h2>
 
 <ul>
-{% for friend in friend_list %}
+{% for friend in friends%}
     <li>{{ friend }}</li>
 {% endfor %}
 </ul>
@@ -55,7 +55,7 @@
 <h2>Following You</h2>
 
 <ul>
-{% for follower in follower_list %}
+{% for follower in followers%}
     <li>{{ follower }}</li>
 {% endfor %}
 </ul>

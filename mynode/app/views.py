@@ -64,7 +64,9 @@ def stream(request):
     #TODO: narrow this down to show only allowed posts, not all posts
     current_user = Users.objects.get(user=request.user)
     posts = Post.objects.all()
-    data = {'posts':posts, 'current_user':current_user}
+    comments = Comment.objects.all()
+    print comments
+    data = {'posts':posts, 'comments':comments, 'current_user':current_user}
     return render_to_response('stream_page.html', data, context)
 
 def post_details(request, post_id):
@@ -91,12 +93,22 @@ def create_post(request):
     #TODO: update post
     return redirect('app.views.stream')
 
+def create_comment(request, parent_post):
+    #the_post_lol = 
+    current_user = Users.objects.get(user=request.user)
+    # lol
+    the_post_haha = Post.objects.get(id=parent_post)
+    context = RequestContext(request)
+    comment = Comment.objects.create(parent_post=the_post_haha, author=current_user, content=request.POST['content']);
+    #post.save()
+    #TODO: update post
+    return redirect('app.views.stream')
+
 @login_required
 def friends(request):
-    context = RequestContext(request)
     #TODO: friend stuff
-    friends = Friends.objects.all()
-    follers = Friends.objects.all()
-    following = Friends.objects.all()
-    data = {'friends':friends, 'followers':followers, 'following':following}
-    return render(request, './friends.html', data, context)
+    #friend_requests = FriendRequests.objects.get(user=request.user)
+    followers = Friend.objects.all()
+    following = Friend.objects.all()
+    data = {'friend_requests':'request!', 'followers':followers, 'following':following}
+    return render(request, 'friend_page.html', data)
