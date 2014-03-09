@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from app.models import *
 
 
@@ -29,14 +30,16 @@ def register(request):
     else:
         # A POST request @TODO: Validation, OR switch to forms
         form = request.POST # Bind data from request.POST into a PostForm
-        user = User.objects.create_user(request.POST['username'],
-                request.POST['email'],
-                request.POST['pwd'])
+        user = User.objects.create_user(username=request.POST['username'],
+                email=request.POST['email'],
+                password=request.POST['pwd'],
+                first_name=request.POST['surname'],
+                last_name=request.POST['lastname'])
         user.save()
-        app_user = Users.objects.create(user = user)
+        app_user = Users.objects.create(user = user, git_url=request.POST['git'])
         app_user.save()
 
-        return render_to_response('stream_page.html', context)
+        return HttpResponseRedirect("/")
 
 def validateLogin(request):
     context = RequestContext(request)
