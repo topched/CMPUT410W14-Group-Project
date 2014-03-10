@@ -1,6 +1,9 @@
 from django.utils import unittest
 from django.test.client import Client
+from django.test.client import RequestFactory
+from django.test import TestCase
 from app.models import *
+from app.views import *
 from django.contrib.auth.models import User
 
 #class MyFuncTestCase(unittest.TestCase):
