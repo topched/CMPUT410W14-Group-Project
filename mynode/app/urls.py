@@ -15,5 +15,8 @@ urlpatterns = patterns('',
 
     url(r'^friends/$', views.friends),
     url(r'^friends/friend/create/$', views.create_friend),
-    #url(r'^friends_requests/', views.friends.create_friendRequest),
+    url(r'^friends/(\d+)/confirm/$', views.confirm_friend),
+    #url(r'^friends/friend/friend/(\d+)/$', views.friend_details),
+    url(r'^friends/(\d+)/delete/$', views.delete_friend),
+  
 )

@@ -20,6 +20,7 @@ class Friend(models.Model):
     accepted = models.IntegerField(default=False)
     class Meta:
         app_label='app'
+        unique_together = ('requester','receiver')
 
 class Image(models.Model):
     author = models.ForeignKey(User, db_column='author')

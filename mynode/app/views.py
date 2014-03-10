@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from app.models import *
-from app.modelforms import *
+from django.forms import ModelForm
+#from app.modelforms import *
 
 
 def index(request):
@@ -64,25 +65,6 @@ def profile(request):
         return redirect('app.views.stream')
 
 
-def validateLogin(request):
-    context = RequestContext(request)
-    username = request.POST['username']
-    pwd = request.POST['password']
-    user = authenticate(username=username, password=pwd)
-
-    #if user is not None:
-
-     #   if user.is_active:
-            #login(request,user)
-            #temp redirect for testing
-      #      return redirect ('stream_page.html', context)
-
-       # else:
-            #disabled account
-   # else:
-        #invalid login - tmp redirect for testing
-    #    return redirect('friend_page.html', context)
-
 #The stream contains posts, so although it doesn't look restful, it is.
 @login_required
 def stream(request):
@@ -135,10 +117,39 @@ def create_comment(request, parent_post):
 def friends(request):
     #TODO: friend stuff
     #friend_requests = FriendRequests.objects.get(user=request.user)
-    followers = Friend.objects.all()
-    following = Friend.objects.all()
-    data = {'friend_requests':'request!', 'followers':followers, 'following':following}
+    followers = Friend.objects.filter(accepted=0,receiver=request.user.id)
+    following = Friend.objects.filter(requester=request.user.id).exclude(accepted=1)
+    friends = Friend.objects.filter(accepted=1,receiver=request.user.id)
+    data = {'friend_requests':'request!', 'followers':followers, 'following':following, 'friends':friends}
     return render(request, 'friend_page.html', data)
+    
+@login_required
+def delete_friend(request, follower_id):
+    current_user = User.objects.get(id=request.user.id)
+    sender = User.objects.get(id=follower_id)
+    friendship = Friend.objects.get(requester=sender,receiver=current_user)
+
+    friendship.accepted = 2
+    friendship.save()
+
+    return redirect('app.views.friends')
+
+@login_required   
+def confirm_friend(request, follower_id):
+    current_user = User.objects.get(id=request.user.id)
+    sender = User.objects.get(id=follower_id)
+    friendship = Friend.objects.get(requester=sender,receiver=current_user)
+    
+    try: friendship2 = Friend.objects.get(requester=current_user,receiver=sender)
+    except: friendship2 = Friend.objects.create(requester=current_user,receiver=sender,accepted=1)
+    friendship.accepted = 1
+    friendship.save()
+    friendship2.accepted = 1
+    friendship2.save()
+    
+    return redirect('app.views.friends')
+        
+        
 
 @login_required
 def create_friend(request):
@@ -147,8 +158,8 @@ def create_friend(request):
     print receiver_name
 
     #TODO: Fancy up the "Person does not exists" code.
-    try : receiver = Users.objects.get(display_name=receiver_name)
-    except Users.DoesNotExist: return redirect('app.views.friends')
+    try : receiver = User.objects.get(username=receiver_name)
+    except User.DoesNotExist: return redirect('app.views.friends')
     print "FRIEND CREATED"
 
     friend = Friend.objects.create(receiver=receiver, requester=current_user)
