@@ -8,20 +8,20 @@ from django.contrib.auth.models import User
 
 class Comment(models.Model):
     parent_post = models.ForeignKey('Post', db_column='parent_post')
-    author = models.ForeignKey('Users', db_column='author')
+    author = models.ForeignKey(User, db_column='author')
     content = models.TextField(blank=True)
     class Meta:
         app_label='app'
 
 class Friend(models.Model):
-    requester = models.ForeignKey('Users', db_column='requester', related_name='requester_userid')
-    receiver = models.ForeignKey('Users', db_column='receiver', related_name='receiver_userid')
+    requester = models.ForeignKey(User, db_column='requester', related_name='requester_userid')
+    receiver = models.ForeignKey(User, db_column='receiver', related_name='receiver_userid')
     accepted = models.IntegerField(default=False)
     class Meta:
         app_label='app'
 
 class Image(models.Model):
-    author = models.ForeignKey('Users', db_column='author')
+    author = models.ForeignKey(User, db_column='author')
     filename = models.CharField(max_length=128)
     visibility = models.IntegerField(blank=True, null=True)
     class Meta:
@@ -29,7 +29,7 @@ class Image(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey('Users', db_column='author')
+    author = models.ForeignKey(User, db_column='author')
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True)
@@ -41,7 +41,7 @@ class Users(models.Model):
     git_url = models.CharField(max_length=256, blank=True)
     default_post_visibility = models.IntegerField(blank=True, null=True)
     approved = models.BooleanField(default=False)
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, parent_link=True)
     class Meta:
         app_label='app'
 
