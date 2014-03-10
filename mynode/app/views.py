@@ -88,7 +88,7 @@ def validateLogin(request):
 def stream(request):
     context = RequestContext(request)
     #TODO: narrow this down to show only allowed posts, not all posts
-    current_user = Users.objects.get(user=request.user)
+    current_user = User.objects.get(id=request.user.id)
     posts = Post.objects.all()
     comments = Comment.objects.all()
     print comments
@@ -113,7 +113,7 @@ def delete_post(request, post_id):
     return redirect('app.views.stream')
 
 def create_post(request):
-    current_user = Users.objects.get(user=request.user)
+    current_user = User.objects.get(id=request.user.id)
     context = RequestContext(request)
     post = Post.objects.create(author=current_user, content=request.POST['content'])
     post.save()
@@ -122,7 +122,7 @@ def create_post(request):
 
 def create_comment(request, parent_post):
     #the_post_lol = 
-    current_user = Users.objects.get(user=request.user)
+    current_user = User.objects.get(id=request.user.id)
     # lol
     the_post_haha = Post.objects.get(id=parent_post)
     context = RequestContext(request)
@@ -142,7 +142,7 @@ def friends(request):
 
 @login_required
 def create_friend(request):
-    current_user = Users.objects.get(user=request.user)
+    current_user = User.objects.get(id=request.user.id)
     receiver_name = request.POST['receiver_display_name']
     print receiver_name
 
@@ -166,7 +166,7 @@ def image(request, image_id=None):
         newImageForm = ImageForm(request.POST, request.FILES)
         if(newImageForm.is_valid()):
             newImage = newImageForm.save(commit=False)
-            newImage.author = Users.objects.get(user=request.user)
+            newImage.author = request.user
             newImage.save()
             return redirect('app.views.stream')
         return render(request, 'image_upload.html', {'ImageForm':newImageForm})
