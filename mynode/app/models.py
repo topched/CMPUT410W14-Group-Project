@@ -38,11 +38,10 @@ class Post(models.Model):
         
 
 class Users(models.Model):
-    display_name = models.CharField(max_length=128)
     git_url = models.CharField(max_length=256, blank=True)
     default_post_visibility = models.IntegerField(blank=True, null=True)
     approved = models.BooleanField(default=False)
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User, primary_key=True)
     class Meta:
         app_label='app'
 
