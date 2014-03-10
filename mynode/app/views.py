@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from app.models import *
+from app.modelforms import *
 
 
 def index(request):
@@ -154,3 +155,22 @@ def create_friend(request):
     friend.save()
     return redirect('app.views.friends')
 
+def image(request, image_id=None):
+    if request.method == 'GET':
+        if(image_id is None):
+            imageForm = ImageForm()
+            return render(request,'image_upload.html', {'ImageForm':imageForm})
+    elif request.method == 'POST':
+        newImageForm = ImageForm(request.POST, request.FILES)
+        if(newImageForm.is_valid()):
+            newImage = newImageForm.save(commit=False)
+            newImage.author = Users.objects.get(user=request.user)
+            newImage.save()
+            return HttpResponseRedirect('/mynode/stream')
+        return render(request, 'image_upload.html', {'ImageForm':newImageForm})
+    elif request.method == "DELETE":
+        Post.objects.get(id=image_id).delete()
+        return redirect('app.views.stream')
+    else:
+        return HttpResponseNotAllowed(['GET','POST'])
+        

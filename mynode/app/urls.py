@@ -10,6 +10,8 @@ urlpatterns = patterns('',
     url(r'^stream/post/(\d+)/delete/$', views.delete_post),
     url(r'^stream/post/create/$', views.create_post),
     url(r'^stream/post/(\d+)/comments/', views.create_comment),
+    url(r'^stream/image/?',views.image),
+    url(r'^stream/image/(\d+)',views.image),
 
     url(r'^friends/$', views.friends),
     url(r'^friends/friend/create/$', views.create_friend),

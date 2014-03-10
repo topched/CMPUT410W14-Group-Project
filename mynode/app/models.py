@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+from PIL import Image
 
 class Comment(models.Model):
     parent_post = models.ForeignKey('Post', db_column='parent_post')
@@ -22,7 +23,7 @@ class Friend(models.Model):
 
 class Image(models.Model):
     author = models.ForeignKey('Users', db_column='author')
-    filename = models.CharField(max_length=128)
+    image = models.ImageField(upload_to='images')
     visibility = models.IntegerField(blank=True, null=True)
     class Meta:
         app_label='app'
