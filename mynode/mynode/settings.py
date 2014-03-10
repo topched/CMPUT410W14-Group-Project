@@ -115,3 +115,4 @@ TEMPLATE_DIRS = (
 )
 
 MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, 'media'))
+MEDIA_URL = '/media/'

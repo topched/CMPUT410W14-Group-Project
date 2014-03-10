@@ -160,13 +160,15 @@ def image(request, image_id=None):
         if(image_id is None):
             imageForm = ImageForm()
             return render(request,'image_upload.html', {'ImageForm':imageForm})
+        else:
+            return render(request,'view_image.html', {'Image':Image.objects.get(id=image_id)})
     elif request.method == 'POST':
         newImageForm = ImageForm(request.POST, request.FILES)
         if(newImageForm.is_valid()):
             newImage = newImageForm.save(commit=False)
             newImage.author = Users.objects.get(user=request.user)
             newImage.save()
-            return HttpResponseRedirect('/mynode/stream')
+            return redirect('app.views.stream')
         return render(request, 'image_upload.html', {'ImageForm':newImageForm})
     elif request.method == "DELETE":
         Post.objects.get(id=image_id).delete()
