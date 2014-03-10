@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'^stream/post/(\d+)/comments/', views.create_comment),
 
     url(r'^friends/$', views.friends),
+    url(r'^friends/friend/create/$', views.create_friend),
     #url(r'^friends_requests/', views.friends.create_friendRequest),
 )

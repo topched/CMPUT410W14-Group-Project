@@ -78,20 +78,21 @@ def post_details(request, post_id):
         # deletin
         # post.edeskajhdfasf
     if request.method == 'DELETE' or request.POST.get('_method') == 'DELETE':
-        return post_delete(request, post_id);
+        return post_delete(request, post_id)
     if request.method == 'PUT':
-        return post_put(request);
+        return post_put(request)
 
 
 def delete_post(request, post_id):
     context = RequestContext(request)
     Post.objects.get(id=post_id).delete()
+    #TODO: Should delete all related COMMENTS as well
     return redirect('app.views.stream')
 
 def create_post(request):
     current_user = Users.objects.get(user=request.user)
     context = RequestContext(request)
-    post = Post.objects.create(author=current_user, content=request.POST['content']);
+    post = Post.objects.create(author=current_user, content=request.POST['content'])
     post.save()
     #TODO: update post
     return redirect('app.views.stream')
@@ -102,7 +103,7 @@ def create_comment(request, parent_post):
     # lol
     the_post_haha = Post.objects.get(id=parent_post)
     context = RequestContext(request)
-    comment = Comment.objects.create(parent_post=the_post_haha, author=current_user, content=request.POST['content']);
+    comment = Comment.objects.create(parent_post=the_post_haha, author=current_user, content=request.POST['content'])
     #post.save()
     #TODO: update post
     return redirect('app.views.stream')
@@ -115,3 +116,19 @@ def friends(request):
     following = Friend.objects.all()
     data = {'friend_requests':'request!', 'followers':followers, 'following':following}
     return render(request, 'friend_page.html', data)
+
+@login_required
+def create_friend(request):
+    current_user = Users.objects.get(user=request.user)
+    receiver_name = request.POST['receiver_display_name']
+    print receiver_name
+
+    #TODO: Fancy up the "Person does not exists" code.
+    try : receiver = Users.objects.get(display_name=receiver_name)
+    except Users.DoesNotExist: return redirect('app.views.friends')
+    print "FRIEND CREATED"
+
+    friend = Friend.objects.create(receiver=receiver, requester=current_user)
+    friend.save()
+    return redirect('app.views.friends')
+

@@ -15,11 +15,10 @@ class Comment(models.Model):
 
 class Friend(models.Model):
     requester = models.ForeignKey('Users', db_column='requester', related_name='requester_userid')
-    friend = models.ForeignKey('Users', db_column='friend', related_name='friend_userid')
-    accepted = models.IntegerField(blank=True, null=True)
+    receiver = models.ForeignKey('Users', db_column='receiver', related_name='receiver_userid')
+    accepted = models.IntegerField(default=False)
     class Meta:
         app_label='app'
-
 
 class Image(models.Model):
     author = models.ForeignKey('Users', db_column='author')
