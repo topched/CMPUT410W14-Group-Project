@@ -140,15 +140,19 @@ def friends(request):
     return render(request, 'friend_page.html', data)
 
 @login_required
+def friend_details(request):
+    current_user = Users.objects.get(user=request.user)
+    receiver_name = request.POST['receiver_display_name']
+    if request.POST.get('name') == 'DELETE':
+
+@login_required
 def create_friend(request):
     current_user = Users.objects.get(user=request.user)
     receiver_name = request.POST['receiver_display_name']
-    print receiver_name
 
     #TODO: Fancy up the "Person does not exists" code.
     try : receiver = Users.objects.get(display_name=receiver_name)
     except Users.DoesNotExist: return redirect('app.views.friends')
-    print "FRIEND CREATED"
 
     friend = Friend.objects.create(receiver=receiver, requester=current_user)
     friend.save()
