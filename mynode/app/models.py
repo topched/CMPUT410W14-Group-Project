@@ -31,10 +31,22 @@ class Image(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(User, db_column='author')
+    PUBLIC = 1
+    SERVER = 2
+    FRIENDS = 3
+    PRIVATE = 4
+    VISIBILITY_CHOICES = (
+        (PUBLIC, 'Public'),
+        (SERVER, 'Server'),
+        (FRIENDS, 'Friends'),
+        (PRIVATE, 'Private')
+    )
+    
+    author = models.ForeignKey(User, related_name='author_user')
+    recipient = models.ForeignKey(User, related_name='recipient_user', null=True)
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
-    visibility = models.IntegerField(blank=True, null=True)
+    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
     class Meta:
         app_label='app'
         
