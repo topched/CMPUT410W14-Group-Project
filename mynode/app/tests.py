@@ -55,6 +55,43 @@ class testRunner(TestCase):
         self.post = Post.objects.create(author = self.user, content="My first post")
         self.post_id = self.post.id
 
+    def test_create_and_confirm_friendship(self):
+
+        tempUser = User.objects.create_user(
+            username="testPerson",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser = Users.objects.create(user = tempUser, git_url="test.git")
+
+        friends = Friend.objects.all()
+        start = len(friends)
+
+        url = '/mynode/friends/friend/create/'
+
+        self.client.login(username='admin',password='password')
+
+        resp = self.client.post(
+            url,
+            {'receiver_display_name': tempUser.username})
+
+        friends = Friend.objects.all()
+        end = len(friends)
+
+        #Friendship created
+        self.assertEqual(start, end-1)
+        #Admin sends friend request
+        self.assertEqual(friends[0].requester,self.user)
+        #TempUser receives request
+        self.assertEqual(friends[0].receiver,tempUser)
+        #friendship should not be accepted yet
+        self.assertEqual(friends[0].accepted,0)
+
+        #TODO:Need to POST to this url to confirm friendship -- couldnt get it to work at home
+        url1 = '/mynode/friends/' + str(tempUser.id) + '/confirm/'
+
     def test_create_user(self):
 
         resp = self.client.get('/mynode/register', follow=True)
@@ -75,7 +112,9 @@ class testRunner(TestCase):
         tmp = User.objects.all()
         end = len(tmp)
 
+        #Created exactly one new user
         self.assertEqual(end, start+1)
+        #Check to make sure the user was created correctly
         self.assertEqual(tmp[end-1].username,'someUser')
 
 
@@ -91,7 +130,9 @@ class testRunner(TestCase):
 
         tmp = Post.objects.all()
     
+        #Exactly 2 posts after creating a new one
         self.assertEqual(len(tmp),2)
+        #Make sure the post contains the correct info
         self.assertEqual(tmp[1].content, "My second post")
 
     def test_delete_post(self):
@@ -107,6 +148,7 @@ class testRunner(TestCase):
         resp = self.client.post(url)
         tmp = Post.objects.all()
     	
+    	#Make sure exactly one post was deleted
         self.assertEqual(len(tmp), start-1)
 
     def test_create_comment(self):
@@ -124,9 +166,13 @@ class testRunner(TestCase):
 
         tmp = Comment.objects.all()
         end = len(tmp)
+        
+        #Make sure exactly one comment was added
         self.assertEqual(start+1,end)
 
         val = tmp[end-1].content
+        
+        #Make sure the comment contains the correct info
         self.assertEqual(val, 'My first comment')
 
     def test_get_stream(self):
@@ -134,7 +180,6 @@ class testRunner(TestCase):
         #No logged in user - should redirect to login
         resp = self.client.get('/mynode/stream/', follow=True)
         self.assertRedirects(resp, '/mynode/')
-
 
         #Logged user should return the stream page
         self.client.login(username='admin', password='password')
