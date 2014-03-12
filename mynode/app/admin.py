@@ -4,6 +4,11 @@ from django.conf.urls import patterns
 from django.shortcuts import render_to_response
 from app.models import *
 
+
+###########################################
+# Custom Display lists for the admin page #
+###########################################
+
 #Admin approval action method for approving users
 def approve(modeladmin, request, queryset):
     queryset.update(approved=1)
@@ -22,6 +27,8 @@ class Users_Admin(admin.ModelAdmin):
     list_display = ('user', 'git_url', 'default_post_visibility', 'approved')
     list_filter = ['approved']
     actions = [approve]
+
+#############################################
 
 admin.site.register(Comment,Comments)
 admin.site.register(Friend,Friends)
