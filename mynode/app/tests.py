@@ -55,6 +55,43 @@ class testRunner(TestCase):
         self.post = Post.objects.create(author = self.user, content="My first post")
         self.post_id = self.post.id
 
+    def test_create_and_confirm_friendship(self):
+
+        tempUser = User.objects.create_user(
+            username="testPerson",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser = Users.objects.create(user = tempUser, git_url="test.git")
+
+        friends = Friend.objects.all()
+        start = len(friends)
+
+        url = '/mynode/friends/friend/create/'
+
+        self.client.login(username='admin',password='password')
+
+        resp = self.client.post(
+            url,
+            {'receiver_display_name': tempUser.username})
+
+        friends = Friend.objects.all()
+        end = len(friends)
+
+        #Friendship created
+        self.assertEqual(start, end-1)
+        #Admin sends friend request
+        self.assertEqual(friends[0].requester,self.user)
+        #TempUser receives request
+        self.assertEqual(friends[0].receiver,tempUser)
+        #friendship should not be accepted yet
+        self.assertEqual(friends[0].accepted,0)
+
+        #TODO:Need to POST to this url to confirm friendship -- couldnt get it to work at home
+        url1 = '/mynode/friends/' + str(tempUser.id) + '/confirm/'
+
     def test_create_user(self):
 
         resp = self.client.get('/mynode/register', follow=True)

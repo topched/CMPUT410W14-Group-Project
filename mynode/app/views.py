@@ -17,7 +17,13 @@ def index(request):
     #context = {'latest_posts_list': latest_posts_list}
     latest_posts = Posts.objects.all()
     context = RequestContext(request)
-    return render_to_response ('stream_page.html', {'posts': latest_posts}, context)
+    if request.user.is_authenticated():
+        auth_user = request.user
+
+    user = User.objects.get(id=auth_user.id)
+    app_user = Users.objects.get(user_id=auth_user.id)
+
+    return render_to_response ('stream_page.html', {'posts': latest_posts,'user':user,'app_user':app_user}, context)
 
 def login(request):
     context = RequestContext(request)
@@ -50,8 +56,10 @@ def profile(request):
     user = User.objects.get(id=auth_user.id)
     app_user = Users.objects.get(user_id=auth_user.id)
 
+    posts = Post.objects.filter(author=auth_user.id)
+
     if request.method == 'GET':
-        return render_to_response('profile_page.html',{'user': user, 'app_user':app_user}, context)
+        return render_to_response('profile_page.html',{'user': user, 'app_user':app_user, 'posts':posts}, context)
     else:
         user.email = request.POST['email']
         user.set_password(request.POST['pwd'])
@@ -120,7 +128,10 @@ def friends(request):
     followers = Friend.objects.filter(accepted=0,receiver=request.user.id)
     following = Friend.objects.filter(requester=request.user.id).exclude(accepted=1)
     friends = Friend.objects.filter(accepted=1,receiver=request.user.id)
-    data = {'friend_requests':'request!', 'followers':followers, 'following':following, 'friends':friends}
+
+    user = User.objects.get(id=request.user.id)
+
+    data = {'friend_requests':'request!', 'followers':followers, 'following':following, 'friends':friends,'user':user}
     return render(request, 'friend_page.html', data)
     
 @login_required
@@ -150,17 +161,16 @@ def confirm_friend(request, follower_id):
     return redirect('app.views.friends')
         
         
-
 @login_required
 def create_friend(request):
     current_user = User.objects.get(id=request.user.id)
     receiver_name = request.POST['receiver_display_name']
-    print receiver_name
+    #print receiver_name
 
     #TODO: Fancy up the "Person does not exists" code.
     try : receiver = User.objects.get(username=receiver_name)
     except User.DoesNotExist: return redirect('app.views.friends')
-    print "FRIEND CREATED"
+    #print "FRIEND CREATED"
 
     friend = Friend.objects.create(receiver=receiver, requester=current_user)
     friend.save()
