@@ -112,7 +112,9 @@ class testRunner(TestCase):
         tmp = User.objects.all()
         end = len(tmp)
 
+        #Created exactly one new user
         self.assertEqual(end, start+1)
+        #Check to make sure the user was created correctly
         self.assertEqual(tmp[end-1].username,'someUser')
 
 
@@ -128,7 +130,9 @@ class testRunner(TestCase):
 
         tmp = Post.objects.all()
     
+        #Exactly 2 posts after creating a new one
         self.assertEqual(len(tmp),2)
+        #Make sure the post contains the correct info
         self.assertEqual(tmp[1].content, "My second post")
 
     def test_delete_post(self):
@@ -144,6 +148,7 @@ class testRunner(TestCase):
         resp = self.client.post(url)
         tmp = Post.objects.all()
     	
+    	#Make sure exactly one post was deleted
         self.assertEqual(len(tmp), start-1)
 
     def test_create_comment(self):
@@ -161,9 +166,13 @@ class testRunner(TestCase):
 
         tmp = Comment.objects.all()
         end = len(tmp)
+        
+        #Make sure exactly one comment was added
         self.assertEqual(start+1,end)
 
         val = tmp[end-1].content
+        
+        #Make sure the comment contains the correct info
         self.assertEqual(val, 'My first comment')
 
     def test_get_stream(self):
@@ -171,7 +180,6 @@ class testRunner(TestCase):
         #No logged in user - should redirect to login
         resp = self.client.get('/mynode/stream/', follow=True)
         self.assertRedirects(resp, '/mynode/')
-
 
         #Logged user should return the stream page
         self.client.login(username='admin', password='password')

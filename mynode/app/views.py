@@ -25,11 +25,16 @@ def index(request):
 
     return render_to_response ('stream_page.html', {'posts': latest_posts,'user':user,'app_user':app_user}, context)
 
+#Simple Login View that uses the Django Auth Login System
 def login(request):
     context = RequestContext(request)
     #TODO: if not logged in return login_page else return stream_page
     return render_to_response ('login_page.html', context)
 
+#Registration View
+# GET: Returns the registration page
+# POST: Creates a user with the parameters in the POST
+# Note: Uses both the django User model and our Users model to extend it
 def register(request):
     context = RequestContext(request)
 
@@ -47,6 +52,9 @@ def register(request):
 
         return HttpResponseRedirect("/")
 
+# Profile View for modifying your profile
+# GET: Renders the profile page with the data from the logged in user
+# POST: Updates any changed data for the user
 @login_required
 def profile(request):
     context = RequestContext(request)
@@ -121,6 +129,10 @@ def create_comment(request, parent_post):
     #TODO: update post
     return redirect('app.views.stream')
 
+# Gets the friend page along with all friend data
+# Followers = People who try to befriend you but you haven't accepted them yet
+# Following = People who you are following but they haven't accepted you yet
+# Friends = People who follow eachother
 @login_required
 def friends(request):
     #TODO: friend stuff
@@ -133,7 +145,8 @@ def friends(request):
 
     data = {'friend_requests':'request!', 'followers':followers, 'following':following, 'friends':friends,'user':user}
     return render(request, 'friend_page.html', data)
-    
+
+# Not accepting a friend request that is sent to you
 @login_required
 def delete_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
@@ -145,6 +158,9 @@ def delete_friend(request, follower_id):
 
     return redirect('app.views.friends')
 
+# Accepting a friend request sent to you
+# If you are already following them it will make you friends
+# If you are not following them it will follow them and make you friends
 @login_required   
 def confirm_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
@@ -163,6 +179,7 @@ def confirm_friend(request, follower_id):
         
 @login_required
 def create_friend(request):
+    #@TODO Check if this will make them friends
     current_user = User.objects.get(id=request.user.id)
     receiver_name = request.POST['receiver_display_name']
     #print receiver_name
