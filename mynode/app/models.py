@@ -7,6 +7,28 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 
+    ##############
+    #  MANAGERS  #
+    ##############
+
+class PostManager(models.Manager):
+    def getAllVisible(self, requester):
+        posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
+        visiblePosts = list()
+        
+        permissionHelper = Permissions()
+        
+        for post_id in posts:
+            post = permissionHelper.canSeePost(post_id, requester)
+            if(post is not None):
+                visiblePosts.append(post)
+        
+        return visiblePosts
+    
+    ############
+    #  MODELS  #
+    ############
+
 class Comment(models.Model):
     parent_post = models.ForeignKey('Post', db_column='parent_post')
     author = models.ForeignKey(User, db_column='author')
@@ -47,6 +69,9 @@ class Post(models.Model):
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    
+    objects = models.Manager()
+    visible_posts = PostManager()
     class Meta:
         app_label='app'
         
@@ -59,3 +84,44 @@ class Users(models.Model):
     class Meta:
         app_label='app'
 
+class Permissions():
+    def canSeePost(self, post_id, requester):
+        post = Post.objects.get(id=post_id)
+        if(post.recipient is not None):
+            if(post.recipient.id == requester or post.author.id == requester):
+                return post
+            else:
+                return None
+        elif(self.authLevel(post.author.id, requester) >= post.visibility):
+            return post
+        else:
+            return None
+    
+    def canSeeImage(self, image_id, requester):
+        image = Image.objects.get(id=image_id)
+        
+        if(self.authLevel(image.author, requester) >= image.visibility):
+            return True
+        else:
+            return False
+    
+    def authLevel(self, owner, requester):
+        print "%s is requesting %s's post" % (requester, owner)
+        if( owner == requester ):
+            print "post is PRIVATE"
+            return Post.PRIVATE
+        elif(self.areFriends(owner, requester)):
+            return Post.FRIENDS
+        else:
+            try:
+                User.objects.get(id=requester)
+                return Post.SERVER
+            except User.DoesNotExist:
+                return Post.PUBLIC
+        
+    def areFriends( self, user1, user2 ):
+        try:
+            Friend.objects.get(requester=user1, receiver=user2, accepted=True)
+            return True
+        except Friend.DoesNotExist:
+            return False

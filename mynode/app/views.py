@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from app.models import *
+from app.modelforms import *
 from django.forms import ModelForm
 #from app.modelforms import *
 
@@ -79,7 +80,8 @@ def stream(request):
     context = RequestContext(request)
     #TODO: narrow this down to show only allowed posts, not all posts
     current_user = User.objects.get(id=request.user.id)
-    posts = Post.objects.all()
+    print "getting posts visible to %s" % request.user.id
+    posts = Post.visible_posts.getAllVisible(request.user.id)
     comments = Comment.objects.all()
     print comments
     data = {'posts':posts, 'comments':comments, 'current_user':current_user}
@@ -102,13 +104,21 @@ def delete_post(request, post_id):
     #TODO: Should delete all related COMMENTS as well
     return redirect('app.views.stream')
 
-def create_post(request):
-    current_user = User.objects.get(id=request.user.id)
-    context = RequestContext(request)
-    post = Post.objects.create(author=current_user, content=request.POST['content'])
-    post.save()
-    #TODO: update post
-    return redirect('app.views.stream')
+def create_post(request, post_id=None):
+    if request.method == 'GET':
+        postForm = PostForm()
+        return render(request,'create_post.html', {'PostForm':postForm})
+    else:
+        current_user = User.objects.get(id=request.user.id)
+        newPostForm = PostForm(request.POST)
+        if(newPostForm.is_valid()):
+            newPost = newPostForm.save(commit=False)
+            newPost.author = current_user
+            newPost.save()
+            return HttpResponseRedirect('/mynode/stream')
+        return render(request, 'create_post.html', {'PostForm':newPostForm})
+        #TODO: update post
+        return redirect('app.views.stream')
 
 def create_comment(request, parent_post):
     #the_post_lol = 
