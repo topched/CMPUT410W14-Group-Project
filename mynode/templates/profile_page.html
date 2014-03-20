@@ -1,10 +1,11 @@
 <!DOCTYPE>
 {% load static %}
 <html>
-    <head><title>Registration</title>
+    <head><title>Profile - {{ user.username }}</title>
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
         <link href="{% static 'css/signin.css' %}" rel="stylesheet">
         <link href="{% static 'css/style.css' %}" rel="stylesheet">
+        <link href="{% static 'css/profile-page.css' %}" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
 
@@ -27,34 +28,129 @@
           <ul class="nav navbar-nav">
             <li><a href="/mynode/stream/">Stream</a></li>
             <li><a href="/mynode/friends/">Friends</a></li>
-            <li class="active"><a href="#">Profile</a></li>
           </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {{ user.username }}
+                <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <div class="navbar-content">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img src="/static/img/DefaultProfile.jpg"
+                                        alt="Alternate Text" class="img-thumbnail" />
+                                </div>
+                                <div class="col-md-7">
+                                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                                    <p class="text-muted small">{{ user.email }}</p>
+                                    <div class="divider">
+                                    </div>
+                                    <a href="/mynode/profile/" class="btn btn-primary btn-sm active">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navbar-footer">
+                            <div class="navbar-footer-content">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="#"class="btn btn-default btn-sm pull-right">Sign Out</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
-        <div class="container">
-            {% if form.errors %}
-            <p> Error Updating Profile! </p>
-            {% endif %}
+    <br><br>
 
-            <h2>Update your Profile</h2>
-            <form class="form-signin" role="form" action="/mynode/profile/" method="post">
-                {% csrf_token %}
-                <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password"/>
-                <input type="password" name="cpwd" id="cpwd" class="form-control" placeholder="Confirm Password"/>
-                <input type="name" name="surname" class="form-control" value="{{ user.first_name }}"/>
-                <input type="last_name" name="lastname" class="form-control" value="{{ user.last_name }}"/>
-                <input type="email" name="email" class="form-control" value="{{ user.email }}"/>
-                <input type="git" name="git" class="form-control" value="{{ app_user.git_url }}"/>
+    <div class="col-md-2"></div>
 
-                <input type="submit" id="submit" name="submit" value="Update" class="btn btn-lg btn-primary btn-block" />
-                <input type="hidden" name="next" value="{{ next }}" />
-            </form>
+      <div class="col-md-8">
+        <div class="panel">
+            <img class="img-thumbnail profile" src="/static/img/DefaultProfile.jpg" alt="...">
+            <a href="#" class="btn btn-xs btn-primary pull-right" style="margin:10px;">Change cover</a>
         </div>
+        <div class="name"><h2>{{ user.first_name }} {{ user.last_name }}</h2></div>
+
+    <div class="col-md-2"></div>
 
 
-    <!-- Modal -->
+        <br><br><br>
+
+        <ul class="nav nav-tabs" id="myTab">
+          <li class="active"><a href="#posts" data-toggle="tab">Posts</a></li>
+          <li><a href="#edit" data-toggle="tab">Edit Info</a></li>
+        </ul>
+
+        <div class="tab-content">
+
+          <!-- Users' Posts Tab -->
+          <div class="tab-pane active" id="posts">
+                
+            {% for post in posts %}
+
+            <div class="btn-toolbar well well-sm" role="toolbar"  style="margin:0px;">
+
+            <div class="btn-group"><input type="checkbox"></div>
+
+            <div class="btn-group col-md-11">{{ post.content }}</div></div>
+          
+            {% endfor %}
+            
+            <br>
+            <button class="btn btn-primary btn-xs"> Delete Selected Posts</button>
+
+          </div><!-- /posts -->
+
+         
+         <!-- Edit Profile Tab -->
+          <div class="tab-pane" id="edit">
+
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+              <div class="container">
+                {% if form.errors %}
+                <p> Error Updating Profile! </p>
+                {% endif %}
+
+                <form class="form-signin" id="profile" role="form" action="/mynode/profile/" method="post">
+                    {% csrf_token %}
+                    <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password"/>
+                    <input type="password" name="cpwd" id="cpwd" class="form-control" placeholder="Confirm Password"/>
+                    <input type="name" name="surname" placeholder="First Name"class="form-control" value="{{ user.first_name }}"/>
+                    <input type="last_name" name="lastname" placeholder="Last Name" class="form-control" value="{{ user.last_name }}"/>
+                    <input type="email" name="email" placeholder="Email" class="form-control" value="{{ user.email }}"/>
+                    <input type="git" name="git" placeholder="GitHub URL"class="form-control" value="{{ app_user.git_url }}"/>
+
+                    <input type="submit" id="submit" name="submit" value="Update" class="btn btn-lg btn-primary btn-block" />
+                    <input type="hidden" name="next" value="{{ next }}" />
+                </form>
+              </div>
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+        </div><!-- /edit profile -->
+
+
+
+
+
+
+    </div><!-- /tab-content -->
+    <div class="col-md-2"></div>
+
+          <!-- Modal -->
     <div class="modal fade" id="passMatch" tabindex="-1" role="dialog" aria-labelledby="passMatch" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -62,8 +158,8 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id="passMatchLabel">Passwords Do Not Match!</h4>
           </div>
-            <div class="modal-body">
-            The passwords entered do not match!
+            <div class="modal-body" id="passMatchBody">
+            The passwords entered do not match or they are blank!
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -72,15 +168,43 @@
       </div>
     </div>
 
-    <script>
+
+
+
+      <script>
+
         $('form').on('submit',function(e){
-           if($('#pwd').val()!=$('#cpwd').val()){
+
+          var p1 = $('#pwd').val();
+          var p2 = $('#cpwd').val();
+
+          if(p1 == "" || p2 == ""){
+            e.preventDefault();
+            $('#passMatch').modal('show');
+            return false;
+
+          }
+
+           if(p1!=p2){
                e.preventDefault();
                $('#passMatch').modal('show');
                return false;
            }
            return true;
         });
+
+
+
       </script>
+
+
+
+
+
+
+
+
+
+
     </body>
 </html>
