@@ -93,6 +93,7 @@ def stream(request):
     data = {'posts':posts, 'comments':comments, 'current_user':current_user}
     return render_to_response('stream_page.html', data, context)
 
+#Is this actually working?
 def post_details(request, post_id):
     context = RequestContext(request)
     #if request.method == 'POST':
