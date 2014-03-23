@@ -83,6 +83,11 @@
         <!-- Post Input Box -->
         <form  action="{% url 'app.views.create_post' %}" method="POST">
           {% csrf_token %}
+            <div class=text_filled>
+            <textarea rows="5" cols="20" id="title" name='title'></textarea>
+            </br>
+          </div>
+            </br>
           <div class=text_filled>
             <textarea rows="5" cols="80" id="content" name='content'></textarea>
             </br>

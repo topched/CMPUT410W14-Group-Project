@@ -123,6 +123,7 @@ def create_post(request, post_id=None):
         if(newPostForm.is_valid()):
             newPost = newPostForm.save(commit=False)
             newPost.author = current_user
+            newPost.title = request.POST['title']
             newPost.save()
             return HttpResponseRedirect('/mynode/stream')
         return render(request, 'create_post.html', {'PostForm':newPostForm})

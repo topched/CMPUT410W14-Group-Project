@@ -18,7 +18,11 @@ def post(request, post_id):
     context = RequestContext(request)
     if request.method == 'GET' or request.method == 'POST':
         try:
-            return HttpResponse(serializers.serialize("json", Post.objects.filter(id = post_id)), content_type="application/json")
+            post = Post.objects.get(id = post_id)
+            author = post.author
+            comments = Comment.objects.filter(parent_post = post)
+
+            return HttpResponse(serializers.serialize("json",comments), content_type="application/json")
         except:
             return HttpResponse(json.dumps("{}"), content_type="application/json")
     elif request.method == 'POST':

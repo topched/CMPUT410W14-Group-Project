@@ -66,6 +66,7 @@ class Post(models.Model):
     
     author = models.ForeignKey(User, related_name='author_user')
     recipient = models.ForeignKey(User, related_name='recipient_user', null=True)
+    title = models.TextField(blank=True)
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True)
     visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
