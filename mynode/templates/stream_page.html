@@ -109,7 +109,7 @@
         {% elif post.content_type = 2 %}
         <p> {{ post.content|convert_markdown }} </p>
         {% elif post.content_type = 3 %}
-        <p> {{ post.content|safe }} </p>
+        <p> {{ post.content|sanitize_html|safe }} </p>
         {% endif %}
         <div class=caption>Post by: {{ post.author.username }} </div> </br>
       </div>
