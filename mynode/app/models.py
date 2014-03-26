@@ -116,9 +116,7 @@ class Permissions():
             return False
     
     def authLevel(self, owner, requester):
-        print "%s is requesting %s's post" % (requester, owner)
         if( owner == requester ):
-            print "post is PRIVATE"
             return Post.PRIVATE
         elif(self.areFriends(owner, requester)):
             return Post.FRIENDS
