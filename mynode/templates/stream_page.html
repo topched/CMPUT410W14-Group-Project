@@ -93,6 +93,11 @@
             <textarea rows="5" cols="80" id="content" name='content'></textarea>
             </br>
           </div>
+           <select name="content-type">
+              <option value="1">Plaintext</option>
+              <option value="2">Markdown</option>
+              <option value="3">HTML</option>
+            </select>
           <div class=buttons>
             <input type="submit" id="post" name="post" value="Post" />
           </div>
@@ -104,11 +109,11 @@
     {% for post in posts %}
     <div class="row">
       <div class="col-md-6 col-md-offset-1">
-        {% if post.content_type = 1 %}
+        {% if post.content_type == 1 %}
         <p> {{ post.content }} </p>
-        {% elif post.content_type = 2 %}
+        {% elif post.content_type == 2 %}
         <p> {{ post.content|convert_markdown }} </p>
-        {% elif post.content_type = 3 %}
+        {% elif post.content_type == 3 %}
         <p> {{ post.content|sanitize_html|safe }} </p>
         {% endif %}
         <div class=caption>Post by: {{ post.author.username }} </div> </br>
