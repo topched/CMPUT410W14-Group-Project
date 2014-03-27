@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^mynode/', include('app.urls')),
-    url(r'^service/post/(?P<post_id>\w+)/$',api.post),
+    url(r'^service/posts/(?P<post_id>\w+)$',api.post),
     url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False), name='index'),
 
 )

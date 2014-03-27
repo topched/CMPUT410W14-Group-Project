@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from app.models import *
 from django.core import serializers
 import json
+import sys
 
 #GET/POST/PUT a post to the service API
 @login_required
@@ -18,13 +19,55 @@ def post(request, post_id):
     context = RequestContext(request)
     if request.method == 'GET' or request.method == 'POST':
         try:
+
             post = Post.objects.get(id = post_id)
-            author = post.author
+            author = Users.objects.get(user_id=post.author)
             comments = Comment.objects.filter(parent_post = post)
 
-            return HttpResponse(serializers.serialize("json",comments), content_type="application/json")
+            response_json = []
+            posts_json = {}
+            post_author_json = {}
+            comments_json = []
+            return_json = {}
+
+            # Filling out the post information
+            post_author_json['id'] = author.uuid
+            post_author_json['displayname'] = author.user.username
+            #TODO: Fix this to properly reflect the host and author location
+            post_author_json['url'] = "http://127.0.0.1:8000/service/author/" + author.uuid #TODO
+            post_author_json['host'] = "http://127.0.0.1:8000" #TODO
+
+            # Add the author to the post information
+            posts_json['author'] = {}
+            posts_json['author'] = post_author_json
+
+            # Fill out the post information
+            #TODO: Fix the TODO's in the JSON/below
+            posts_json['title'] = post.title
+            posts_json['source'] = "TODO" #TODO
+            posts_json['origin'] = "TODO" #TODO
+            posts_json['description'] = post.description
+            posts_json['content'] = post.content
+            posts_json['categories'] = "TODO" #TODO
+            posts_json['pubDate'] = str(post.post_date)
+            posts_json['guid'] = post.uuid
+            posts_json['visibility'] = 'TODO' #TODO
+            content_type = post.content_type
+            if content_type == 1:
+                posts_json['content-type'] = 'text/plain'
+            elif content_type== 2:
+                posts_json['content-type'] = 'text/markdown'
+            elif content_type == 3:
+                posts_json['content-type'] = 'text/html'
+
+            response_json.append(posts_json)
+            return_json['posts'] = response_json
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
+        
         except:
-            return HttpResponse(json.dumps("{}"), content_type="application/json")
+            e = sys.exc_info()[0]
+            print(e)
+           return HttpResponse(json.dumps("{}"), content_type="application/json")
     elif request.method == 'POST':
         # We should create a post and return it using the json information here
         return HttpResponse(json.dumps("{}"), content_type="application/json")

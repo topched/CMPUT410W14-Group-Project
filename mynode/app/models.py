@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+from django_extensions.db.fields import UUIDField
 from PIL import Image
 
     ##############
@@ -33,6 +34,7 @@ class Comment(models.Model):
     parent_post = models.ForeignKey('Post', db_column='parent_post')
     author = models.ForeignKey(User, db_column='author')
     content = models.TextField(blank=True)
+    uuid = UUIDField(version=4, unique=True)
     class Meta:
         app_label='app'
 
@@ -76,9 +78,12 @@ class Post(models.Model):
     author = models.ForeignKey(User, related_name='author_user')
     recipient = models.ForeignKey(User, related_name='recipient_user', null=True)
     title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
     content = models.TextField(blank=True)
     content_type = models.IntegerField(blank=True, null=True, choices=CONTENT_CHOICES)
     visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    uuid = UUIDField(version=4, unique=True)
+    post_date = models.DateTimeField(auto_now_add=True)
     
     objects = models.Manager()
     visible_posts = PostManager()
@@ -91,6 +96,7 @@ class Users(models.Model):
     default_post_visibility = models.IntegerField(blank=True, null=True)
     approved = models.BooleanField(default=False)
     user = models.OneToOneField(User, primary_key=True, parent_link=True)
+    uuid = UUIDField(version=4, unique=True)
     class Meta:
         app_label='app'
 
