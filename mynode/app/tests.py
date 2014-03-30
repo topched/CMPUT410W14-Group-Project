@@ -1,3 +1,4 @@
+__author__ = 'Kris'
 from django.utils import unittest
 from django.test.client import Client
 from django.test.client import RequestFactory
@@ -5,6 +6,7 @@ from django.test import TestCase
 from app.models import *
 from app.views import *
 from django.contrib.auth.models import User
+import json
 
 #class MyFuncTestCase(unittest.TestCase):
 #    def testBasic(self):
@@ -50,10 +52,99 @@ class testRunner(TestCase):
             first_name="Admin",
             last_name="Person")
 
-        self.app_user = Users.objects.create(user = self.user, git_url="test.git")
+        self.app_user = Users.objects.create(user=self.user, git_url="test.git")
 
-        self.post = Post.objects.create(author = self.user, content="My first post")
+        self.post = Post.objects.create(author=self.user, content="My first post")
         self.post_id = self.post.id
+
+    def test_match_friends_from_list(self):
+
+        tempUser1 = User.objects.create_user(
+            username="testPerson1",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser1 = Users.objects.create(user=tempUser1, git_url="test.git")
+
+        tempUser2 = User.objects.create_user(
+            username="testPerson2",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser2 = Users.objects.create(user=tempUser2, git_url="test.git")
+
+        tempUser3 = User.objects.create_user(
+            username="testPerson3",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser3 = Users.objects.create(user=tempUser3, git_url="test.git")
+
+        tempUser4 = User.objects.create_user(
+            username="testPerson4",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+
+        temp_appUser4 = Users.objects.create(user=tempUser4, git_url="test.git")
+
+        url = '/mynode/friends/friend/create/'
+
+        #admin sends friend request to tempuser1
+        self.client.login(username='admin', password='password')
+        self.client.post(url,{'receiver_display_name': tempUser1.username})
+        self.assertEquals(len(Friend.objects.all()), 1)
+
+        #tempuser1 accepts the friend request
+        self.client.login(username=tempUser1.username, password='password')
+        url1 = '/mynode/friends/' + str(self.user.id) + '/confirm/'
+        self.client.post(url1)
+        self.assertEquals(len(Friend.objects.all()), 2)
+
+        #admin sends friend request to tempuser2
+        self.client.login(username='admin', password='password')
+        self.client.post(url, {'receiver_display_name': tempUser2.username})
+        self.assertEquals(len(Friend.objects.all()), 3)
+
+        #tempuser2 accepts friend request
+        self.client.login(username=tempUser2.username, password='password')
+        url2 = '/mynode/friends/' + str(self.user.id) + '/confirm/'
+        self.client.post(url2)
+        self.assertEquals(len(Friend.objects.all()), 4)
+
+        #json request to send
+        send_json = {}
+        send_json['query'] = "friends"
+        send_json['author'] = self.app_user.uuid
+        send_json['authors'] = [temp_appUser1.uuid, temp_appUser2.uuid, temp_appUser3.uuid, temp_appUser4.uuid]
+
+        #send the post
+        url3 = "/service/friends/" + self.app_user.uuid
+        resp = self.client.post(url3, send_json)
+
+        expectedJson = {}
+        expectedJson['query'] = 'friends'
+        expectedJson['author'] = self.app_user.uuid
+
+        #TODO return proper values in api
+        #expectedJson['friends'] = [temp_appUser1.uuid, temp_appUser2.uuid]
+
+        #print resp.content
+        return_vals = json.loads(resp.content)
+
+        self.assertEquals(expectedJson, return_vals)
+
+        #self.assertEquals(return_vals['query'], 'friends')
+        #self.assertEquals(return_vals['author'], self.app_user.uuid)
+        #self.assertEquals(return_vals['friends'], [])
+
 
     def test_create_and_confirm_friendship(self):
 
@@ -64,23 +155,24 @@ class testRunner(TestCase):
             first_name="Test",
             last_name="Person")
 
-        temp_appUser = Users.objects.create(user = tempUser, git_url="test.git")
+        temp_appUser = Users.objects.create(user=tempUser, git_url="test.git")
 
         friends = Friend.objects.all()
         start = len(friends)
 
         url = '/mynode/friends/friend/create/'
+        self.client.login(username='admin', password='password')
 
-        self.client.login(username='admin',password='password')
+        #print tempUser.username
 
-        resp = self.client.post(
+        self.client.post(
             url,
             {'receiver_display_name': tempUser.username})
 
         friends = Friend.objects.all()
         end = len(friends)
 
-        #Friendship created
+        #follow created
         self.assertEqual(start, end-1)
         #Admin sends friend request
         self.assertEqual(friends[0].requester,self.user)
@@ -89,8 +181,17 @@ class testRunner(TestCase):
         #friendship should not be accepted yet
         self.assertEqual(friends[0].accepted,0)
 
-        #TODO:Need to POST to this url to confirm friendship -- couldnt get it to work at home
-        url1 = '/mynode/friends/' + str(tempUser.id) + '/confirm/'
+
+        url1 = '/mynode/friends/' + str(self.user.id) + '/confirm/'
+
+        #login and accept friend request
+        self.client.login(username='testPerson', password='password')
+        resp2 = self.client.post(url1)
+        friends = Friend.objects.all()
+        self.assertEquals(len(friends), 2)
+        self.assertEquals(friends[0].accepted, 1)
+        self.assertEquals(friends[1].accepted, 1)
+
 
     def test_create_user(self):
 
@@ -125,7 +226,7 @@ class testRunner(TestCase):
 
         resp = self.client.post(
             '/mynode/stream/post/create/', 
-            {'content':'My second post'}
+            {'content': 'My second post', 'title': 'My test title', 'content-type': 1}
         )
 
         tmp = Post.objects.all()

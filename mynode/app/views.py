@@ -24,7 +24,7 @@ def index(request):
     user = User.objects.get(id=auth_user.id)
     app_user = Users.objects.get(user_id=auth_user.id)
 
-    return render_to_response ('stream_page.html', {'posts': latest_posts,'user':user,'app_user':app_user}, context)
+    return render_to_response('stream_page.html', {'posts': latest_posts,'user':user,'app_user':app_user}, context)
 
 #Simple Login View that uses the Django Auth Login System
 def login(request):
@@ -132,12 +132,10 @@ def create_post(request, post_id=None):
         return redirect('app.views.stream')
 
 def create_comment(request, parent_post):
-    #the_post_lol = 
-    current_user = User.objects.get(id=request.user.id)
-    # lol
-    the_post_haha = Post.objects.get(id=parent_post)
     context = RequestContext(request)
-    comment = Comment.objects.create(parent_post=the_post_haha, author=current_user, content=request.POST['content'])
+    current_user = User.objects.get(id=request.user.id)
+    the_post = Post.objects.get(id=parent_post)
+    comment = Comment.objects.create(parent_post=the_post, author=current_user, content=request.POST['content'])
     #post.save()
     #TODO: update post
     return redirect('app.views.stream')

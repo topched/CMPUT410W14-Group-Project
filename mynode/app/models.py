@@ -35,23 +35,28 @@ class Comment(models.Model):
     author = models.ForeignKey(User, db_column='author')
     content = models.TextField(blank=True)
     uuid = UUIDField(version=4, unique=True)
+
     class Meta:
-        app_label='app'
+        app_label = 'app'
+
 
 class Friend(models.Model):
     requester = models.ForeignKey(User, db_column='requester', related_name='requester_userid')
     receiver = models.ForeignKey(User, db_column='receiver', related_name='receiver_userid')
     accepted = models.IntegerField(default=False)
+
     class Meta:
-        app_label='app'
-        unique_together = ('requester','receiver')
+        app_label = 'app'
+        unique_together = ('requester', 'receiver')
+
 
 class Image(models.Model):
     author = models.ForeignKey(User, db_column='author')
     image = models.ImageField(upload_to='images')
     visibility = models.IntegerField(blank=True, null=True)
+
     class Meta:
-        app_label='app'
+        app_label = 'app'
 
 
 class Post(models.Model):

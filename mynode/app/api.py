@@ -1,4 +1,4 @@
-__author__ = 'Christian'
+__author__ = 'Christian & Kris'
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render_to_response
@@ -55,7 +55,7 @@ def post(request, post_id):
             content_type = post.content_type
             if content_type == 1:
                 posts_json['content-type'] = 'text/plain'
-            elif content_type== 2:
+            elif content_type == 2:
                 posts_json['content-type'] = 'text/markdown'
             elif content_type == 3:
                 posts_json['content-type'] = 'text/html'
@@ -67,9 +67,66 @@ def post(request, post_id):
         except:
             e = sys.exc_info()[0]
             print(e)
-           return HttpResponse(json.dumps("{}"), content_type="application/json")
+            return HttpResponse(json.dumps("{}"), content_type="application/json")
     elif request.method == 'POST':
         # We should create a post and return it using the json information here
         return HttpResponse(json.dumps("{}"), content_type="application/json")
     # If we somehow get here return empty json
     return HttpResponse(json.dumps("{}"), content_type="application/json")
+
+
+def friendship(request, uuidA, uuidB):
+    context = RequestContext(request)
+    if request.method == 'GET':
+
+        return_json = {}
+        return_json['query'] = "friends"
+
+        #API example has friends listed twice, doesnt seem to work. maybe just a typo
+        return_json['friends'] = uuidA, uuidB
+
+        try:
+            userA = Users.objects.get(uuid=uuidA)
+            userB = Users.objects.get(uuid=uuidB)
+            Friend.objects.get(requester=userA.user.id, receiver=userB.user.id, accepted=1)
+
+        except:
+            #either user not found or not friends
+            return_json['friends'] = "NO"
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+        else:
+            return_json['friends'] = "YES"
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+def friendshipList(request, authorUUID):
+    context = RequestContext(request)
+    if request.method == 'POST':
+
+        return_json = {}
+        return_json['query'] = request.POST['query']
+        return_json['author'] = request.POST['author']
+
+        vals = request.POST['authors']
+
+        #TODO still need to return a proper list of friends
+        print vals
+
+        try:
+            app_author = Users.objects.get(uuid=authorUUID)
+
+        except:
+            return_json['friends'] = []
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+
+
+
+        return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+
+
+
+
+
+
