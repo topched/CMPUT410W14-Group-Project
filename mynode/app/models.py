@@ -35,6 +35,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, db_column='author')
     content = models.TextField(blank=True)
     uuid = UUIDField(version=4, unique=True)
+    post_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         app_label = 'app'

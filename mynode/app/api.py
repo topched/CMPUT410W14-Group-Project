@@ -13,17 +13,21 @@ from django.core import serializers
 import json
 import sys
 
+# Use http://jsonlint.com to validate JSON before commit
+
 #GET/POST/PUT a post to the service API
 @login_required
 def post(request, post_id):
     context = RequestContext(request)
     if request.method == 'GET' or request.method == 'POST':
         try:
-
+            #TODO Update the URI to access posts, have it use the posts uuid but in a nicer format
+            #TODO Refactor fetching a posts JSON out of the request so it can be used to get all posts
+            # Initialize some important object based on the request
             post = Post.objects.get(id = post_id)
             author = Users.objects.get(user_id=post.author)
-            comments = Comment.objects.filter(parent_post = post)
 
+            # Initialize the JSON containers
             response_json = []
             posts_json = {}
             post_author_json = {}
@@ -48,7 +52,7 @@ def post(request, post_id):
             posts_json['origin'] = "TODO" #TODO
             posts_json['description'] = post.description
             posts_json['content'] = post.content
-            posts_json['categories'] = "TODO" #TODO
+            posts_json['categories'] = {}
             posts_json['pubDate'] = str(post.post_date)
             posts_json['guid'] = post.uuid
             posts_json['visibility'] = 'TODO' #TODO
@@ -60,19 +64,45 @@ def post(request, post_id):
             elif content_type == 3:
                 posts_json['content-type'] = 'text/html'
 
+            # Iterate through the comments and add them to the Comment JSON
+            comment_set = Comment.objects.filter(parent_post = post_id)
+            if comment_set:
+                for comment in comment_set:
+                    # Get the comment information
+                    comment_json = {}
+                    comment_json['comment'] = comment.content
+                    comment_json['PubDate'] = str(comment.post_date)
+                    comment_json['guid'] = comment.uuid
+
+                    # Construct the comment author JSON
+                    comment_json['author'] = {}
+                    comment_author_json = {}
+                    comment_author = Users.objects.get(user_id = comment.author)
+                    comment_author_json['id'] = comment_author.uuid
+                    comment_author_json['displayname'] = comment_author.user.username
+                    comment_author_json['host'] = "http://127.0.0.1:8000 TODO" #TODO
+                    comment_json['author'] = comment_author_json
+
+                    # Add comment to comment array
+                    comments_json.append(comment_json)
+
+            # Combine the sub-elements into the response JSON
+            posts_json['comments'] = comments_json
             response_json.append(posts_json)
             return_json['posts'] = response_json
             return HttpResponse(json.dumps(return_json), content_type="application/json")
         
         except:
+            # Print the except for quiet errors once deployed, comment out the try & except when debugging
             e = sys.exc_info()[0]
             print(e)
             return HttpResponse(json.dumps("{}"), content_type="application/json")
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
+        #TODO Here we should update the post information
         # We should create a post and return it using the json information here
         return HttpResponse(json.dumps("{}"), content_type="application/json")
-    # If we somehow get here return empty json
-    return HttpResponse(json.dumps("{}"), content_type="application/json")
+    # If we somehow (not a get, post, or put) get here return empty json
+    return HttpResponse(json.dumps("{}"), content_type="application/json", status = 405)
 
 
 def friendship(request, uuidA, uuidB):
