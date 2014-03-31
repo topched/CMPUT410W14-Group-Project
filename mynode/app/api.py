@@ -169,6 +169,12 @@ def specific_author_posts(request, author_id):
     # Anything other than GET returns a 403
     return HttpResponse(status=403)
 
+# a response if friends or not -- ask the service htt://service/friends/<uuidA>/<uuidB>
+# responds with JSON
+#   {"query: "friends",
+#    "friends": [uuidA, uuidB],
+#    "friends": YES or NO }
+#TODO - friends listed twice -- deal with this
 def friendship(request, uuidA, uuidB):
     context = RequestContext(request)
     if request.method == 'GET':
@@ -193,28 +199,49 @@ def friendship(request, uuidA, uuidB):
             return_json['friends'] = "YES"
             return HttpResponse(json.dumps(return_json), content_type="application/json")
 
-
+# anyone in the list a friend? POST to http://service/friends/authorUUID w/ a JSON object containing a list of UUID's
+# responds with JSON
+#   {"query": "friends",
+#    "author": authorUUID,
+#    "friends": [list containing the UUID's of all friends in the list] }
 def friendshipList(request, authorUUID):
     context = RequestContext(request)
     if request.method == 'POST':
 
+        vals = json.loads(request.body)
         return_json = {}
-        return_json['query'] = request.POST['query']
-        return_json['author'] = request.POST['author']
+        return_json['query'] = vals['query']
+        return_json['author'] = vals['author']
 
-        vals = request.POST['authors']
+        authors = []
+        authors = vals['authors']
 
-        #TODO still need to return a proper list of friends
-        print vals
-
+        friends = []
         try:
             app_author = Users.objects.get(uuid=authorUUID)
 
+            #loop through to see if we have any matches
+            for author in authors:
+
+                tmp_author = Users.objects.get(uuid=author)
+
+                try:
+                    friend = Friend.objects.get(requester=app_author.user.id, receiver=tmp_author.user.id, accepted=1)
+
+                    if friend:
+                        friends.append(author)
+                except:
+                    pass
+
         except:
+
+            #either not a valid author or no friends matched
             return_json['friends'] = []
             return HttpResponse(json.dumps(return_json), content_type="application/json")
 
-        return HttpResponse(json.dumps(return_json), content_type="application/json")
+        else:
+            return_json['friends'] = friends
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
 
 
 
