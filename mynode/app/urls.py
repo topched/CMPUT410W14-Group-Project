@@ -2,7 +2,9 @@ from django.conf.urls import patterns, url
 from app import views
 
 urlpatterns = patterns('',
-    url(r'^$', 'django.contrib.auth.views.login', {'template_name': 'login_page.html'}),
+    url(r'^$', views.login),
+    url(r'^login/?$','django.contrib.auth.views.login', {'template_name': 'login_page.html'}),
+    url(r'^logout/?$', views.logout_view),
     url(r'^register/?$', views.register),
     url(r'^profile/?$', views.profile),
     url(r'^stream/?$', views.stream),

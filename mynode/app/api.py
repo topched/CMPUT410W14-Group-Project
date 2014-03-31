@@ -1,97 +1,104 @@
 __author__ = 'Christian & Kris'
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
-from django.template import RequestContext
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from app.models import *
-from django.core import serializers
 import json
 import sys
+from django.http import HttpResponse
+from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
+from app.models import *
+
 
 # Use http://jsonlint.com to validate JSON before commit
+# FROM JSON sample on hindles github
+# The following are ways URIs that can be used for post retrieval
+#
+# http://service/author/posts (posts that are visible to the currently authenticated user)
+# or
+# http://service/posts (all posts marked as public on the server)
+# or
+# http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
+# or
+# http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
+#
+# All of the previous URIs will get a list of posts like this:
+
+def get_post(post_id):
+#TODO Update the URI to access posts, have it use the posts uuid!!!!!!!!!!!!!
+    # Initialize some important object based on the request
+    post = Post.objects.get(id=post_id)
+    author = Users.objects.get(user_id=post.author)
+
+    # Initialize the JSON containers
+    posts_json = {}
+    post_author_json = {}
+    comments_json = []
+
+    # Filling out the post information
+    post_author_json['id'] = author.uuid
+    post_author_json['displayname'] = author.user.username
+    #TODO: Fix this to properly reflect the host and author location
+    post_author_json['url'] = "http://127.0.0.1:8000/service/author/" + author.uuid #TODO
+    post_author_json['host'] = "http://127.0.0.1:8000" #TODO
+
+    # Add the author to the post information
+    posts_json['author'] = {}
+    posts_json['author'] = post_author_json
+
+    # Fill out the post information
+    #TODO: Fix the TODO's in the JSON/below
+    posts_json['title'] = post.title
+    posts_json['source'] = "TODO" #TODO
+    posts_json['origin'] = "TODO" #TODO
+    posts_json['description'] = post.description
+    posts_json['content'] = post.content
+    posts_json['categories'] = {}
+    posts_json['pubDate'] = str(post.post_date)
+    posts_json['guid'] = post.uuid
+    posts_json['visibility'] = 'TODO' #TODO
+    content_type = post.content_type
+    if content_type == 1:
+        posts_json['content-type'] = 'text/plain'
+    elif content_type == 2:
+        posts_json['content-type'] = 'text/markdown'
+    elif content_type == 3:
+        posts_json['content-type'] = 'text/html'
+
+    # Iterate through the comments and add them to the Comment JSON
+    comment_set = Comment.objects.filter(parent_post=post_id)
+    if comment_set:
+        for comment in comment_set:
+            # Get the comment information
+            comment_json = {}
+            comment_json['comment'] = comment.content
+            comment_json['PubDate'] = str(comment.post_date)
+            comment_json['guid'] = comment.uuid
+
+            # Construct the comment author JSON
+            comment_json['author'] = {}
+            comment_author_json = {}
+            comment_author = Users.objects.get(user_id=comment.author)
+            comment_author_json['id'] = comment_author.uuid
+            comment_author_json['displayname'] = comment_author.user.username
+            comment_author_json['host'] = "http://127.0.0.1:8000 TODO" #TODO
+            comment_json['author'] = comment_author_json
+
+            # Add comment to comment array
+            comments_json.append(comment_json)
+
+    # Combine the sub-elements into the response JSON
+    posts_json['comments'] = comments_json
+
+    return posts_json
 
 #GET/POST/PUT a post to the service API
 @login_required
 def post(request, post_id):
-    context = RequestContext(request)
     if request.method == 'GET' or request.method == 'POST':
         try:
-            #TODO Update the URI to access posts, have it use the posts uuid but in a nicer format
-            #TODO Refactor fetching a posts JSON out of the request so it can be used to get all posts
-            # Initialize some important object based on the request
-            post = Post.objects.get(id = post_id)
-            author = Users.objects.get(user_id=post.author)
-
-            # Initialize the JSON containers
             response_json = []
-            posts_json = {}
-            post_author_json = {}
-            comments_json = []
             return_json = {}
-
-            # Filling out the post information
-            post_author_json['id'] = author.uuid
-            post_author_json['displayname'] = author.user.username
-            #TODO: Fix this to properly reflect the host and author location
-            post_author_json['url'] = "http://127.0.0.1:8000/service/author/" + author.uuid #TODO
-            post_author_json['host'] = "http://127.0.0.1:8000" #TODO
-
-            # Add the author to the post information
-            posts_json['author'] = {}
-            posts_json['author'] = post_author_json
-
-            # Fill out the post information
-            #TODO: Fix the TODO's in the JSON/below
-            posts_json['title'] = post.title
-            posts_json['source'] = "TODO" #TODO
-            posts_json['origin'] = "TODO" #TODO
-            posts_json['description'] = post.description
-            posts_json['content'] = post.content
-            posts_json['categories'] = {}
-            posts_json['pubDate'] = str(post.post_date)
-            posts_json['guid'] = post.uuid
-            posts_json['visibility'] = 'TODO' #TODO
-            content_type = post.content_type
-            if content_type == 1:
-                posts_json['content-type'] = 'text/plain'
-            elif content_type == 2:
-                posts_json['content-type'] = 'text/markdown'
-            elif content_type == 3:
-                posts_json['content-type'] = 'text/html'
-
-            # Iterate through the comments and add them to the Comment JSON
-            comment_set = Comment.objects.filter(parent_post = post_id)
-            if comment_set:
-                for comment in comment_set:
-                    # Get the comment information
-                    comment_json = {}
-                    comment_json['comment'] = comment.content
-                    comment_json['PubDate'] = str(comment.post_date)
-                    comment_json['guid'] = comment.uuid
-
-                    # Construct the comment author JSON
-                    comment_json['author'] = {}
-                    comment_author_json = {}
-                    comment_author = Users.objects.get(user_id = comment.author)
-                    comment_author_json['id'] = comment_author.uuid
-                    comment_author_json['displayname'] = comment_author.user.username
-                    comment_author_json['host'] = "http://127.0.0.1:8000 TODO" #TODO
-                    comment_json['author'] = comment_author_json
-
-                    # Add comment to comment array
-                    comments_json.append(comment_json)
-
-            # Combine the sub-elements into the response JSON
-            posts_json['comments'] = comments_json
-            response_json.append(posts_json)
+            response_json.append(get_post(post_id))
             return_json['posts'] = response_json
             return HttpResponse(json.dumps(return_json), content_type="application/json")
-        
         except:
             # Print the except for quiet errors once deployed, comment out the try & except when debugging
             e = sys.exc_info()[0]
@@ -100,10 +107,67 @@ def post(request, post_id):
     elif request.method == 'PUT':
         #TODO Here we should update the post information
         # We should create a post and return it using the json information here
+        post_json = json.loads(request.DATA)
         return HttpResponse(json.dumps("{}"), content_type="application/json")
-    # If we somehow (not a get, post, or put) get here return empty json
-    return HttpResponse(json.dumps("{}"), content_type="application/json", status = 405)
+        # If we somehow (not a get, post, or put) get here return empty json
+    return HttpResponse(json.dumps("{}"), content_type="application/json", status=405)
 
+# Get all the public posts on the server along with their comments
+def posts(request):
+    if request.method == 'GET':
+        response_json = []
+        return_json = {}
+        # Only public posts
+        post_set = Post.objects.filter(visibility=1)
+        # For each post create the JSON object
+        if post_set:
+            for post in post_set:
+                # Add the post JSON to the response set
+                response_json.append(get_post(post.id))
+        return_json['posts'] = response_json
+        return HttpResponse(json.dumps(return_json), content_type="application/json")
+    elif request.method == 'PUT':
+        #TODO Here we should post based on the JSON being passed
+        # We should create a post and return it using the json information here
+        post_json = json.loads(request.DATA)
+        return HttpResponse(json.dumps("{}"), content_type="application/json")
+    # Anything other than GET returns a 403
+    return HttpResponse(status=403)
+
+# Get all the posts visible to the current authenticated user
+def author_posts(request):
+    if request.method == 'GET':
+        response_json = []
+        return_json = {}
+        # Only posts visible for this user
+        post_set = Post.visible_posts.getAllVisible(request.user.id)
+        # For each post create the JSON object
+        if post_set:
+            for post in post_set:
+                # Add the post JSON to the response set
+                response_json.append(get_post(post.id))
+        return_json['posts'] = response_json
+        return HttpResponse(json.dumps(return_json), content_type="application/json")
+    # Anything other than GET returns a 403
+    return HttpResponse(status=403)
+
+# Get all the posts visible to the current authenticated user for a specific author
+def specific_author_posts(request, author_id):
+    if request.method == 'GET':
+        response_json = []
+        return_json = {}
+        # Only posts visible for this user
+        post_set = Post.visible_posts.getAllVisible(request.user.id)
+        # For each post create the JSON object
+        if post_set:
+            for post in post_set:
+                # Add the post JSON to the response set if it is from the author we want
+                if post.author == User.objects.get(id=author_id):
+                    response_json.append(get_post(post.id))
+        return_json['posts'] = response_json
+        return HttpResponse(json.dumps(return_json), content_type="application/json")
+    # Anything other than GET returns a 403
+    return HttpResponse(status=403)
 
 def friendship(request, uuidA, uuidB):
     context = RequestContext(request)
@@ -129,6 +193,7 @@ def friendship(request, uuidA, uuidB):
             return_json['friends'] = "YES"
             return HttpResponse(json.dumps(return_json), content_type="application/json")
 
+
 def friendshipList(request, authorUUID):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -148,9 +213,6 @@ def friendshipList(request, authorUUID):
         except:
             return_json['friends'] = []
             return HttpResponse(json.dumps(return_json), content_type="application/json")
-
-
-
 
         return HttpResponse(json.dumps(return_json), content_type="application/json")
 
