@@ -107,7 +107,11 @@ def post(request, post_id):
     elif request.method == 'PUT':
         #TODO Here we should update the post information
         # We should create a post and return it using the json information here
-        post_json = json.loads(request.DATA)
+        post_json = json.loads(request.body)
+
+        post = Post.objects.get(id=post_id)
+        post.content = post_json['content']
+        post.save()
         return HttpResponse(json.dumps("{}"), content_type="application/json")
         # If we somehow (not a get, post, or put) get here return empty json
     return HttpResponse(json.dumps("{}"), content_type="application/json", status=405)

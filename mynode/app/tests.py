@@ -261,7 +261,7 @@ class testRunner(TestCase):
         resp = self.client.post(url)
         tmp = Post.objects.all()
     	
-    	#Make sure exactly one post was deleted
+        #Make sure exactly one post was deleted
         self.assertEqual(len(tmp), start-1)
 
     def test_create_comment(self):
@@ -330,6 +330,23 @@ class testRunner(TestCase):
         self.client.login(username='admin', password='password')
         resp = self.client.get('/admin/')
         self.assertEqual(resp.status_code, 200)
+
+    def test_post_to_api(self):
+        #Logged in user
+        tempUser1 = User.objects.create_user(
+            username="testPerson1",
+            email="test@test.com",
+            password="password",
+            first_name="Test",
+            last_name="Person")
+        tempUser1.save()
+        self.client.login(username='testPerson1', password='password')
+        post = Post.objects.create(id=100,author=tempUser1)
+        post.save()
+        resp = self.client.put('/service/posts/' + str(post.id),
+            json.dumps({'content': '1', 'title': 'My test title', 'content-type': 1, 'visibility':1}))
+        print resp
+        self.assertEqual(Post.objects.get(id=post.id).content, '1')
 
     #not sure why this test doesnt work
     # def test_root_redirect(self):
