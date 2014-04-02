@@ -1,4 +1,4 @@
-__author__ = 'Kris'
+__author__ = 'Kris & Christian'
 from django.utils import unittest
 from django.test.client import Client
 from django.test.client import RequestFactory

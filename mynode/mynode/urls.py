@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^mynode/', include('app.urls')),
-    url(r'^service/posts/(?P<post_id>\w+)$', api.post),
+    url(r'^service/posts/(?P<post_uuid>[-\w]+)$', api.post),
     url(r'^service/author/posts$', api.author_posts),
     url(r'^service/author/(?P<author_id>\w+)/posts$', api.specific_author_posts),
     url(r'^service/posts$', api.posts),

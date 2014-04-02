@@ -22,7 +22,6 @@ from app.models import *
 # All of the previous URIs will get a list of posts like this:
 
 def get_post(post_id):
-#TODO Update the URI to access posts, have it use the posts uuid!!!!!!!!!!!!!
     # Initialize some important object based on the request
     post = Post.objects.get(id=post_id)
     author = Users.objects.get(user_id=post.author)
@@ -91,7 +90,9 @@ def get_post(post_id):
 
 #GET/POST/PUT a post to the service API
 @login_required
-def post(request, post_id):
+def post(request, post_uuid):
+    temp_post = Post.objects.get(uuid=post_uuid)
+    post_id = temp_post.id
     if request.method == 'GET' or request.method == 'POST':
         try:
             response_json = []
@@ -106,11 +107,17 @@ def post(request, post_id):
             return HttpResponse(json.dumps("{}"), content_type="application/json")
     elif request.method == 'PUT':
         #TODO Here we should update the post information
+        #TODO Is this actually necessary? I'm not sure
         # We should create a post and return it using the json information here
         post_json = json.loads(request.body)
 
         post = Post.objects.get(id=post_id)
-        post.content = post_json['content']
+        try:
+            post.content = post_json['content']
+        except:
+            pass
+
+
         post.save()
         return HttpResponse(json.dumps("{}"), content_type="application/json")
         # If we somehow (not a get, post, or put) get here return empty json
