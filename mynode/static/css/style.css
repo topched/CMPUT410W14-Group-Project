@@ -1,5 +1,6 @@
 body {
     padding-top: 50px;
+    background-image: url('/static/img/bg.png');
 }
 h2 {
     text-align: center ;
@@ -11,39 +12,95 @@ h2 {
     padding-right:10px;
     padding-bottom: 5px;
 }
-.post-block
-{
-margin: 20px;
-padding: 20px;
 
-    left: 48%;
-border: 1px solid #d8d8d8;
-background: #f9f9f9;
 
--moz-border-radius: 4px;
--webkit-border-radius: 4px;
-border-radius: 4px;
--moz-box-shadow: inset 0 0 0 1px #fff;
--webkit-box-shadow: inset 0 0 0 1px #fff;
-box-shadow: inset 0 0 0 1px #fff;
- }
+/* NEW STUFF BELOW */
 
-.comment-block
-{
-margin: 20px;
-padding: 20px;
 
-    left: 48%;
-border: 1px solid #d8d8d8;
-background: #f9f9f9;
+/* page layout structure */
+#w { display: block; width: 700px; margin: 0 auto; padding-top: 35px; }
 
--moz-border-radius: 4px;
--webkit-border-radius: 4px;
-border-radius: 4px;
--moz-box-shadow: inset 0 0 0 1px #fff;
--webkit-box-shadow: inset 0 0 0 1px #fff;
-box-shadow: inset 0 0 0 1px #fff;
- }
+#container {
+  display: block;
+  width: 100%;
+  background: #fff;
+  padding: 14px 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+
+/* comments area */
+#comments { display: block; }
+
+#comments .cmmnt, ul .cmmnt, ul ul .cmmnt { display: block; position: relative; padding-left: 65px; padding-bottom:10px;  border-top: 1px solid #ddd; }
+
+#comments .cmmnt .avatar  { position: absolute; top: 8px; left: 0; }
+#comments .cmmnt .avatar img {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  -moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  -webkit-transition: all 0.4s linear;
+  -moz-transition: all 0.4s linear;
+  -ms-transition: all 0.4s linear;
+  -o-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+}
+
+#comments .cmmnt .avatar a:hover img { opacity: 0.77; }
+
+#comments .cmmnt .cmmnt-content { padding: 0px 3px; padding-bottom: 12px; padding-top: 8px; }
+
+#comments .cmmnt .cmmnt-content header { font-size: 1.3em; display: block; margin-bottom: 8px; }
+#comments .cmmnt .cmmnt-content header .pubdate { color: #777; }
+#comments .cmmnt .cmmnt-content header .userlink { font-weight: bold; }
+
+#comments .cmmnt .replies { margin-bottom: 7px; }
+
+
+
+/* END OF NEW STUFF */
+
+
+/*.post-block*/
+/*{*/
+/*margin: 20px;*/
+/*padding: 20px;*/
+
+    /*left: 48%;*/
+/*border: 1px solid #d8d8d8;*/
+/*background: #f9f9f9;*/
+
+/*-moz-border-radius: 4px;*/
+/*-webkit-border-radius: 4px;*/
+/*border-radius: 4px;*/
+/*-moz-box-shadow: inset 0 0 0 1px #fff;*/
+/*-webkit-box-shadow: inset 0 0 0 1px #fff;*/
+/*box-shadow: inset 0 0 0 1px #fff;*/
+ /*}*/
+
+/*.comment-block*/
+/*{*/
+    /*margin: 20px 100px;*/
+    /*padding: 20px;*/
+    /*left: 48%;*/
+    /*border: 1px solid #d8d8d8;*/
+    /*background: #f9f9f9;*/
+
+/*-moz-border-radius: 4px;*/
+/*-webkit-border-radius: 4px;*/
+/*border-radius: 4px;*/
+/*-moz-box-shadow: inset 0 0 0 1px #fff;*/
+/*-webkit-box-shadow: inset 0 0 0 1px #fff;*/
+/*box-shadow: inset 0 0 0 1px #fff;*/
+ /*}*/
 textarea {
     width: 100%;
     height: 50px;
@@ -54,10 +111,10 @@ textarea {
     margin: 5px 0px 0px 0px;
 }
 
-.caption {
-    float: left;
-    font-size:50%
-}
+/*.caption {*/
+    /*float: left;*/
+    /*font-size:50%*/
+/*}*/
 
 /* Special class on .container surrounding .navbar, used for positioning it into place. */
 .navbar-wrapper {

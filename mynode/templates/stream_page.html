@@ -6,6 +6,7 @@
 <head><title>MyNode Stream</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!--<link href="{% static 'js/mynode.js' %}" rel="stylesheet">-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -105,7 +106,7 @@
                 </select>
 
                 <div class=buttons>
-                    <input type="submit" class="btn btn-default" id="post" name="post" value="Post"/>
+                    <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
                 </div>
             </div>
         </form>
@@ -113,95 +114,100 @@
 </div>
 </br>
 </br>
-<!-- Post Stream -->
+<!-- Post Stream  --  NEED TO SHOW GITHUB STUFF IN STREAM STILL-->
 {% for post in posts %}
-    <div class="post-block">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-1">
-                {% if post.content_type == 1 %}
-                    <p> {{ post.content }} </p>
-                {% elif post.content_type == 2 %}
-                    <p> {{ post.content|convert_markdown }} </p>
-                {% elif post.content_type == 3 %}
-                    <p> {{ post.content|sanitize_html|safe }} </p>
-                {% endif %}
-                <div class=caption>Post by: {{ post.author.username }} </div>
-                </br>
-            </div>
-        </div>
-    
-        {% for comment in comments %}
-            {% if post == comment.parent_post %}
-                <div class="comment-block">
-                    <div class="row">
-                        <div class="col-md-6 col-md-offset-2">
-                            <p> {{ comment.content }} </p>
-
-                            <div class=caption>Comment by: {{ comment.author.username }} </div>
-                            </br>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    
-        <!-- Post Buttons Row -->
-        <div class="row">
-            <div class="col-md-6 col-md-offset-1">
-                <div class="post_buttons">
-                    <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
-                        {% csrf_token %}
-                        <input class="btn btn-default" type="button" value="Comment" id='comment-link'/>
-                        {% if post.author == current_user %}
-                            <input class="btn btn-default" type="submit" value="Delete"/>
+    <div id="w">
+        <div id="container">
+            <ul id="comments">
+                <li class="cmmnt">
+                    <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+                    <div class="cmmnt-content">
+                        <header>{{ post.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
+                        <p>
+                        {% if post.content_type == 1 %}
+                            <p> {{ post.content }} </p>
+                        {% elif post.content_type == 2 %}
+                            <p> {{ post.content|convert_markdown }} </p>
+                        {% elif post.content_type == 3 %}
+                            <p> {{ post.content|sanitize_html|safe }} </p>
                         {% endif %}
-                    </form>
-    
-                </div>
-            </div>
-            <!-- Comment Row -->
-            <div class="row">
-                <div class="col-md-6 col-md-offset-1">
-                    <div class="comment_area" style="display:none">
-                        <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
-                            {% csrf_token %}
-                            <textarea name='content'>
-    
-                            </textarea>
-    
-                            <div class="comment_buttons">
-                                <input class="btn btn-default" type="submit" id="post" name="post" value="Comment"/>
-                                <input class="btn btn-default" type="button" value="Cancel" id='cancel-link'/>
-                            </div>
-                        </form>
+                        </p>
                     </div>
-    
-                </div>
+
+                    {% for comment in comments %}
+                    {% if post == comment.parent_post %}
+
+                        <ul class="replies">
+                            <li class="cmmnt">
+                                <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+                                <div class="cmmnt-content">
+                                    <header>{{ comment.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
+                                    <p>{{ comment.content }}</p>
+                                </div>
+                            </li>
+                        </ul>
+
+                    {% endif %}
+                    {% endfor %}
+
+                </li>
+            </ul>
+
+            <div class="row">
+            <div class="stream_buttons">
+            <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
+                {% csrf_token %}
+                <input class="btn btn-primary" type="button" value="Comment" id="comment_button"/>
+                {% if post.author == current_user %}
+                    <input class="btn btn-primary" type="submit" value="Delete"/>
+                {% endif %}
+            </form>
+            </div>
+
+            <div class="comment_area" style="display:none">
+                <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
+                    {% csrf_token %}
+                    <textarea class="form-control" name='content'>
+
+                    </textarea>
+                    </br>
+                    <div class="comment_buttons">
+                        <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
+                        <input class="btn btn-primary" type="button" value="Cancel" id='cancel-button'/>
+                    </div>
+                </form>
+            </div>
             </div>
         </div>
     </div>
 {% endfor %}
+</br></br>
 
 
 <!-- Dynamic Comments -->
 <script type="text/javascript">
+
+
     $(function () {
-        $('.delete-comment-form').submit(function () {
-            return confirm("Are you sure you want to delete this?");
-        });
-        $('#comment-link').click(function () {
+
+        $(document).on("click", "#comment_button", function() {
             $(this).closest(".row").find(".comment_area").show();
-            $(this).closest(".row").find(".post_buttons").hide();
-            $(this).closest(".row").find(".comment_area textarea").focus();
             $(this).closest(".row").find(".comment_buttons").show();
-            return false;
+            $(this).closest(".row").find(".stream_buttons").hide();
         });
-        $('#cancel-link').click(function () {
-            $(this).closest(".row").find(".post_buttons").hide();
+
+        $(document).on("click", "#cancel-button", function() {
             $(this).closest(".row").find(".comment_area").hide();
+            $(this).closest(".row").find("post_buttons").hide();
             $(this).closest(".row").find(".comment_buttons").hide();
+            $(this).closest(".row").find(".stream_buttons").show();
         });
+
+
     });
+
 </script>
 </body>
+
+
 </html>

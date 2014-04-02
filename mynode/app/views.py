@@ -6,13 +6,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
+from django.core import serializers
+from collections import namedtuple
 
 from app.models import *
 from app.modelforms import *
+#import httplib
+#import httpclient
+#import json
+import urllib2
 
-#from app.modelforms import *
-
-
+#Is this even called anymore??
 def index(request):
     latest_posts = Posts.objects.all().order_by('date')[:50]
     #context = {'latest_posts_list': latest_posts_list}
@@ -100,11 +104,52 @@ def stream(request):
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
     # Sorts posts from newest to oldest
-    posts.sort(key=lambda x:x.post_date, reverse=True)
+    posts.sort(key=lambda x: x.post_date, reverse=True)
     comments = Comment.objects.all()
     #print comments
+
+
+    #tmp = serializers.serialize("json", posts)
+    #print tmp
+    tmpUser = Users.objects.get(user_id=request.user.id)
+    github_feed(tmpUser.git_url)
+
+
+
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
+
+#TODO finish this view
+def github_feed(username):
+
+    #print username
+
+    #events created url -- #TODO use username
+    urlEC = "https://api.github.com/users/topched/events"
+    reqEC = urllib2.Request(urlEC)
+
+
+    #events received url -- #TODO use username
+    urlER = "https://api.github.com/users/topched/received_events"
+    reqER = urllib2.Request(urlER)
+
+    try:
+        respEC = urllib2.urlopen(reqEC)
+        respER = urllib2.urlopen(reqER)
+
+        eventsC = respEC.read()
+        eventsR = respER.read()
+    except:
+        pass
+
+
+
+    #All git events here --
+    #TODO needs to be returned to stream view then sorted into posts, most likely by dates. eventsC and eventsR potentially huge
+    #print eventsC
+    #print eventsR
+
+    #return resp
 
 #Is this actually working?
 def post_details(request, post_id):
@@ -244,4 +289,5 @@ def image(request, image_id=None):
         return redirect('app.views.stream')
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
-        
+
+

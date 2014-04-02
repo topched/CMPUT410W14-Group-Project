@@ -52,10 +52,17 @@ class testRunner(TestCase):
             first_name="Admin",
             last_name="Person")
 
-        self.app_user = Users.objects.create(user=self.user, git_url="test.git")
+        self.app_user = Users.objects.create(user=self.user, git_url="topched")
 
         self.post = Post.objects.create(author=self.user, content="My first post")
         self.post_id = self.post.id
+
+    def test_github_feed(self):
+
+        url = "http://api.github.com/users/topched"
+        resp = self.client.get(url)
+
+        print resp
 
     def test_match_friends_from_list(self):
 
