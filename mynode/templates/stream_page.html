@@ -6,7 +6,6 @@
 <head><title>MyNode Stream</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <!--<link href="{% static 'js/mynode.js' %}" rel="stylesheet">-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -86,7 +85,7 @@
         <!-- Post Input Box -->
         <form action="{% url 'app.views.create_post' %}" method="POST">
             {% csrf_token %}
-            <div class="col-lg-8">
+
                 <div class=text_area>
                     <input type="text" class="form-control" placeholder="Title" id="title" name='title'>
                     <!--<textarea rows="5" cols="20" id="title" name='title'></textarea>-->
@@ -108,7 +107,7 @@
                 <div class=buttons>
                     <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
                 </div>
-            </div>
+
         </form>
     </div>
 </div>
@@ -178,6 +177,7 @@
                 </form>
             </div>
             </div>
+
         </div>
     </div>
 {% endfor %}

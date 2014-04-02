@@ -7,12 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.core import serializers
-from collections import namedtuple
+
 
 from app.models import *
 from app.modelforms import *
-#import httplib
-#import httpclient
 #import json
 import urllib2
 
@@ -108,13 +106,12 @@ def stream(request):
     comments = Comment.objects.all()
     #print comments
 
-
+    #uncomment serializer import to use this
     #tmp = serializers.serialize("json", posts)
     #print tmp
+
     tmpUser = Users.objects.get(user_id=request.user.id)
-    github_feed(tmpUser.git_url)
-
-
+    gitEvents = github_feed(tmpUser.git_url)
 
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
@@ -134,10 +131,10 @@ def github_feed(username):
     reqER = urllib2.Request(urlER)
 
     try:
-        respEC = urllib2.urlopen(reqEC)
+        #respEC = urllib2.urlopen(reqEC)
         respER = urllib2.urlopen(reqER)
 
-        eventsC = respEC.read()
+        #eventsC = respEC.read()
         eventsR = respER.read()
     except:
         pass
@@ -149,7 +146,7 @@ def github_feed(username):
     #print eventsC
     #print eventsR
 
-    #return resp
+    return respER
 
 #Is this actually working?
 def post_details(request, post_id):
