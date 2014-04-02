@@ -11,7 +11,7 @@ from django.core import serializers
 
 from app.models import *
 from app.modelforms import *
-#import json
+import json
 import urllib2
 
 #Is this even called anymore??
@@ -101,17 +101,34 @@ def stream(request):
     current_user = User.objects.get(id=request.user.id)
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
+
+    #get the github json
+    tmpUser = Users.objects.get(user_id=request.user.id)
+    gitJson = github_feed(tmpUser.git_url)
+
+    vals = json.loads(gitJson)
+
+    for x in range(0, 10):
+        tmp = vals[x]
+        tmpUsername = tmp['actor']['login']
+        if tmp['type'] == "PushEvent":
+            tmpContent = tmp['payload']['commits']
+        else:
+            tmpContent= "Not a push event"
+        #print tmpUsername
+        tmpPost = Post.objects.create(author=User.objects.get(id=1), content=tmpContent, content_type=1, visibility=1)
+        posts.append(tmpPost)
+
+
+
+
+
     # Sorts posts from newest to oldest
     posts.sort(key=lambda x: x.post_date, reverse=True)
     comments = Comment.objects.all()
     #print comments
 
-    #uncomment serializer import to use this
-    #tmp = serializers.serialize("json", posts)
-    #print tmp
 
-    tmpUser = Users.objects.get(user_id=request.user.id)
-    gitEvents = github_feed(tmpUser.git_url)
 
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
@@ -130,23 +147,21 @@ def github_feed(username):
     urlER = "https://api.github.com/users/topched/received_events"
     reqER = urllib2.Request(urlER)
 
+    #eventsR = ""
+
     try:
         #respEC = urllib2.urlopen(reqEC)
         respER = urllib2.urlopen(reqER)
 
         #eventsC = respEC.read()
         eventsR = respER.read()
+
+        return eventsR
     except:
         pass
 
+    return None
 
-
-    #All git events here --
-    #TODO needs to be returned to stream view then sorted into posts, most likely by dates. eventsC and eventsR potentially huge
-    #print eventsC
-    #print eventsR
-
-    return respER
 
 #Is this actually working?
 def post_details(request, post_id):

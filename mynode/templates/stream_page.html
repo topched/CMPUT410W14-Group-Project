@@ -166,10 +166,10 @@
             <div class="comment_area" style="display:none">
                 <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
                     {% csrf_token %}
-                    <textarea class="form-control" name='content'></textarea>
+                    <textarea class="form-control" name='content' id="post_content"></textarea>
                     </br>
                     <div class="comment_buttons">
-                        <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
+                        <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post" disabled="disabled"/>
                         <input class="btn btn-primary" type="button" value="Cancel" id='cancel-button'/>
                     </div>
                 </form>
@@ -196,9 +196,14 @@
 
         $(document).on("click", "#cancel-button", function() {
             $(this).closest(".row").find(".comment_area").hide();
-            $(this).closest(".row").find("post_buttons").hide();
             $(this).closest(".row").find(".comment_buttons").hide();
             $(this).closest(".row").find(".stream_buttons").show();
+        });
+        $(document).on("keyup", "#post_content", function() {
+            //alert($(this).val())
+            if($(this).val() != "") {
+                $(this).closest(".row").find(".post_comment").attr("disabled", false);
+            }
         });
 
 

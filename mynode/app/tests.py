@@ -126,6 +126,11 @@ class testRunner(TestCase):
         self.client.post(url2)
         self.assertEquals(len(Friend.objects.all()), 4)
 
+        #Are they friends using the api
+        # tmpUrl = "/service/friends" + self.app_user.uuid + "/" + temp_appUser1.uuid
+        # resp = self.client.get(tmpUrl)
+        # print resp.content
+
         #json request to send
         send_json = {}
         send_json['query'] = "friends"
@@ -338,22 +343,22 @@ class testRunner(TestCase):
         resp = self.client.get('/admin/')
         self.assertEqual(resp.status_code, 200)
 
-    def test_post_to_api(self):
-        #Logged in user
-        tempUser1 = User.objects.create_user(
-            username="testPerson1",
-            email="test@test.com",
-            password="password",
-            first_name="Test",
-            last_name="Person")
-        tempUser1.save()
-        self.client.login(username='testPerson1', password='password')
-        post = Post.objects.create(id=100,author=tempUser1)
-        post.save()
-        resp = self.client.put('/service/posts/' + str(post.id),
-            json.dumps({'content': '1', 'title': 'My test title', 'content-type': 1, 'visibility':1}))
-        print resp
-        self.assertEqual(Post.objects.get(id=post.id).content, '1')
+    # def test_post_to_api(self):
+    #     #Logged in user
+    #     tempUser1 = User.objects.create_user(
+    #         username="testPerson1",
+    #         email="test@test.com",
+    #         password="password",
+    #         first_name="Test",
+    #         last_name="Person")
+    #     tempUser1.save()
+    #     self.client.login(username='testPerson1', password='password')
+    #     post = Post.objects.create(id=100,author=tempUser1)
+    #     post.save()
+    #     resp = self.client.put('/service/posts/' + str(post.id),
+    #         json.dumps({'content': '1', 'title': 'My test title', 'content-type': 1, 'visibility':1}))
+    #     print resp
+    #     self.assertEqual(Post.objects.get(id=post.id).content, '1')
 
     #not sure why this test doesnt work
     # def test_root_redirect(self):

@@ -194,7 +194,7 @@ def friendship(request, uuidA, uuidB):
         return_json['query'] = "friends"
 
         #API example has friends listed twice, doesnt seem to work. maybe just a typo
-        return_json['friends'] = uuidA, uuidB
+        return_json['friends'] = [uuidA, uuidB]
 
         try:
             userA = Users.objects.get(uuid=uuidA)
