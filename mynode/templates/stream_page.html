@@ -166,9 +166,7 @@
             <div class="comment_area" style="display:none">
                 <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
                     {% csrf_token %}
-                    <textarea class="form-control" name='content'>
-
-                    </textarea>
+                    <textarea class="form-control" name='content'></textarea>
                     </br>
                     <div class="comment_buttons">
                         <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
