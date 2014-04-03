@@ -92,7 +92,7 @@ def stream(request):
     gitJson = github_feed(tmpUser.git_url)
 
     if gitJson is not None:
-        #print "you have git"
+
         vals = json.loads(gitJson)
 
         #create a temp user for github posts
@@ -103,16 +103,14 @@ def stream(request):
         gitUser.first_name = "git"
         gitUser.last_name = "user"
 
-
         #how many github entries to show in the stream -- Usually 100 results in vals
         for x in range(0, 10):
-            tmp = vals[x]
-            tmpUsername = tmp['actor']['login']
+            gitItem = vals[x]
+            tmpUsername = gitItem['actor']['login']
 
-            #only want to show push events
-            #add else below for different types in the future
-            if tmp['type'] == "PushEvent":
-                tmpContent = tmp['payload']['commits']
+            #handle a push event
+            if gitItem['type'] == "PushEvent":
+                itemContent = gitItem['payload']['commits']
 
                 post = Post()
                 post.author = gitUser
@@ -120,14 +118,14 @@ def stream(request):
                 post.id = 999999
                 #only gets the first commit message -- could return more then 1 here
                 #TODO - create better content using more then the message
-                post.content = tmpContent[0]['message']
+                post.content = itemContent[0]['message']
                 post.visibility = 1
                 post.content_type = 1
-                time = datetime.datetime.strptime(tmp['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+                time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
                 post.post_date = time
-                post.description = "MYKEY9A9A"
-                author = tmpContent[0]['author']['name']
-                post.title = author + " pushed to " + tmp['repo']['name']
+                post.description = "MYGITKEY-PushEvent"
+                author = itemContent[0]['author']['name']
+                post.title = author + " pushed to " + gitItem['repo']['name']
                 posts.append(post)
 
     # Sorts posts from newest to oldest
@@ -138,7 +136,7 @@ def stream(request):
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
 
-#TODO finish this view
+#Returns a json object of a specific users received events if the username is valid
 def github_feed(username):
 
     #print username
@@ -146,14 +144,14 @@ def github_feed(username):
     #urlEC = "https://api.github.com/users/ + username + /events"
     #reqEC = urllib2.Request(urlEC)
 
-    #events received url -- #TODO use username
+    #events received url
     url = "https://api.github.com/users/" + username + "/received_events"
+    print url
     req = urllib2.Request(url)
 
     try:
         resp = urllib2.urlopen(req)
         events = resp.read()
-
         return events
     except:
         pass

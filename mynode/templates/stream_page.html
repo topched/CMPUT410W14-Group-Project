@@ -121,19 +121,18 @@
                 <li class="cmmnt">
 
 
-                    {% if post.description != "MYKEY9A9A" %}
-                    <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+                    {% if post.description == "MYGITKEY-PushEvent" %}
+                        <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
                     {% else %}
-                    <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
+                        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
                     {% endif %}
 
                     <div class="cmmnt-content">
-                        {% if post.description != "MYKEY9A9A" %}
-                        <header>{{ post.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
+                        {% if post.description != "MYGITKEY-PushEvent" %}
+                            <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
                         {% else %}
-                        <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
+                            <header>{{ post.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
                         {% endif %}
-
                         <p>
                         {% if post.content_type == 1 %}
                             <p> {{ post.content }} </p>
@@ -164,32 +163,30 @@
                 </li>
             </ul>
 
-            {% if post.description != "MYKEY9A9A" %}
+            {% if post.description != "MYGITKEY-PushEvent" %}
             <div class="row">
-            <div class="stream_buttons">
-            <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
-                {% csrf_token %}
-                <input class="btn btn-primary" type="button" value="Comment" id="comment_button"/>
-                {% if post.author == current_user %}
-                    <input class="btn btn-primary" type="submit" value="Delete"/>
-                {% endif %}
-            </form>
-            </div>
+                <div class="stream_buttons">
+                    <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="btn btn-primary" type="button" value="Comment" id="comment_button"/>
+                        {% if post.author == current_user %}
+                            <input class="btn btn-primary" type="submit" value="Delete"/>
+                        {% endif %}
+                    </form>
+                </div>
             {% endif %}
 
-            <div class="comment_area" style="display:none">
-                <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
-                    {% csrf_token %}
-                    <textarea class="form-control" name='content' id="post_content"></textarea>
-                    </br>
-                    <div class="comment_buttons">
-                        <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
-                        <input class="btn btn-primary" type="button" value="Cancel" id='cancel-button'/>
-                    </div>
-                </form>
+                <div class="comment_area" style="display:none">
+                    <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <textarea class="form-control" name='content' id="post_content"></textarea></br>
+                        <div class="comment_buttons">
+                            <input class="btn btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
+                            <input class="btn btn-primary" type="button" value="Cancel" id='cancel-button'/>
+                        </div>
+                    </form>
+                </div>
             </div>
-            </div>
-
         </div>
     </div>
 {% endfor %}
@@ -227,6 +224,4 @@
 
 </script>
 </body>
-
-
 </html>
