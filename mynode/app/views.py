@@ -117,7 +117,7 @@ def stream(request):
             post.post_date = time
             post.description = "MYKEY9A9A"
             author = tmpContent[0]['author']['name']
-            post.title = author + "pushed to " + tmp['repo']['name']
+            post.title = author + " pushed to " + tmp['repo']['name']
             posts.append(post)
 
 
