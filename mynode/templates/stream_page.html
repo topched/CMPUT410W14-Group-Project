@@ -128,10 +128,10 @@
                     {% endif %}
 
                     <div class="cmmnt-content">
-                        {% if post.description != "MYGITKEY-PushEvent" %}
+                        {% if post.description == "MYGITKEY-PushEvent" %}
                             <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
                         {% else %}
-                            <header>{{ post.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
+                            <header>{{ post.author.username }} - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
                         {% endif %}
                         <p>
                         {% if post.content_type == 1 %}

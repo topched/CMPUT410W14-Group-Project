@@ -118,9 +118,11 @@ def stream(request):
                 post.id = 999999
                 #only gets the first commit message -- could return more then 1 here
                 #TODO - create better content using more then the message
-                post.content = itemContent[0]['message']
+                tmpUrl = "https://github.com/" + gitItem['repo']['name'] + "/commit/" + itemContent[0]['sha']
+                post.content = itemContent[0]['message'] + "</br></br>" + "View the full commit <a href=" + tmpUrl + ">here</a>"
                 post.visibility = 1
-                post.content_type = 1
+                #post content is html
+                post.content_type = 3
                 time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
                 post.post_date = time
                 post.description = "MYGITKEY-PushEvent"
