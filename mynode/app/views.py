@@ -106,28 +106,28 @@ def stream(request):
         #how many github entries to show in the stream -- Usually 100 results in vals
         for x in range(0, 10):
             gitItem = vals[x]
-            tmpUsername = gitItem['actor']['login']
+            #tmpUsername = gitItem['actor']['login']
 
             #handle a push event
             if gitItem['type'] == "PushEvent":
-                itemContent = gitItem['payload']['commits']
+                #itemContent = gitItem['payload']['commits']
 
                 post = Post()
                 post.author = gitUser
                 #pretty sure this number doesnt matter not actually a object for deletion
                 post.id = 999999
-                #only gets the first commit message -- could return more then 1 here
-                #TODO - create better content using more then the message
-                tmpUrl = "https://github.com/" + gitItem['repo']['name'] + "/commit/" + itemContent[0]['sha']
-                post.content = itemContent[0]['message'] + "</br></br>" + "View the full commit <a href=" + tmpUrl + ">here</a>"
+
+                #post.content contains a html item
+                post.content = get_git_html_content(gitItem)
+
                 post.visibility = 1
                 #post content is html
                 post.content_type = 3
                 time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
                 post.post_date = time
                 post.description = "MYGITKEY-PushEvent"
-                author = itemContent[0]['author']['name']
-                post.title = author + " pushed to " + gitItem['repo']['name']
+
+                post.title = gitItem['type']
                 posts.append(post)
 
     # Sorts posts from newest to oldest
@@ -137,6 +137,30 @@ def stream(request):
 
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
+
+#returns a html content section for a github post
+def get_git_html_content(gitItem):
+
+    itemcontent = gitItem['payload']['commits']
+    username = gitItem['actor']['login']
+
+    #only gets the first commit message -- could return more then 1 here
+    #TODO - create better content using more then the message
+    author = itemcontent[0]['author']['name']
+    authorurl = "https://github.com/" + username
+    repo = gitItem['repo']['name']
+    repourl = "https://github.com/" + repo
+    commiturl = "https://github.com/" + gitItem['repo']['name'] + "/commit/" + itemcontent[0]['sha']
+
+    eventhtml = "<a href=" + authorurl + ">" + author + "</a> Pushed To <a href=" \
+        + repourl + ">" + repo + "</a></br></br>"
+
+    messagehtml = itemcontent[0]['message'] + "</br></br>"
+    commithtml = "View the full commit <a href=" + commiturl + ">Here</a>"
+
+    content = eventhtml + messagehtml + commithtml
+
+    return content
 
 #Returns a json object of a specific users received events if the username is valid
 def github_feed(username):
