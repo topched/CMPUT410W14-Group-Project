@@ -105,7 +105,10 @@ def stream(request):
 
             post = Post()
             #Need a GitHub user created already
-            post.author = User.objects.get(username="GithubRelayUser")
+            try:
+                post.author = User.objects.get(username="GithubRelayUser")
+            except User.DoesNotExist:
+                User.objects.create(username="GithubRelayUser", password="github")
             #pretty sure this number doesnt matter not actually a object for deletion
             post.id = 999999
             #only gets the first commit message -- could return more then 1 here
