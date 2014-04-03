@@ -91,35 +91,44 @@ def stream(request):
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
 
-    vals = json.loads(gitJson)
+    if gitJson is not None:
 
-    #how many github entries to show in the stream -- Usually 100 results in vals
-    for x in range(0, 10):
-        tmp = vals[x]
-        tmpUsername = tmp['actor']['login']
+        vals = json.loads(gitJson)
 
-        #only want to show push events
-        #add else below for different types in the future
-        if tmp['type'] == "PushEvent":
-            tmpContent = tmp['payload']['commits']
+        #create a temp user for github posts
+        gitUser = User()
+        gitUser.username = "GitHub"
+        gitUser.email = "temp@temp.com"
+        gitUser.password = "password"
+        gitUser.first_name = "git"
+        gitUser.last_name = "user"
 
-            post = Post()
-            #Need a GitHub user created already
-            post.author = User.objects.get(username="GithubRelayUser")
-            #pretty sure this number doesnt matter not actually a object for deletion
-            post.id = 999999
-            #only gets the first commit message -- could return more then 1 here
-            #TODO - create better content using more then the message
-            post.content = tmpContent[0]['message']
-            post.visibility = 1
-            post.content_type = 1
-            time = datetime.datetime.strptime(tmp['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-            post.post_date = time
-            post.description = "MYKEY9A9A"
-            author = tmpContent[0]['author']['name']
-            post.title = author + " pushed to " + tmp['repo']['name']
-            posts.append(post)
+        #how many github entries to show in the stream -- Usually 100 results in vals
+        for x in range(0, 10):
+            gitItem = vals[x]
+            #tmpUsername = gitItem['actor']['login']
 
+            #handle a push event
+            if gitItem['type'] == "PushEvent":
+                #itemContent = gitItem['payload']['commits']
+
+                post = Post()
+                post.author = gitUser
+                #pretty sure this number doesnt matter not actually a object for deletion
+                post.id = 999999
+
+                #post.content contains a html item
+                post.content = get_git_html_content(gitItem)
+
+                post.visibility = 1
+                #post content is html
+                post.content_type = 3
+                time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+                post.post_date = time
+                post.description = "MYGITKEY-PushEvent"
+
+                post.title = gitItem['type']
+                posts.append(post)
 
     # Sorts posts from newest to oldest
     posts.sort(key=lambda y: y.post_date, reverse=True)
@@ -129,22 +138,46 @@ def stream(request):
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
 
-#TODO finish this view
+#returns a html content section for a github post
+def get_git_html_content(gitItem):
+
+    itemcontent = gitItem['payload']['commits']
+    username = gitItem['actor']['login']
+
+    #only gets the first commit message -- could return more then 1 here
+    #TODO - create better content using more then the message
+    author = itemcontent[0]['author']['name']
+    authorurl = "https://github.com/" + username
+    repo = gitItem['repo']['name']
+    repourl = "https://github.com/" + repo
+    commiturl = "https://github.com/" + gitItem['repo']['name'] + "/commit/" + itemcontent[0]['sha']
+
+    eventhtml = "<a href=" + authorurl + ">" + author + "</a> Pushed To <a href=" \
+        + repourl + ">" + repo + "</a></br></br>"
+
+    messagehtml = itemcontent[0]['message'] + "</br></br>"
+    commithtml = "View the full commit <a href=" + commiturl + ">Here</a>"
+
+    content = eventhtml + messagehtml + commithtml
+
+    return content
+
+#Returns a json object of a specific users received events if the username is valid
 def github_feed(username):
 
     #print username
-    #events created url -- #TODO use username
-    #urlEC = "https://api.github.com/users/topched/events"
+    #events created url
+    #urlEC = "https://api.github.com/users/ + username + /events"
     #reqEC = urllib2.Request(urlEC)
 
-    #events received url -- #TODO use username
-    url = "https://api.github.com/users/topched/received_events"
+    #events received url
+    url = "https://api.github.com/users/" + username + "/received_events"
+    print url
     req = urllib2.Request(url)
 
     try:
         resp = urllib2.urlopen(req)
         events = resp.read()
-
         return events
     except:
         pass
