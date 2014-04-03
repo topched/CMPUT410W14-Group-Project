@@ -83,6 +83,7 @@ class Post(models.Model):
     
     author = models.ForeignKey(User, related_name='author_user')
     recipient = models.ForeignKey(User, related_name='recipient_user', null=True)
+    image = models.ForeignKey(Image, null=True)
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
     content = models.TextField(blank=True)
