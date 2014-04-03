@@ -106,6 +106,16 @@ class Users(models.Model):
     class Meta:
         app_label='app'
 
+class RemoteFriends(models.Model):
+    uuid = models.CharField(max_length=256, blank=True)
+    displayname = models.CharField(max_length=256, blank=True)
+    host = models.CharField(max_length=256, blank=True)
+    remote_accepted = models.IntegerField(default=False)
+    local_accepted = models.IntegerField(default=False)
+    local_receiver = models.ForeignKey(User, db_column='local_receiver', related_name='local_receiver')
+    class Meta:
+        app_label='app'
+
 class Permissions():
     def canSeePost(self, post_id, requester):
         post = Post.objects.get(id=post_id)
