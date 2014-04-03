@@ -6,27 +6,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
-from django.core import serializers
-
-
 from app.models import *
 from app.modelforms import *
 import json
 import urllib2
+import datetime
 
-#Is this even called anymore??
-def index(request):
-    latest_posts = Posts.objects.all().order_by('date')[:50]
-    #context = {'latest_posts_list': latest_posts_list}
-    latest_posts = Posts.objects.all()
-    context = RequestContext(request)
-    if request.user.is_authenticated():
-        auth_user = request.user
-
-    user = User.objects.get(id=auth_user.id)
-    app_user = Users.objects.get(user_id=auth_user.id)
-
-    return render_to_response('stream_page.html', {'posts': latest_posts, 'user': user, 'app_user': app_user}, context)
 
 #Simple Login View that uses the Django Auth Login System
 def login(request):
@@ -108,27 +93,38 @@ def stream(request):
 
     vals = json.loads(gitJson)
 
+    #how many github entries to show in the stream -- Usually 100 results in vals
     for x in range(0, 10):
         tmp = vals[x]
         tmpUsername = tmp['actor']['login']
+
+        #only want to show push events
+        #add else below for different types in the future
         if tmp['type'] == "PushEvent":
             tmpContent = tmp['payload']['commits']
-        else:
-            tmpContent= "Not a push event"
-        #print tmpUsername
-        tmpPost = Post.objects.create(author=User.objects.get(id=1), content=tmpContent, content_type=1, visibility=1)
-        posts.append(tmpPost)
 
-
-
+            post = Post()
+            #Need a GitHub user created already
+            post.author = User.objects.get(username="GithubRelayUser")
+            #pretty sure this number doesnt matter not actually a object for deletion
+            post.id = 999999
+            #only gets the first commit message -- could return more then 1 here
+            #TODO - create better content using more then the message
+            post.content = tmpContent[0]['message']
+            post.visibility = 1
+            post.content_type = 1
+            time = datetime.datetime.strptime(tmp['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+            post.post_date = time
+            post.description = "MYKEY9A9A"
+            author = tmpContent[0]['author']['name']
+            post.title = author + "pushed to " + tmp['repo']['name']
+            posts.append(post)
 
 
     # Sorts posts from newest to oldest
-    posts.sort(key=lambda x: x.post_date, reverse=True)
+    posts.sort(key=lambda y: y.post_date, reverse=True)
     comments = Comment.objects.all()
     #print comments
-
-
 
     data = {'posts': posts, 'comments': comments, 'current_user': current_user}
     return render_to_response('stream_page.html', data, context)
@@ -137,26 +133,19 @@ def stream(request):
 def github_feed(username):
 
     #print username
-
     #events created url -- #TODO use username
-    urlEC = "https://api.github.com/users/topched/events"
-    reqEC = urllib2.Request(urlEC)
-
+    #urlEC = "https://api.github.com/users/topched/events"
+    #reqEC = urllib2.Request(urlEC)
 
     #events received url -- #TODO use username
-    urlER = "https://api.github.com/users/topched/received_events"
-    reqER = urllib2.Request(urlER)
-
-    #eventsR = ""
+    url = "https://api.github.com/users/topched/received_events"
+    req = urllib2.Request(url)
 
     try:
-        #respEC = urllib2.urlopen(reqEC)
-        respER = urllib2.urlopen(reqER)
+        resp = urllib2.urlopen(req)
+        events = resp.read()
 
-        #eventsC = respEC.read()
-        eventsR = respER.read()
-
-        return eventsR
+        return events
     except:
         pass
 

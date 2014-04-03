@@ -15,6 +15,5 @@ urlpatterns = patterns('',
     url(r'^service/posts$', api.posts),
     url(r'^service/friends/(?P<authorUUID>[-\w]+)$', api.friendshipList),
     url(r'^service/friends/(?P<uuidA>[-\w]+)/(?P<uuidB>[-\w]+)$', api.friendship),
-    url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False), name='index'),
-
+    url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
 )
