@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, url
+from mynode import settings
 from app import views
 
 urlpatterns = patterns('',

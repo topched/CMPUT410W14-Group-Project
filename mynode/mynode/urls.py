@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 from app import api
+from mynode import settings
 
 admin.autodiscover()
 
@@ -15,5 +16,6 @@ urlpatterns = patterns('',
     url(r'^service/posts$', api.posts),
     url(r'^service/friends/(?P<authorUUID>[-\w]+)$', api.friendshipList),
     url(r'^service/friends/(?P<uuidA>[-\w]+)/(?P<uuidB>[-\w]+)$', api.friendship),
-    #url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+    url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
 )

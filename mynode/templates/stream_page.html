@@ -145,9 +145,9 @@
                     </div>
                     
                     {% if post.image %}
-                    <div class="post_linked_image">
+                    <div class="post_image_container">
                         {% block content %}
-                        <img src="{{ post.image.image.url }}" />
+                        <img class="post_image" src="{{ post.image.image.url }}" />
                         {% endblock %}
                     </div>
                     {% endif %}

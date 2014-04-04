@@ -127,3 +127,7 @@ overflow: hidden;
 }
 
 
+img.post_image {
+    max-width:500px;
+}
+
