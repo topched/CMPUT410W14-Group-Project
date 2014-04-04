@@ -10,7 +10,12 @@ class ImageForm(ModelForm):
         exclude = ('author',)
 
 class PostForm(ModelForm):
-    recipient = forms.ModelChoiceField(queryset=User.objects.all(),required=False)
     class Meta:
         model = Post
         exclude = ('author',)
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user','')
+        super(PostForm, self).__init__(*args, **kwargs)
+        self.fields['recipient']=forms.ModelChoiceField(queryset=User.objects.exclude(id=user), required=False)
+        self.fields['image']=forms.ModelChoiceField(queryset=Image.objects.filter(author=user), required=False)

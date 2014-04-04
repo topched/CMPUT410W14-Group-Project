@@ -143,6 +143,14 @@
                         {% endif %}
                         </p>
                     </div>
+                    
+                    {% if post.image %}
+                    <div class="post_linked_image">
+                        {% block content %}
+                        <img src="{{ post.image.image.url }}" />
+                        {% endblock %}
+                    </div>
+                    {% endif %}
 
                     {% for comment in comments %}
                     {% if post == comment.parent_post %}

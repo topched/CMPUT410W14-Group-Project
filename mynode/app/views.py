@@ -88,8 +88,8 @@ def stream(request):
     posts = Post.visible_posts.getAllVisible(request.user.id)
 
     #get the github json
-    tmpUser = Users.objects.get(user_id=request.user.id)
-    gitJson = github_feed(tmpUser.git_url)
+    #tmpUser = Users.objects.get(user_id=request.user.id)
+    gitJson = None #github_feed(tmpUser.git_url)
 
     if gitJson is not None:
 
@@ -206,17 +206,18 @@ def delete_post(request, post_id):
 
 def create_post(request, post_id=None):
     if request.method == 'GET':
-        postForm = PostForm()
+        postForm = PostForm(user=request.user.id)
         return render(request, 'create_post.html', {'PostForm': postForm})
     else:
         current_user = User.objects.get(id=request.user.id)
-        newPostForm = PostForm(request.POST)
+        newPostForm = PostForm(request.POST, user=request.user.id)
         if (newPostForm.is_valid()):
             newPost = newPostForm.save(commit=False)
             newPost.author = current_user
-            newPost.title = request.POST['title']
-            newPost.content_type = request.POST['content-type']
-            newPost.visibility = request.POST['visibility']
+            # This is all done when you pass the post data to the PostForm
+            #newPost.title = request.POST['title']
+            #newPost.content_type = request.POST['content-type']
+            #newPost.visibility = request.POST['visibility']
             newPost.save()
             return HttpResponseRedirect('/mynode/stream')
         return render(request, 'create_post.html', {'PostForm': newPostForm})

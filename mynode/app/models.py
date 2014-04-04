@@ -52,12 +52,27 @@ class Friend(models.Model):
 
 
 class Image(models.Model):
+    PUBLIC = 1
+    SERVER = 2
+    FRIENDS = 3
+    PRIVATE = 4
+    VISIBILITY_CHOICES = (
+        (PUBLIC, 'Public'),
+        (SERVER, 'Server'),
+        (FRIENDS, 'Friends'),
+        (PRIVATE, 'Private')
+    )
+    
     author = models.ForeignKey(User, db_column='author')
     image = models.ImageField(upload_to='images')
-    visibility = models.IntegerField(blank=True, null=True)
+    name = models.CharField(blank=False, null=False, max_length=256)
+    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
 
     class Meta:
         app_label = 'app'
+    
+    def __unicode__(self):
+        return self.name
 
 
 class Post(models.Model):
