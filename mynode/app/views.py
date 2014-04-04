@@ -88,8 +88,8 @@ def stream(request):
     posts = Post.visible_posts.getAllVisible(request.user.id)
 
     #get the github json
-    #tmpUser = Users.objects.get(user_id=request.user.id)
-    gitJson = None #github_feed(tmpUser.git_url)
+    tmpUser = Users.objects.get(user_id=request.user.id)
+    gitJson = github_feed(tmpUser.git_url)
 
     if gitJson is not None:
 
