@@ -208,18 +208,18 @@ def friendship(request, uuidA, uuidB):
             pass
              
         try:
-        	   userB = Users.objects.get(uuidB)
+            userB = Users.objects.get(uuidB)
             RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
         except:
             pass        	
         
         try:
-        	   userA = Users.objects.get(uuidA)
-        	   userB = Users.objects.get(uuidB)
-        	   Friend.objects.get(requester=userA.user, receiver=userB.user, accepted=1)
+            userA = Users.objects.get(uuidA)
+            userB = Users.objects.get(uuidB)
+            Friend.objects.get(requester=userA.user, receiver=userB.user, accepted=1)
        
         except:
-       	   return_json['friends'] = "NO"
+            return_json['friends'] = "NO"
             return HttpResponse(json.dumps(return_json), content_type="application/json") 
 
         else:
