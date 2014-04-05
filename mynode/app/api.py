@@ -206,14 +206,48 @@ def friendship(request, uuidA, uuidB):
             userB = Users.objects.get(uuid=uuidB)
             Friend.objects.get(requester=userA.user.id, receiver=userB.user.id, accepted=1)
 
-        except:
-            #either user not found or not friends
-            return_json['friends'] = "NO"
-            return HttpResponse(json.dumps(return_json), content_type="application/json")
+        except userA.DoesNotExist:
+
+            try:
+                userB = Users.objects.get(uuid=uuidB)
+                remote_friend = RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
+
+            #either userB doesnt exist or they arent remote friends
+            except:
+                return_json['friends'] = "NO"
+                return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+            else:
+                return_json['friends'] = "YES"
+                return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+
+
+
+        except userB.DoesNotExist:
+
+            try:
+                userA = Users.objects.get(uuid=uuidA)
+                remote_friend = RemoteFriends.objects.get(uuid=uuidB, local_receiver=userA.user, local_accepted=True, remote_accepted=True)
+
+            except:
+
+                return_json['friends'] = "NO"
+                return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+            else:
+                return_json['friends'] = "YES"
+                return HttpResponse(json.dumps(return_json), content_type="application/json")
 
         else:
             return_json['friends'] = "YES"
             return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+    else:
+        return HttpResponse(405)
+
+
+
 
 # anyone in the list a friend? POST to http://service/friends/authorUUID w/ a JSON object containing a list of UUID's
 # responds with JSON
@@ -235,17 +269,14 @@ def friendshipList(request, authorUUID):
 
         friends = []
         try:
-
-
-
             for author in authors:
                 try:
 
                     tmp = Users.objects.get(uuid=author)
                     tmp_user = tmp.user
-                #print tmp_user.id
-                #print authorUUID
-                    friend = RemoteFriends.objects.get(uuid=vals['author'],local_receiver=tmp_user, local_accepted=True, remote_accepted=True)
+                    #print tmp_user.id
+                    #print authorUUID
+                    friend = RemoteFriends.objects.get(uuid=vals['author'], local_receiver=tmp_user, local_accepted=True, remote_accepted=True)
 
                     if friend:
                         friends.append(author)
@@ -261,7 +292,6 @@ def friendshipList(request, authorUUID):
         else:
             return_json['friends'] = friends
             return HttpResponse(json.dumps(return_json), content_type="application/json")
-
 
     else:
         return HttpResponse(405)
