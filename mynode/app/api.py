@@ -235,13 +235,15 @@ def friendshipList(request, authorUUID):
 
         friends = []
         try:
-            app_author = Users.objects.get(uuid=authorUUID)
+            # app_author = Users.objects.get(uuid=authorUUID)
 
             #loop through to see if we have any matches
             for author in authors:
                 try:
-                    tmp_author = Users.objects.get(uuid=author)
-                    friend = Friend.objects.get(requester=app_author.user.id, receiver=tmp_author.user.id, accepted=1)
+
+                    tmp = Users.objects.get(uuid=author)
+                    tmp_user = User.objects.get(id=tmp.id)
+                    friend = RemoteFriends.objects.get(local_receiver=tmp_user, uuid=authorUUID, remote_accepted=True, local_accepted=True)
 
                     if friend:
                         friends.append(author)
@@ -315,7 +317,7 @@ def confirm_remote_friend(request, uuid):
         data['query'] = "friendrequest"
 
         author['id'] = (Users.objects.get(user_id=request.user.id)).uuid
-        author['host'] = 'http://127.0.0.1:8000/'#TODO: Update This!!!!
+        author['host'] = 'http://cs410.cs.ualberta.ca:41068/'
         author['displayname'] = (User.objects.get(id=request.user.id)).username
 
         friend_author['id'] = remote_request.uuid
@@ -328,8 +330,8 @@ def confirm_remote_friend(request, uuid):
 
 
 
-        #eq = urllib2.Request(remote_request.host + "service/friendrequest")
-        req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
+        req = urllib2.Request(remote_request.host + "service/friendrequest")
+        #req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
         req.add_header('Content-Type', 'application/json')
 
         response = urllib2.urlopen(req, json.dumps(data))
