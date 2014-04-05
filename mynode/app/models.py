@@ -131,6 +131,7 @@ class RemoteFriends(models.Model):
     local_receiver = models.ForeignKey(User, db_column='local_receiver', related_name='local_receiver')
     class Meta:
         app_label='app'
+        unique_together = ('uuid', 'local_receiver')
 
 class Permissions():
     def canSeePost(self, post_id, requester):

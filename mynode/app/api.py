@@ -4,6 +4,7 @@ import sys
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from app.models import *
 
 
@@ -254,9 +255,29 @@ def friendshipList(request, authorUUID):
             return_json['friends'] = friends
             return HttpResponse(json.dumps(return_json), content_type="application/json")
 
+@csrf_exempt
+def friendrequest(request):
+    if request.method == 'POST':
+        vals = json.loads(request.body)
+        #if (RemoteFriends.objects.filter(uuid=vals['author']['id'],
+         #                                local_receiver=Users.objects.get(uuid=vals['friend']['author']['id'])).count() == 0):
+        try:
+            remote_friend = RemoteFriends.objects.create(
+                uuid=vals['author']['id'],
+                displayname=vals['author']['displayname'],
+                host=vals['author']['host'],
+                remote_accepted=True,
+                local_accepted=False,
+                local_receiver=(Users.objects.get(uuid=vals['friend']['author']['id'])).user)
+            remote_friend.save()
+            return HttpResponse()
+        except:
+            remote_friend = RemoteFriends.objects.get(uuid=vals['author']['id'],
+                                         local_receiver=(Users.objects.get(uuid=vals['friend']['author']['id'])).user)
+            remote_friend.remote_accepted = True
+            remote_friend.save()
+            return HttpResponse()
+        #else:
 
 
-
-
-
-
+    return HttpResponse(status=403)

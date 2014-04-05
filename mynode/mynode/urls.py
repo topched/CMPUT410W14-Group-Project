@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^service/posts$', api.posts),
     url(r'^service/friends/(?P<authorUUID>[-\w]+)$', api.friendshipList),
     url(r'^service/friends/(?P<uuidA>[-\w]+)/(?P<uuidB>[-\w]+)$', api.friendship),
+    url(r'^service/friendrequest$', api.friendrequest),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
     url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
 )
