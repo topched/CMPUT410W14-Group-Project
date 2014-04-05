@@ -239,10 +239,8 @@ def friendshipList(request, authorUUID):
 
             #loop through to see if we have any matches
             for author in authors:
-
-                tmp_author = Users.objects.get(uuid=author)
-
                 try:
+                    tmp_author = Users.objects.get(uuid=author)
                     friend = Friend.objects.get(requester=app_author.user.id, receiver=tmp_author.user.id, accepted=1)
 
                     if friend:
