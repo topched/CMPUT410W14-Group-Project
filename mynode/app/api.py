@@ -220,6 +220,7 @@ def friendship(request, uuidA, uuidB):
 #   {"query": "friends",
 #    "author": authorUUID,
 #    "friends": [list containing the UUID's of all friends in the list] }
+@csrf_exempt
 def friendshipList(request, authorUUID):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -258,6 +259,10 @@ def friendshipList(request, authorUUID):
         else:
             return_json['friends'] = friends
             return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+
+    else:
+        return HttpResponse(405)
 
 # Add a remote friend request to our DB
 @csrf_exempt
