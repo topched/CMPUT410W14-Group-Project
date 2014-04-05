@@ -202,25 +202,31 @@ def friendship(request, uuidA, uuidB):
         return_json['friends'] = [uuidA, uuidB]
 
         try:
-            userA = Users.objects.get(uuidA)
+            userA = Users.objects.get(uuid=uuidA)
             RemoteFriends.objects.get(uuid=uuidB, local_receiver=userA.user, local_accepted=True, remote_accepted=True)
         except:
             pass
              
         try:
-            userB = Users.objects.get(uuidB)
+            userB = Users.objects.get(uuid=uuidB)
             RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
         except:
             pass        	
         
         try:
-            userA = Users.objects.get(uuidA)
-            userB = Users.objects.get(uuidB)
-            Friend.objects.get(requester=userA.user, receiver=userB.user, accepted=1)
+            userA = Users.objects.get(uuid=uuidA)
+            userB = Users.objects.get(uuid=uuidB)
+            Friend.objects.get(requester=userA.user.id, receiver=userB.user.id, accepted=1)
        
-        except:
-            return_json['friends'] = "NO"
+        except Users.DoesNotExist:
+            return_json['friends'] = "NO USER"
             return HttpResponse(json.dumps(return_json), content_type="application/json") 
+
+        except Friend.DoesNotExist:
+            return_json['friends'] = "NO Friend"
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
+
+
 
         else:
             return_json['friends'] = "YES"
