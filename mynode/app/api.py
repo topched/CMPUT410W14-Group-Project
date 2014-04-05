@@ -203,45 +203,34 @@ def friendship(request, uuidA, uuidB):
 
         try:
             userA = Users.objects.get(uuid=uuidA)
+            RemoteFriends.objects.get(uuid=uuidB, local_receiver=userA.user, local_accepted=True, remote_accepted=True)
+        except:
+            pass
+             
+        try:
+            userB = Users.objects.get(uuid=uuidB)
+            RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
+        except:
+            pass        	
+        
+        try:
+            userA = Users.objects.get(uuid=uuidA)
             userB = Users.objects.get(uuid=uuidB)
             Friend.objects.get(requester=userA.user.id, receiver=userB.user.id, accepted=1)
+       
+        except Users.DoesNotExist:
+            return_json['friends'] = "NO USER"
+            return HttpResponse(json.dumps(return_json), content_type="application/json") 
 
-        except userA.DoesNotExist:
-
-            try:
-                userB = Users.objects.get(uuid=uuidB)
-                remote_friend = RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
-
-            #either userB doesnt exist or they arent remote friends
-            except:
-                return_json['friends'] = "NO"
-                return HttpResponse(json.dumps(return_json), content_type="application/json")
-
-            else:
-                return_json['friends'] = "YES"
-                return HttpResponse(json.dumps(return_json), content_type="application/json")
+        except Friend.DoesNotExist:
+            return_json['friends'] = "NO Friend"
+            return HttpResponse(json.dumps(return_json), content_type="application/json")
 
 
-
-
-        except userB.DoesNotExist:
-
-            try:
-                userA = Users.objects.get(uuid=uuidA)
-                remote_friend = RemoteFriends.objects.get(uuid=uuidB, local_receiver=userA.user, local_accepted=True, remote_accepted=True)
-
-            except:
-
-                return_json['friends'] = "NO"
-                return HttpResponse(json.dumps(return_json), content_type="application/json")
-
-            else:
-                return_json['friends'] = "YES"
-                return HttpResponse(json.dumps(return_json), content_type="application/json")
 
         else:
             return_json['friends'] = "YES"
-            return HttpResponse(json.dumps(return_json), content_type="application/json")
+            return HttpResponse(json.dumps(return_json), content_type="application/json") 
 
     else:
         return HttpResponse(405)
