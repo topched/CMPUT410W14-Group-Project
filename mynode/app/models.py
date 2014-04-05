@@ -40,6 +40,13 @@ class Comment(models.Model):
     class Meta:
         app_label = 'app'
 
+class RemoteServers(models.Model):
+    hostname = models.TextField(blank=True)
+    active = models.IntegerField(default=False)
+
+    class Meta:
+        app_label = 'app'
+
 
 class Friend(models.Model):
     requester = models.ForeignKey(User, db_column='requester', related_name='requester_userid')

@@ -23,6 +23,12 @@ class Comments(admin.ModelAdmin):
 class Friends(admin.ModelAdmin):
     list_display = ('id', 'requester', 'receiver', 'accepted')
 
+class RemoteServers(admin.ModelAdmin):
+    list_display = ('hostname', 'active')
+
+class RemoteFriends(admin.ModelAdmin):
+    list_display = ('uuid', 'displayname', 'host', 'remote_accepted', 'local_accepted', 'local_receiver', 'blocked')
+
 class Users_Admin(admin.ModelAdmin):
     list_display = ('user', 'git_url', 'default_post_visibility', 'approved')
     list_filter = ['approved']
