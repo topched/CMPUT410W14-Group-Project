@@ -235,15 +235,17 @@ def friendshipList(request, authorUUID):
 
         friends = []
         try:
-            # app_author = Users.objects.get(uuid=authorUUID)
 
-            #loop through to see if we have any matches
+
+
             for author in authors:
                 try:
 
                     tmp = Users.objects.get(uuid=author)
-                    tmp_user = User.objects.get(id=tmp.id)
-                    friend = RemoteFriends.objects.get(local_receiver=tmp_user, uuid=authorUUID, remote_accepted=True, local_accepted=True)
+                    tmp_user = tmp.user
+                #print tmp_user.id
+                #print authorUUID
+                    friend = RemoteFriends.objects.get(uuid=vals['author'],local_receiver=tmp_user, local_accepted=True, remote_accepted=True)
 
                     if friend:
                         friends.append(author)
