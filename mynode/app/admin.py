@@ -23,10 +23,10 @@ class Comments(admin.ModelAdmin):
 class Friends(admin.ModelAdmin):
     list_display = ('id', 'requester', 'receiver', 'accepted')
 
-class RemoteServers(admin.ModelAdmin):
+class RemoteServersAdmin(admin.ModelAdmin):
     list_display = ('hostname', 'active')
 
-class RemoteFriends(admin.ModelAdmin):
+class RemoteFriendsAdmin(admin.ModelAdmin):
     list_display = ('uuid', 'displayname', 'host', 'remote_accepted', 'local_accepted', 'local_receiver', 'blocked')
 
 class Users_Admin(admin.ModelAdmin):
@@ -41,4 +41,6 @@ admin.site.register(Friend,Friends)
 admin.site.register(Image)
 admin.site.register(Post,Posts)
 admin.site.register(Users,Users_Admin)
+admin.site.register(RemoteServers,RemoteServersAdmin)
+admin.site.register(RemoteFriends,RemoteFriendsAdmin)
 # Register your models here.

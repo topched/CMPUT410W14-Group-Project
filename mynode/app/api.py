@@ -205,26 +205,26 @@ def friendship(request, uuidA, uuidB):
             userA = Users.objects.get(uuidA)
             RemoteFriends.objects.get(uuid=uuidB, local_receiver=userA.user, local_accepted=True, remote_accepted=True)
         except:
-
-            #Either userA isnt a valid user or userA isnt remote friends with userB
-            try:
-                userB = Users.objects.get(uuidB)
-                RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
-
-            except:
-
-                #Either userB isnt a valid user or userB isnt remote friends with userA
-                try:
-                    Friend.objects.get(requester=userA.id, receiver=userB.id, accepted=1)
-
-                except:
-                    return_json['friends'] = "NO"
-                    return HttpResponse(json.dumps(return_json), content_type="application/json")
+            pass
+             
+        try:
+        	   userB = Users.objects.get(uuidB)
+            RemoteFriends.objects.get(uuid=uuidA, local_receiver=userB.user, local_accepted=True, remote_accepted=True)
+        except:
+            pass        	
+        
+        try:
+        	   userA = Users.objects.get(uuidA)
+        	   userB = Users.objects.get(uuidB)
+        	   Friend.objects.get(requester=userA.user, receiver=userB.user, accepted=1)
+       
+        except:
+       	   return_json['friends'] = "NO"
+            return HttpResponse(json.dumps(return_json), content_type="application/json") 
 
         else:
             return_json['friends'] = "YES"
-            return HttpResponse(json.dumps(return_json), content_type="application/json")
-
+            return HttpResponse(json.dumps(return_json), content_type="application/json") 
 
     else:
         return HttpResponse(405)
