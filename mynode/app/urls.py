@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 from mynode import settings
 from app import views
+from app import api
 
 urlpatterns = patterns('',
     url(r'^$', views.login),
@@ -21,5 +22,7 @@ urlpatterns = patterns('',
     url(r'^friends/(\d+)/confirm/$', views.confirm_friend),
     #url(r'^friends/friend/friend/(\d+)/$', views.friend_details),
     url(r'^friends/(\d+)/delete/$', views.delete_friend),
+    url(r'^remote_friends/(?P<uuid>[-\w]+)/delete/$', api.delete_remote_friend),
+    url(r'^remote_friends/(?P<uuid>[-\w]+)/confirm/$', api.confirm_remote_friend),
   
 )

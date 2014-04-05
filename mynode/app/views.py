@@ -180,7 +180,7 @@ def github_feed(username):
         events = resp.read()
         return events
     except:
-        pass
+       pass
 
     return None
 
@@ -246,10 +246,14 @@ def friends(request):
     following = Friend.objects.filter(requester=request.user.id).exclude(accepted=1)
     friends = Friend.objects.filter(accepted=1, receiver=request.user.id)
 
+    remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
+    remote_following = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=False, local_receiver=request.user)
+    remote_friends = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=True, local_receiver=request.user)
+
     user = User.objects.get(id=request.user.id)
 
     data = {'friend_requests': 'request!', 'followers': followers, 'following': following, 'friends': friends,
-            'user': user}
+            'user': user, 'remote_follower':remote_followers, 'remote_following':remote_following, 'remote_friends':remote_friends}
     return render(request, 'friend_page.html', data)
 
 # Not accepting a friend request that is sent to you

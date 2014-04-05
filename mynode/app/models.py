@@ -129,6 +129,7 @@ class RemoteFriends(models.Model):
     remote_accepted = models.IntegerField(default=False)
     local_accepted = models.IntegerField(default=False)
     local_receiver = models.ForeignKey(User, db_column='local_receiver', related_name='local_receiver')
+    blocked = models.IntegerField(default=False)
     class Meta:
         app_label='app'
         unique_together = ('uuid', 'local_receiver')

@@ -1,11 +1,15 @@
 __author__ = 'Christian & Kris'
 import json
 import sys
+import urllib2
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
+from django.contrib.auth.models import User
 from app.models import *
+from django.conf import settings
 
 
 # Use http://jsonlint.com to validate JSON before commit
@@ -255,12 +259,11 @@ def friendshipList(request, authorUUID):
             return_json['friends'] = friends
             return HttpResponse(json.dumps(return_json), content_type="application/json")
 
+# Add a remote friend request to our DB
 @csrf_exempt
 def friendrequest(request):
     if request.method == 'POST':
         vals = json.loads(request.body)
-        #if (RemoteFriends.objects.filter(uuid=vals['author']['id'],
-         #                                local_receiver=Users.objects.get(uuid=vals['friend']['author']['id'])).count() == 0):
         try:
             remote_friend = RemoteFriends.objects.create(
                 uuid=vals['author']['id'],
@@ -272,12 +275,73 @@ def friendrequest(request):
             remote_friend.save()
             return HttpResponse()
         except:
-            remote_friend = RemoteFriends.objects.get(uuid=vals['author']['id'],
-                                         local_receiver=(Users.objects.get(uuid=vals['friend']['author']['id'])).user)
-            remote_friend.remote_accepted = True
-            remote_friend.save()
-            return HttpResponse()
-        #else:
-
+            try:
+                remote_friend = RemoteFriends.objects.get(uuid=vals['author']['id'],
+                                             local_receiver=(Users.objects.get(uuid=vals['friend']['author']['id'])).user)
+                remote_friend.remote_accepted = True
+                remote_friend.save()
+                return HttpResponse()
+            except:
+                return HttpResponse(status=409)
 
     return HttpResponse(status=403)
+
+@login_required
+def delete_remote_friend(request, uuid):
+    try:
+        remote_request = RemoteFriends.objects.get(uuid=uuid, local_receiver=request.user)
+        remote_request.blocked = True
+        remote_request.save()
+        return redirect('app.views.friends')
+    except:
+        # Do something here
+        return redirect('app.views.friends')
+
+@login_required
+def confirm_remote_friend(request, uuid):
+    #try:
+        # Accept the friend request
+        remote_request = RemoteFriends.objects.get(uuid=uuid, local_receiver=request.user)
+
+
+        # Send out the JSON to their servers API to confirm
+        data = {}
+        author = {}
+        friend = {}
+        friend_author = {}
+        data['query'] = "friendrequest"
+
+        author['id'] = (Users.objects.get(user_id=request.user.id)).uuid
+        author['host'] = 'http://127.0.0.1:8000/'#TODO: Update This!!!!
+        author['displayname'] = (User.objects.get(id=request.user.id)).username
+
+        friend_author['id'] = remote_request.uuid
+        friend_author['host'] = remote_request.host
+        friend_author['displayname'] = remote_request.displayname
+        friend_author['url'] = remote_request.host + "author/" + remote_request.uuid
+        friend['author'] = friend_author
+        data['author'] = author
+        data['friend'] = friend
+
+
+
+        #eq = urllib2.Request(remote_request.host + "service/friendrequest")
+        req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
+        req.add_header('Content-Type', 'application/json')
+
+        response = urllib2.urlopen(req, json.dumps(data))
+        html = response.read()
+        print(html)
+
+        if response.getcode() == 200:
+            remote_request.local_accepted = True
+            remote_request.save()
+
+
+        return HttpResponse(json.dumps(data), content_type="application/json")
+        #return redirect('app.views.friends')
+    #except:
+    #    # Do something here
+    #    return redirect('app.views.friends')
+
+
