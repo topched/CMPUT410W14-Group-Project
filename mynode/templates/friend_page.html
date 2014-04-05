@@ -94,14 +94,14 @@
         <div class="col-md-12 col-md-offset-4 ">
           {% if not follower.accepted %}
           {{ follower_request.requester.username }}
-{#			<form action="{% url 'app.views.delete_friend' follower_request.requester.id %}" method="POST">#}
-{#				{% csrf_token %}#}
-{#				<input type="submit" name="delete" value="Deny" />#}
-{#			</form>#}
-{#			<form action="{% url 'app.views.confirm_friend' follower_request.requester.id %}" method="POST">#}
-{#				{% csrf_token %}#}
-{#				<input type="submit" name="update" value="Confirm" />#}
-{#			</form>#}
+			<form action="{% url 'app.views.delete_friend' follower_request.requester.id %}" method="POST">
+				{% csrf_token %}
+				<input type="submit" name="delete" value="Deny" />
+			</form>
+			<form action="{% url 'app.views.confirm_friend' follower_request.requester.id %}" method="POST">
+				{% csrf_token %}
+				<input type="submit" name="update" value="Confirm" />
+			</form>
           {% endif %}
         </div>
       </div>
