@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db import connection
 from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
 from PIL import Image
@@ -25,6 +26,20 @@ class PostManager(models.Manager):
                 visiblePosts.append(post)
         
         return visiblePosts
+
+class ImageManager(models.Manager):
+    def getAllVisible(self, requester):
+        images = super(ImageManager, self).get_queryset().values_list('id',flat=True)
+        visibleImages = list()
+        
+        permissionHelper = Permissions()
+        
+        for image_id in images:
+            image = permissionHelper.canSeeImage(image_id, requester)
+            if(image is not None):
+                visibleImages.append(image)
+        
+        return visibleImages
     
     ############
     #  MODELS  #
@@ -61,11 +76,13 @@ class Friend(models.Model):
 class Image(models.Model):
     PUBLIC = 1
     SERVER = 2
-    FRIENDS = 3
-    PRIVATE = 4
+    FRIENDOF = 3
+    FRIENDS = 4
+    PRIVATE = 5
     VISIBILITY_CHOICES = (
         (PUBLIC, 'Public'),
         (SERVER, 'Server'),
+        (FRIENDOF, 'Friends of Friends'),
         (FRIENDS, 'Friends'),
         (PRIVATE, 'Private')
     )
@@ -85,11 +102,13 @@ class Image(models.Model):
 class Post(models.Model):
     PUBLIC = 1
     SERVER = 2
-    FRIENDS = 3
-    PRIVATE = 4
+    FRIENDOF = 3
+    FRIENDS = 4
+    PRIVATE = 5
     VISIBILITY_CHOICES = (
         (PUBLIC, 'Public'),
         (SERVER, 'Server'),
+        (FRIENDOF, 'Friends of Friends'),
         (FRIENDS, 'Friends'),
         (PRIVATE, 'Private')
     )
@@ -158,15 +177,17 @@ class Permissions():
         image = Image.objects.get(id=image_id)
         
         if(self.authLevel(image.author, requester) >= image.visibility):
-            return True
+            return image
         else:
-            return False
+            return None
     
     def authLevel(self, owner, requester):
         if( owner == requester ):
             return Post.PRIVATE
         elif(self.areFriends(owner, requester)):
             return Post.FRIENDS
+        elif(self.isFriendOfFriend(owner, requester)):
+            return Post.FRIENDOF
         else:
             try:
                 User.objects.get(id=requester)
@@ -179,4 +200,14 @@ class Permissions():
             Friend.objects.get(requester=user1, receiver=user2, accepted=True)
             return True
         except Friend.DoesNotExist:
+            return False
+        
+    def isFriendOfFriend(self, user1, user2):
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM app_friend AS f1, app_friend AS f2 WHERE f1.accepted = 1 AND f2.accepted = 1 AND f1.requester = %s AND f2.requester = %s AND f1.receiver = f2.receiver LIMIT 1;", [user1, user2])
+        result = cursor.fetchall()
+        
+        if(len(result) is not 0):
+            return True
+        else:
             return False
