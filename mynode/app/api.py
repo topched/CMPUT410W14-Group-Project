@@ -39,9 +39,8 @@ def get_post(post_id):
     # Filling out the post information
     post_author_json['id'] = author.uuid
     post_author_json['displayname'] = author.user.username
-    #TODO: Fix this to properly reflect the host and author location
-    post_author_json['url'] = "http://127.0.0.1:8000/service/author/" + author.uuid #TODO
-    post_author_json['host'] = "http://127.0.0.1:8000" #TODO
+    post_author_json['url'] = "http://cs410.cs.ualberta.ca:41068/service/author/" + author.uuid
+    post_author_json['host'] = "http://cs410.cs.ualberta.ca:41068/"
 
     # Add the author to the post information
     posts_json['author'] = {}
@@ -82,7 +81,7 @@ def get_post(post_id):
             comment_author = Users.objects.get(user_id=comment.author)
             comment_author_json['id'] = comment_author.uuid
             comment_author_json['displayname'] = comment_author.user.username
-            comment_author_json['host'] = "http://127.0.0.1:8000 TODO" #TODO
+            comment_author_json['host'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
             comment_json['author'] = comment_author_json
 
             # Add comment to comment array
