@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, logout
+from django.db import IntegrityError
 from app.models import *
 from app.modelforms import *
 import json
@@ -249,9 +250,11 @@ def create_comment(request, parent_post):
 def friends(request):
     #TODO: friend stuff
     #friend_requests = FriendRequests.objects.get(user=request.user)
-    followers = Friend.objects.filter(accepted=0, receiver=request.user.id)
-    following = Friend.objects.filter(requester=request.user.id).exclude(accepted=1)
-    friends = Friend.objects.filter(accepted=1, receiver=request.user.id)
+    followers = Friend.objects.filter(accepted = 2, receiver=request.user.id)
+    following = Friend.objects.filter(accepted = 0, requester=request.user.id)
+    friends = Friend.objects.filter(accepted = 1, receiver=request.user.id)
+    print following;
+    print friends;
 
     remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
     remote_following = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=False, local_receiver=request.user)
@@ -269,10 +272,15 @@ def delete_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
     sender = User.objects.get(id=follower_id)
     friendship = Friend.objects.get(requester=sender, receiver=current_user)
+    # TODO: This should actually delete the relationship, not update it.
+    # Should only be able to delete your own relationships.
+    #friendship = Friend.objects.get(requester=current_user, receiver=sender)
+    #friendship.delete();
 
-    friendship.accepted = 2 #TODO: Pretty sure this should be 0? 
+    # Apparently we changed this from bool to int, with 2 meaning the friendship
+    # was denied.
+    friendship.accepted = 2 
     friendship.save()
-
     return redirect('app.views.friends')
 
 # Accepting a friend request sent to you
@@ -308,10 +316,14 @@ def create_friend(request):
         receiver = User.objects.get(username=receiver_name)
     except User.DoesNotExist:
         return redirect('app.views.friends')
-        #print "FRIEND CREATED"
-
+        
+    #try:
     friend = Friend.objects.create(receiver=receiver, requester=current_user)
     friend.save()
+    #except IntegrityError:
+    #    friendship = Friend.objects.get(requester=current_user, receiver=receiver_name)
+    #    friendship.accepted = 0
+    #    return redirect('app.views.friends')
     return redirect('app.views.friends')
 
 

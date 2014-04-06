@@ -106,6 +106,31 @@
       <!-- </form> -->
     {% empty %}
     <div class="col-md-12 col-md-offset-3 ">
+      <p class="text-muted">You aren't following anyone yet!</p>
+    </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-3 col-md-offset-3">
+          <h3>Followers</h3>
+        </div>
+      </div>
+
+      {% for follow in followers %}
+      <!-- This needs to be a form once delete_friend is update to work with friends, and delete_friend_request is created -->
+      <!-- form app.views.delete_friend' follower_request.requester.id -->
+      <div class="row">
+        <div class="col-md-2 col-md-offset-3">
+          <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
+          <strong>{{ follow.requester.username }}</strong>
+        </div>
+        <div class="col-md-1 ">
+          <button type="submit" name=delete class="btn btn-xs btn-warning">Unfollow</button>
+        </div>
+      </div>
+      <!-- </form> -->
+    {% empty %}
+    <div class="col-md-12 col-md-offset-3 ">
       <p class="text-muted">You don't have any followers yet! Try making a public post.</p>
     </div>
     {% endfor %}
