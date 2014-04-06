@@ -270,7 +270,7 @@ def delete_friend(request, follower_id):
     sender = User.objects.get(id=follower_id)
     friendship = Friend.objects.get(requester=sender, receiver=current_user)
 
-    friendship.accepted = 2
+    friendship.accepted = 2 #TODO: Pretty sure this should be 0? 
     friendship.save()
 
     return redirect('app.views.friends')
