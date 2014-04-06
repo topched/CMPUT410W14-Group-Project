@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, logout
 from app.models import *
 from app.modelforms import *
 import json
@@ -32,6 +32,8 @@ def logout_view(request):
 # GET: Returns the registration page
 # POST: Creates a user with the parameters in the POST
 # Note: Uses both the django User model and our Users model to extend it
+# Must rename auth login function because login view
+from django.contrib.auth import login as auth_login
 def register(request):
     context = RequestContext(request)
 
@@ -46,8 +48,12 @@ def register(request):
         user.save()
         app_user = Users.objects.create(user=user, git_url=request.POST['git'])
         app_user.save()
-
-        return HttpResponseRedirect("/")
+        
+        # Login user if registration went okay.
+        auth_user = authenticate(username=request.POST['username'], password=request.POST['pwd'])
+        auth_login(request, auth_user)
+        if request.user.is_authenticated():
+            return redirect(stream)
 
 # Profile View for modifying your profile
 # GET: Renders the profile page with the data from the logged in user
@@ -74,6 +80,7 @@ def profile(request):
 
         app_user.git_url = request.POST['git']
         app_user.save()
+
 
         return redirect('app.views.stream')
 
