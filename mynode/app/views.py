@@ -330,10 +330,13 @@ def delete_friend(request, receiver_id):
     friendship = Friend.objects.get(requester=current_user, receiver=receiver)
     friendship.delete()
 
-    # Set other half of friendship to 'denied'
-    friendship2 = Friend.objects.get(requester=receiver, receiver=current_user)
-    friendship2.accepted = 2
-    friendship2.save()
+    # Set other half of friendship to 'denied', if it exists
+    try:
+        friendship2 = Friend.objects.get(requester=receiver, receiver=current_user)
+        friendship2.accepted = 2
+        friendship2.save()
+    except:
+        return redirect('app.views.friends')
     
     return redirect('app.views.friends')
 
