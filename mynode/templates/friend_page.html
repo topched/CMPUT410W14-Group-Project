@@ -46,9 +46,9 @@
             {% csrf_token %}
             <button type="submit" name="update" value="Confirm" class="btn btn-xs btn-success">Confirm</button>
           </form>
-          <form action="{% url 'app.views.delete_friend' follower_request.requester.id %}" method="POST">
+          <form action="{% url 'app.views.deny_friend' follower_request.requester.id %}" method="POST">
             {% csrf_token %}
-            <button type="submit" name="delete" value="Deny" class="btn btn-xs btn-danger">Deny</button>
+            <button type="submit" name="deny" value="Deny" class="btn btn-xs btn-danger">Deny</button>
           </form>
         </div>
       </div>
@@ -68,9 +68,9 @@
             <strong>{{ follower_request.displayname }} - follower_request.host</strong>
           </div>
 
-          <form action="{% url 'app.api.delete_remote_friend' follower_request.uuid %}" method="POST">
+          <form action="{% url 'app.api.deny_remote_friend' follower_request.uuid %}" method="POST">
             {% csrf_token %}
-            <button type="submit" name="delete" value="Deny" class="btn btn-xs btn-danger">Deny</button>
+            <button type="submit" name="deny" value="Deny" class="btn btn-xs btn-danger">Deny</button>
           </form>
           <form action="{% url 'app.api.confirm_remote_friend' follower_request.uuid %}" method="POST">
             {% csrf_token %}
@@ -133,17 +133,13 @@
       </div>
 
       {% for follow in followers %}
-      <!-- This needs to be a form once delete_friend is update to work with friends, and delete_friend_request is created -->
-      <!-- form app.views.delete_friend' follower_request.requester.id -->
+
       <div class="row">
         <div class="col-md-2 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
           <strong>{{ follow.requester.username }}</strong>
         </div>
-        <div class="col-md-1 ">
-          <button type="submit" name=delete class="btn btn-xs btn-warning">Unfollow</button>
-        </div>
-      </div>
+     </div>
       <!-- </form> -->
     {% empty %}
     <div class="col-md-12 col-md-offset-3 ">
@@ -167,7 +163,7 @@
 
 
 
-   
+
   <div class="row">
     <div class="col-md-4 col-md-offset-3">
       <h3>Friends</h3>
@@ -175,37 +171,38 @@
   </div>
 
   {% for friend in friends %}
-  <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
   <div class="row">
+    <form action="{% url 'app.views.delete_friend' friend.receiver.id %}" method="POST">
+      {% csrf_token %}
+      <div class="col-md-2 col-md-offset-3">
+        <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
+        <strong>{{ friend.receiver.username }}</strong>
+      </div>
+      <div class="col-md-1 ">
+        <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
+      </div>
+    </form> 
+  </div>
+
+  {% empty %}
+  <div class="col-md-12 col-md-offset-3 ">
+    <p class="text-muted">You don't have any friends yet! Try following someone.</p>
+  </div>
+  {% endfor %}
+
+  {% for friend in remote_friends%}
+  <div class="row">
+    <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
     <div class="col-md-2 col-md-offset-3">
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-      <strong>{{ friend.requester.username }}</strong>
+      <strong>{{ friend.displayname }} - {{ friend.host }}</strong>
     </div>
     <div class="col-md-1 ">
       <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
     </div>
   </div>
   <!-- </form> -->
-
-{% empty %}
-<div class="col-md-12 col-md-offset-3 ">
-  <p class="text-muted">You don't have any friends yet! Try following someone.</p>
-</div>
 {% endfor %}
-
-{% for friend in remote_friends%}
-<div class="row">
-  <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
-  <div class="col-md-2 col-md-offset-3">
-    <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-    <strong>{{ friend.displayname }} - {{ friend.host }}</strong>
-  </div>
-  <div class="col-md-1 ">
-    <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
-  </div>
-</div>
-<!-- </form> -->
-   {% endfor %}
  </div>
 </div>
 </body>
