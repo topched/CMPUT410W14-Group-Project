@@ -2,6 +2,7 @@ __author__ = 'Christian & Kris'
 import json
 import sys
 import urllib2
+import requests
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -348,20 +349,33 @@ def confirm_remote_friend(request, uuid):
         data['author'] = author
         data['friend'] = friend
 
-
-
-        req = urllib2.Request(remote_request.host + "service/friendrequest")
+	import os
+	os.environ['http_proxy']=''
+	url_request = remote_request.host + "friendrequest"
+        url_request = "http://cs410.ualberta.ca:41078/friendrequest"
+	print url_request
+	req = urllib2.Request(url_request)
         #req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
-        req.add_header('Content-Type', 'application/json')
-
-        response = urllib2.urlopen(req, json.dumps(data))
-        html = response.read()
-        print(html)
-
+#        req.add_header('Content-Type', 'application/json')
+	try:
+		response = urllib2.urlopen(req)#,# json.dumps(data), 5)
+	except urllib2.HTTPError, e:
+    		print(str(e.code))
+	except urllib2.URLError, e:
+    		print(str(e.reason))
+	except httplib.HTTPException, e:
+    		print('HTTPException')
+	except:
+		print("OH SHIT")
+		pass
+ 
         if response.getcode() == 200:
-            remote_request.local_accepted = True
-            remote_request.save()
+             remote_request.local_accepted = True
+             remote_request.save()
 
+#	headers = {'Content-Type':'application/json'}
+#	r = requests.get(url_request,data=json.dumps(data),headers=headers)
+#	print r.response
 
         return HttpResponse(json.dumps(data), content_type="application/json")
         #return redirect('app.views.friends')
