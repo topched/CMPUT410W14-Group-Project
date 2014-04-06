@@ -253,7 +253,7 @@ def friends(request):
     followers = Friend.objects.filter(accepted = 2, receiver=request.user.id)
     following = Friend.objects.filter(accepted = 0, requester=request.user.id)
     friends = Friend.objects.filter(accepted = 1, receiver=request.user.id)
-    print friend_requests;
+    print followers;
 
     remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
     remote_following = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=False, local_receiver=request.user)
