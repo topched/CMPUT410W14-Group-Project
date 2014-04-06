@@ -33,7 +33,7 @@
       </div>
 
 
-      {% for follower_request in followers %}
+      {% for follower_request in friend_requests %}
       {% if not follower.accepted %}
       <div class="row">
         <div class="col-md-2 col-md-offset-3">
@@ -116,13 +116,13 @@
         </div>
       </div>
 
-      {% for follow in followers %}
+      {% for follow in following %}
       <!-- This needs to be a form once delete_friend is update to work with friends, and delete_friend_request is created -->
       <!-- form app.views.delete_friend' follower_request.requester.id -->
       <div class="row">
         <div class="col-md-2 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-          <strong>{{ follow.requester.username }}</strong>
+          <strong>{{ follow.receiver.username }}</strong>
         </div>
         <div class="col-md-1 ">
           <button type="submit" name=delete class="btn btn-xs btn-warning">Unfollow</button>

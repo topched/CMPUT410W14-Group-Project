@@ -249,12 +249,11 @@ def create_comment(request, parent_post):
 @login_required
 def friends(request):
     #TODO: friend stuff
-    #friend_requests = FriendRequests.objects.get(user=request.user)
+    friend_requests = Friend.objects.filter(accepted = 0, receiver=request.user.id)
     followers = Friend.objects.filter(accepted = 2, receiver=request.user.id)
     following = Friend.objects.filter(accepted = 0, requester=request.user.id)
     friends = Friend.objects.filter(accepted = 1, receiver=request.user.id)
-    print following;
-    print friends;
+    print friend_requests;
 
     remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
     remote_following = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=False, local_receiver=request.user)
@@ -262,7 +261,7 @@ def friends(request):
 
     user = User.objects.get(id=request.user.id)
 
-    data = {'friend_requests': 'request!', 'followers': followers, 'following': following, 'friends': friends,
+    data = {'friend_requests': friend_requests, 'followers': followers, 'following': following, 'friends': friends,
             'user': user, 'remote_follower':remote_followers, 'remote_following':remote_following, 'remote_friends':remote_friends}
     return render(request, 'friend_page.html', data)
 
