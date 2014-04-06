@@ -369,4 +369,17 @@ def confirm_remote_friend(request, uuid):
     #    # Do something here
     #    return redirect('app.views.friends')
 
-
+# Get a list of all our authors
+def get_all_users(request):
+	if (request.method == 'GET'):
+		authors = Users.objects.filter()
+		author_array = []
+		for author in authors:
+			author_json = {}
+			author_json['displayname']=author.user.username
+			author_json['id']=author.uuid
+			author_array.append(author_json)
+		return HttpResponse(json.dumps(author_array), content_type="application/json")
+	else:
+		return HttpResponse(409)
+	

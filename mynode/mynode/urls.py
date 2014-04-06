@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^service/friendrequest$', api.friendrequest),
     # INSECURE - DO NOT USE UNLESS YOU ARE TESTING! USE STREAM/IMAGE/<IMAGE_ID> INSTEAD.
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+    url(r'^global/authors$', api.get_all_users),
     url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
 )
