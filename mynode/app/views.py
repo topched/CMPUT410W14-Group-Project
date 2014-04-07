@@ -158,8 +158,8 @@ def stream(request):
     #get public posts from other servers
     remote_posts = get_remote_public_posts()
     if remote_posts is not None:
-        print json.loads(remote_posts)
-        print "not empty"
+        print remote_posts[0]
+
 
     # Sorts posts from newest to oldest
     posts.sort(key=lambda y: y.post_date, reverse=True)
@@ -223,18 +223,18 @@ def get_remote_public_posts():
 
     for server in servers:
 
-        url = server.hostname + "/posts"
+        url = server.hostname + "posts"
         req = urllib2.Request(url)
 
         try:
             resp = urllib2.urlopen(req)
             posts = resp.read()
-            print posts
+            #print posts
             return_json.append(posts)
         except:
             pass
 
-    return json.dumps(return_json)
+    return return_json
 
 #Is this actually working?
 def post_details(request, post_id):
