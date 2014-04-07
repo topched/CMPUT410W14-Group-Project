@@ -68,7 +68,7 @@
             <strong>{{ follower_request.displayname }} - follower_request.host</strong>
           </div>
 
-          <form action="{% url 'app.api.deny_remote_friend' follower_request.uuid %}" method="POST">
+          <form action="{% url 'app.api.delete_remote_friend' follower_request.uuid %}" method="POST">
             {% csrf_token %}
             <button type="submit" name="deny" value="Deny" class="btn btn-xs btn-danger">Deny</button>
           </form>
