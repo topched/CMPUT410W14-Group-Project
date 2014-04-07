@@ -161,15 +161,23 @@ def stream(request):
 
         remoteUser = User()
         remoteUser.username = "RemoteUser"
+        remoteUser.first_name = "Remote"
+        remoteUser.last_name = "User"
 
         for x in range (0,len(remote_posts)):
 
-            post = remote_posts[x]
+            val = remote_posts[x]
 
+            #individual post from a server
             for x in range(0, 10):
 
-                print "temp"
+                post = Post()
+                post.author = remoteUser
+                post.id = 999999999
 
+                post.content = val['content']
+                post.title = val['title']
+                posts.append(post)
 
 
 
