@@ -1,5 +1,6 @@
 <!DOCTYPE>
 {% load static %}
+{% load markup %}
 <html>
     <head><title>Profile - {{ user.username }}</title>
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -13,85 +14,181 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
     <body>
-    
+
     {% include "navbar.html" %}
     <br><br>
 
-    <div class="col-md-2"></div>
 
-      <div class="col-md-8">
-        <div class="panel">
-            <img class="img-thumbnail profile" src="/static/img/DefaultProfile.jpg" alt="...">
-            <a href="#" class="btn btn-xs btn-primary pull-right" style="margin:10px;">Change cover</a>
+
+    <div class="col-md-1"></div>
+    <div class="col-md-2">
+        <div class="profile-pic-box">
+
+        <img class="img-thumbnail" src="/static/img/penguinAvatar.png" >
+        <div class="profile-details">
+        <h3>{{ user.first_name }} {{ user.last_name}}</h3>
+        <h4>{{ user.username }}</h4>
+        <h4>{{ user.email }}</h4>
         </div>
-        <div class="name"><h2>{{ user.first_name }} {{ user.last_name }}</h2></div>
+      </div>
 
-    <div class="col-md-2"></div>
+    </div>
+
+    <div class="col-md-7">
+
+        <div class="row">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary active" id="profileStreamButton">My Stream</button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="editProfileButton">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+      </br></br>
+
+      <div class="hidden" id="edit-profile">
 
 
-        <br><br><br>
+        {% if form.errors %}
+        <p> Error Updating Profile! </p>
+        {% endif %}
 
-        <ul class="nav nav-tabs" id="myTab">
-          <li class="active"><a href="#posts" data-toggle="tab">Posts</a></li>
-          <li><a href="#edit" data-toggle="tab">Edit Info</a></li>
-        </ul>
+        <form id="profile" class="form-horizontal" role="form" action="/mynode/profile/" method="post">
 
-        <div class="tab-content">
 
-          <!-- Users' Posts Tab -->
-          <div class="tab-pane active" id="posts">
-                
-            {% for post in posts %}
 
-            <div class="btn-toolbar well well-sm" role="toolbar"  style="margin:0px;">
+            {% csrf_token %}
+              <div class="form-group">
+                <label for="pwd" class="col-md-4 control-label">Password</label>
+                <div class="col-md-5">
+                  <input type="password" name="pwd" class="form-control" id="pwd" placeholder="Password">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cpwd" class="col-md-4 control-label">Confirm Password</label>
+                <div class="col-md-5">
+                  <input type="password" name="cpwd" class="form-control" id="cpwd" placeholder="Confirm Password">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="surname" class="col-md-4 control-label">First Name</label>
+                <div class="col-md-5">
+                  <input type="name" name="surname" class="form-control" id="surname" placeholder="First Name" value="{{ user.first_name }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="lastname" class="col-md-4 control-label">Last Name</label>
+                <div class="col-md-5">
+                  <input type="name" name="lastname" class="form-control" id="lastname" placeholder="Last Name" value="{{ user.last_name }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email" class="col-md-4 control-label">Email</label>
+                <div class="col-md-5">
+                  <input type="email" name="email" class="form-control" id="email" placeholder="Email" value="{{ user.email }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="git" class="col-md-4 control-label">GitHub Username</label>
+                <div class="col-md-5">
+                  <input type="name" name="git" class="form-control" id="git" placeholder="GitHub Username" value="{{ app_user.git_url }}">
+                </div>
+              </div>
 
-            <div class="btn-group"><input type="checkbox"></div>
+              <div class="form-group">
+              <div class="avatar-selector">
+              <div class="col-md-2">
+                <label class="col-md-2 control-label">Choose Avatar</label>
+            </div>
+              <div class="col-md-10">
 
-            <div class="btn-group col-md-11">{{ post.content }}</div></div>
-          
-            {% endfor %}
-            
-            <br>
-            <button class="btn btn-primary btn-xs"> Delete Selected Posts</button>
 
-          </div><!-- /posts -->
+                  <input id="defaultAvatar" type="radio" name="avatar-choice" value="defaultAvatar" />
+                  <label class="come-to-life defaultAvatar" for="defaultAvatar"></label>
+                  <input id="maleAvatar1" type="radio" name="avatar-choice" value="maleAvatar1" />
+                  <label class="come-to-life maleAvatar1"for="maleAvatar1"></label>
+                  <input id="femaleAvatar1" type="radio" name="avatar-choice" value="femaleAvatar1" />
+                  <label class="come-to-life femaleAvatar1"for="femaleAvatar1"></label>
+                  <input id="teddyAvatar" type="radio" name="avatar-choice" value="teddyAvatar" />
+                  <label class="come-to-life teddyAvatar"for="teddyAvatar"></label>
+                  <input id="penguinAvatar" type="radio" name="avatar-choice" value="penguinAvatar" />
+                  <label class="come-to-life penguinAvatar"for="penguinAvatar"></label>
+                  <input id="cowAvatar" type="radio" name="avatar-choice" value="cowAvatar" />
+                  <label class="come-to-life cowAvatar"for="cowAvatar"></label>
+                  <input id="bunnyAvatar" type="radio" name="avatar-choice" value="bunnyAvatar" />
+                  <label class="come-to-life bunnyAvatar"for="bunnyAvatar"></label>
 
-         
-         <!-- Edit Profile Tab -->
-          <div class="tab-pane" id="edit">
 
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-              <div class="container">
-                {% if form.errors %}
-                <p> Error Updating Profile! </p>
-                {% endif %}
-
-                <form class="form-signin" id="profile" role="form" action="/mynode/profile/" method="post">
-                    {% csrf_token %}
-                    <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password"/>
-                    <input type="password" name="cpwd" id="cpwd" class="form-control" placeholder="Confirm Password"/>
-                    <input type="name" name="surname" placeholder="First Name"class="form-control" value="{{ user.first_name }}"/>
-                    <input type="last_name" name="lastname" placeholder="Last Name" class="form-control" value="{{ user.last_name }}"/>
-                    <input type="email" name="email" placeholder="Email" class="form-control" value="{{ user.email }}"/>
-                    <input type="git" name="git" placeholder="GitHub URL"class="form-control" value="{{ app_user.git_url }}"/>
-
-                    <input type="submit" id="submit" name="submit" value="Update" class="btn btn-lg btn-primary btn-block" />
-                    <input type="hidden" name="next" value="{{ next }}" />
-                </form>
               </div>
             </div>
-            <div class="col-md-3"></div>
-          </div>
-        </div><!-- /edit profile -->
+              </div>
+              <div class="form-group col-md-3"></div>
+              <div class="form-group col-md-6">
+              <input type="submit" id="submit" name="submit" value="Update" class="btn btn-lg btn-primary btn-block" />
+              <input type="hidden" name="next" value="{{ next }}" />
+              </div>
+
+        </form>
+
+      </div>
+
+
+        <div id="profile-posts">
+        {% for post in posts %}
+        <div id="w">
+            <div id="container">
+                <ul id="comments">
+                    <li class="cmmnt">
+
+
+                      <div class="cmmnt-content">
+
+                              <header>{{ post.author.username }} - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
+
+                          <p>
+                          {% if post.content_type == 2 %}
+                              <p> {{ post.content|convert_markdown }} </p>
+                          {% elif post.content_type == 3 %}
+                              <p> {{ post.content|sanitize_html|safe }} </p>
+                          {% else %}
+                              <p> {{ post.content }} </p>
+                          {% endif %}
+                          </p>
+                      </div>
+
+                      {% if post.image %}
+                      <div class="post_image_container">
+                          {% block content %}
+                          <img class="post_image" src="{{ post.image.image.url }}" />
+                          {% endblock %}
+                      </div>
+                      {% endif %}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+
+
+        {% endfor %}
+      </div>
+
+
+
+
+    </div>
 
 
 
 
 
 
-    </div><!-- /tab-content -->
-    <div class="col-md-2"></div>
+
+    <div class="col-md-1"></div>
+
+
 
           <!-- Modal -->
     <div class="modal fade" id="passMatch" tabindex="-1" role="dialog" aria-labelledby="passMatch" aria-hidden="true">
@@ -116,6 +213,29 @@
 
       <script>
 
+        $(function () {
+
+
+        $(document).on("click", "#editProfileButton",  function() {
+
+            $("#profileStreamButton").removeClass("active");
+            $("#editProfileButton").addClass("active");
+
+            //show edit profile stuff
+            $("#edit-profile").removeClass("hidden");
+            $("#profile-posts").addClass("hidden");
+        });
+
+        $(document).on("click", "#profileStreamButton", function() {
+
+          $("#editProfileButton").removeClass("active");
+          $("#profileStreamButton").addClass("active");
+
+          //show stream stuff
+          $("#edit-profile").addClass("hidden");
+          $("#profile-posts").removeClass("hidden");
+        });
+
         $('form').on('submit',function(e){
 
           var p1 = $('#pwd').val();
@@ -135,6 +255,8 @@
            }
            return true;
         });
+
+      });
 
 
 
