@@ -21,9 +21,9 @@
           $(this).tab('show')
       });
 
-      $('#myTab a[href="#post"]').tab('show'); 
-      $('#myTab a[href="#image"]').tab('show'); 
-      $('#myTab a[href="#advanced"]').tab('show'); 
+      $('#myTab a[href="#post"]').tab('show');
+      $('#myTab a[href="#image"]').tab('show');
+      $('#myTab a[href="#advanced"]').tab('show');
       </script>
 
 <div class=container>
@@ -88,7 +88,7 @@
       {% if post.description == "MYGITKEY-PushEvent" %}
       <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
       {% else %}
-      <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+      <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ app_user.avatar }}" width="55" height="55"></a></div>
       {% endif %}
 
       <div class="cmmnt-content">
@@ -121,9 +121,9 @@
 
       <ul class="replies">
         <li class="cmmnt">
-        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
         <div class="cmmnt-content">
-          <header>{{ comment.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
+          <header>{{ comment.author.username }} - <span class="pubdate">{{ comment.post_date }}</span></header>
           <p>{{ comment.content }}</p>
         </div>
         </li>
@@ -198,13 +198,13 @@ $('#myTab a[href="#advanced"]').on('click', function(){
     $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
       $('#advanced').html(data);
       });
-    });  
+    });
 
 $('#myTab a[href="#image"]').on('click', function(){
     $.get('/mynode/stream/image/', $(this).serialize(), function(data){
       $('#image').html(data);
       });
-    });  
+    });
 
   </script>
 </body>

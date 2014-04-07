@@ -63,7 +63,7 @@ def register(request):
         user.save()
         app_user = Users.objects.create(user=user, git_url=request.POST['git'])
         app_user.save()
-        
+
         # Login user if registration went okay.
         auth_user = authenticate(username=request.POST['username'], password=request.POST['pwd'])
         auth_login(request, auth_user)
@@ -94,8 +94,8 @@ def profile(request):
         user.save()
 
         app_user.git_url = request.POST['git']
+        app_user.avatar = request.POST['avatar-choice']
         app_user.save()
-
 
         return redirect('app.views.stream')
 
@@ -106,6 +106,7 @@ def stream(request):
     context = RequestContext(request)
     #TODO: narrow this down to show only allowed posts, not all posts, I think this is done
     current_user = User.objects.get(id=request.user.id)
+    app_user = Users.objects.get(user_id=current_user.id)
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
 
@@ -157,7 +158,7 @@ def stream(request):
     comments = Comment.objects.all()
     #print comments
 
-    data = {'posts': posts, 'comments': comments, 'current_user': current_user}
+    data = {'posts': posts, 'comments': comments, 'current_user': current_user, 'app_user': app_user}
     return render_to_response('stream_page.html', data, context)
 
 #returns a html content section for a github post
@@ -312,7 +313,7 @@ def deny_friend(request, follower_id):
 
     # Apparently we changed this from bool to int, with 2 meaning the friendship
     # was denied.
-    friendship.accepted = 2 
+    friendship.accepted = 2
     friendship.save()
     return redirect('app.views.friends')
 
@@ -351,7 +352,7 @@ def delete_friend(request, receiver_id):
         friendship2.save()
     except:
         return redirect('app.views.friends')
-    
+
     return redirect('app.views.friends')
 
 def image(request, image_id=None):
@@ -374,5 +375,3 @@ def image(request, image_id=None):
         return redirect('app.views.stream')
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
-
-
