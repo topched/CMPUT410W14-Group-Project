@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-<head>
-    <title>Create New Post</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-</head>
-<body>
-    {% include "navbar.html" %}
-    {% if PostForm.errors %}
+    <form method="post" action="/mynode/stream/post/create/">
+            {% if PostForm.errors %}
         {% for field in PostForm %}
             {% for error in field.errors %}
                 <div class="alert alert-error">
@@ -24,13 +15,11 @@
                 <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
-    {% endif %}
-    <form method="post" action="/mynode/stream/post/create/">
+        {% endif %}
         {% csrf_token %}
         <table>
             {{ PostForm }}
         </table>
-        <input type="submit" value="Create Post" />
+        <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
     </form>
-</body>
 </html>

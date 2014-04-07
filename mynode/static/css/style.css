@@ -69,4 +69,9 @@ textarea {
 img.post_image {
     max-width:500px;
 }
-
+.follow_button {
+    margin-top: 6.5px;
+}
+table tr:nth-child(4){
+    display: none;
+}
