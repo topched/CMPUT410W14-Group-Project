@@ -12,6 +12,7 @@ h2 {
     padding-right:10px;
     padding-bottom: 5px;
 }
+
 textarea {
     width: 100%;
     height: 50px;
@@ -55,12 +56,12 @@ textarea {
 .navbar-nav.navbar-right:last-child {
     margin-right: 15px !important;
 }
-.navbar-footer 
+.navbar-footer
 {
     background-color:#DDD;
 }
-.navbar-footer-content { 
-    padding:15px 15px 15px 15px; 
+.navbar-footer-content {
+    padding:15px 15px 15px 15px;
 }
 .dropdown-menu {
     padding: 0px;
@@ -74,4 +75,67 @@ img.post_image {
 }
 table tr:nth-child(4){
     display: none;
+}
+.profile-pic-box {
+
+
+  background: #FFF;
+  padding: 14px 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+
+}
+
+.profile-details{
+
+  display: block;
+  padding-left: 10px;
+
+}
+
+
+/* Avatar selection Below */
+.avatar-selector input{
+    margin:0;padding:0;
+    -webkit-appearance:none;
+       -moz-appearance:none;
+            appearance:none;
+}
+.defaultAvatar{background-image:url(/static/img/avatar1.jpeg);}
+.maleAvatar1{background-image:url(/static/img/DefaultProfile.jpg);}
+.femaleAvatar1{background-image:url(/static/img/avatar2.jpg);}
+.teddyAvatar{background-image:url(/static/img/teddyAvatar.png);}
+.penguinAvatar{background-image:url(/static/img/penguinAvatar.png);}
+.cowAvatar{background-image:url(/static/img/cowAvatar.png);}
+.bunnyAvatar{background-image:url(/static/img/bunnyAvatar.png);}
+
+
+.avatar-selector input:active +.come-to-life{opacity: .9;}
+.avatar-selector input:checked +.come-to-life{
+    -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+}
+.come-to-life{
+    cursor:pointer;
+    background-size:contain;
+    background-repeat:no-repeat;
+    display:inline-block;
+    width:100px;height:70px;
+    -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+.come-to-life:hover{
+    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+            filter: brightness(1.2) grayscale(.5) opacity(.9);
+>>>>>>> 09735445becdd65af05953edfd105de8662dbb2b
 }
