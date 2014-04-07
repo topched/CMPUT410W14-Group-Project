@@ -267,6 +267,11 @@ $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
   $('#advanced').html(data);
   });
     });  
+$('#myTab a[href="#image"]').on('click', function(){
+$.get('/mynode/stream/image/', $(this).serialize(), function(data){
+  $('#image').html(data);
+  });
+    });  
 /* Can be use to change the ugly pre-made forms
    $('#myTab a[href="#image"]').on('click', function(){
    $.get('/mynode/stream/image/', $(this).serialize(), function(data){
