@@ -17,30 +17,30 @@ class PostManager(models.Manager):
     def getAllVisible(self, requester):
         posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
         visiblePosts = list()
-        
+
         permissionHelper = Permissions()
-        
+
         for post_id in posts:
             post = permissionHelper.canSeePost(post_id, requester)
             if(post is not None):
                 visiblePosts.append(post)
-        
+
         return visiblePosts
 
 class ImageManager(models.Manager):
     def getAllVisible(self, requester):
         images = super(ImageManager, self).get_queryset().values_list('id',flat=True)
         visibleImages = list()
-        
+
         permissionHelper = Permissions()
-        
+
         for image_id in images:
             image = permissionHelper.canSeeImage(image_id, requester)
             if(image is not None):
                 visibleImages.append(image)
-        
+
         return visibleImages
-    
+
     ############
     #  MODELS  #
     ############
@@ -86,7 +86,7 @@ class Image(models.Model):
         (FRIENDS, 'Friends'),
         (PRIVATE, 'Private')
     )
-    
+
     author = models.ForeignKey(User, db_column='author')
     image = models.ImageField(upload_to='images')
     name = models.CharField(blank=False, null=False, max_length=256)
@@ -94,7 +94,7 @@ class Image(models.Model):
 
     class Meta:
         app_label = 'app'
-    
+
     def __unicode__(self):
         return self.name
 
@@ -112,7 +112,7 @@ class Post(models.Model):
         (FRIENDS, 'Friends'),
         (PRIVATE, 'Private')
     )
-    
+
     PLAINTEXT = 1
     MARKDOWN = 2
     HTML = 3
@@ -121,7 +121,7 @@ class Post(models.Model):
         (MARKDOWN, 'Markdown'),
         (HTML, 'HTML')
     )
-    
+
     author = models.ForeignKey(User, related_name='author_user')
     recipient = models.ForeignKey(User, related_name='recipient_user', null=True)
     image = models.ForeignKey(Image, null=True)
@@ -132,12 +132,12 @@ class Post(models.Model):
     visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
     uuid = UUIDField(version=4, unique=True)
     post_date = models.DateTimeField(auto_now_add=True)
-    
+
     objects = models.Manager()
     visible_posts = PostManager()
     class Meta:
         app_label='app'
-        
+
 
 class Users(models.Model):
     git_url = models.CharField(max_length=256, blank=True)
@@ -145,6 +145,7 @@ class Users(models.Model):
     approved = models.BooleanField(default=False)
     user = models.OneToOneField(User, primary_key=True, parent_link=True)
     uuid = UUIDField(version=4, unique=True)
+    avatar = models.CharField(max_length=256, default="DefaultProfile.jpg")
     class Meta:
         app_label='app'
 
@@ -158,7 +159,7 @@ class RemoteFriends(models.Model):
     blocked = models.IntegerField(default=False)
     class Meta:
         app_label='app'
-        unique_together = ('uuid', 'local_receiver')
+        #unique_together = ('uuid', 'local_receiver')
 
 class Permissions():
     def canSeePost(self, post_id, requester):
@@ -172,15 +173,15 @@ class Permissions():
             return post
         else:
             return None
-    
+
     def canSeeImage(self, image_id, requester):
         image = Image.objects.get(id=image_id)
-        
+
         if(self.authLevel(image.author, requester) >= image.visibility):
             return image
         else:
             return None
-    
+
     def authLevel(self, owner, requester):
         if( owner == requester ):
             return Post.PRIVATE
@@ -194,19 +195,19 @@ class Permissions():
                 return Post.SERVER
             except User.DoesNotExist:
                 return Post.PUBLIC
-        
+
     def areFriends( self, user1, user2 ):
         try:
             Friend.objects.get(requester=user1, receiver=user2, accepted=True)
             return True
         except Friend.DoesNotExist:
             return False
-        
+
     def isFriendOfFriend(self, user1, user2):
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM app_friend AS f1, app_friend AS f2 WHERE f1.accepted = 1 AND f2.accepted = 1 AND f1.requester = %s AND f2.requester = %s AND f1.receiver = f2.receiver LIMIT 1;", [user1, user2])
         result = cursor.fetchall()
-        
+
         if(len(result) is not 0):
             return True
         else:

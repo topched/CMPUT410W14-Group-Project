@@ -105,8 +105,8 @@ table tr:nth-child(4){
        -moz-appearance:none;
             appearance:none;
 }
-.defaultAvatar{background-image:url(/static/img/avatar1.jpeg);}
-.maleAvatar1{background-image:url(/static/img/DefaultProfile.jpg);}
+.maleAvatar1{background-image:url(/static/img/avatar1.jpeg);}
+.defaultProfile{background-image:url(/static/img/DefaultProfile.jpg);}
 .femaleAvatar1{background-image:url(/static/img/avatar2.jpg);}
 .teddyAvatar{background-image:url(/static/img/teddyAvatar.png);}
 .penguinAvatar{background-image:url(/static/img/penguinAvatar.png);}
@@ -137,5 +137,4 @@ table tr:nth-child(4){
     -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
        -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
             filter: brightness(1.2) grayscale(.5) opacity(.9);
->>>>>>> 09735445becdd65af05953edfd105de8662dbb2b
 }

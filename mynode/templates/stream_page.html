@@ -3,136 +3,136 @@
 {% load static %}
 {% load markup %}
 <html>
-  <head><title>MyNode Stream</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/stream_style.css' %}" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<head><title>MyNode Stream</title>
+<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<link href="{% static 'css/stream_style.css' %}" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 
-  </head>
+</head>
 
-  <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">MyNode</a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/mynode/stream/">Stream</a></li>
-                <li><a href="/mynode/friends/">Friends</a></li>
-            </ul>
-
-
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    {{ user.username }}
-                    <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <div class="navbar-content">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <img src="/static/img/DefaultProfile.jpg"
-                                             alt="Alternate Text" class="img-thumbnail"/>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <span>{{ user.first_name }} {{ user.last_name }}</span>
-
-                                        <p class="text-muted small">{{ user.email }}</p>
-
-                                        <div class="divider">
-                                        </div>
-                                        <a href="/mynode/profile/" class="btn btn-primary btn-sm active">View
-                                            Profile</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="navbar-footer">
-                                <div class="navbar-footer-content">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <a href="{% url 'app.views.logout_view' %}" class="btn btn-default btn-sm pull-right">Sign Out</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <!--/.nav-collapse -->
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">MyNode</a>
     </div>
-</div>
-    {% csrf_token %}
-    <script type="text/javascript">
-      $('#myTab a').click(function (e) {
-          $(this).tab('show')
-      });
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/mynode/stream/">Stream</a></li>
+            <li><a href="/mynode/friends/">Friends</a></li>
+        </ul>
 
-      $('#myTab a[href="#post"]').tab('show'); 
-      $('#myTab a[href="#image"]').tab('show'); 
-      $('#myTab a[href="#advanced"]').tab('show'); 
-      </script>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {{ user.username }}
+                <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <div class="navbar-content">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img src="/static/img/DefaultProfile.jpg"
+                                         alt="Alternate Text" class="img-thumbnail"/>
+                                </div>
+                                <div class="col-md-7">
+                                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+
+                                    <p class="text-muted small">{{ user.email }}</p>
+
+                                    <div class="divider">
+                                    </div>
+                                    <a href="/mynode/profile/" class="btn btn-primary btn-sm active">View
+                                        Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navbar-footer">
+                            <div class="navbar-footer-content">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="{% url 'app.views.logout_view' %}" class="btn btn-default btn-sm pull-right">Sign Out</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!--/.nav-collapse -->
+</div>
+</div>
+{% csrf_token %}
+<script type="text/javascript">
+  $('#myTab a').click(function (e) {
+      $(this).tab('show')
+  });
+
+  $('#myTab a[href="#post"]').tab('show');
+  $('#myTab a[href="#image"]').tab('show');
+  $('#myTab a[href="#advanced"]').tab('show');
+  </script>
 
 <div class=container>
-  <!-- Nav tabs -->
-  <ul id="myTab" class="nav nav-tabs">
-    <li class="active"><a href="#post" data-toggle="tab">Simple</a></li>
-    <li><a href="#advanced" data-toggle="tab">Advanced</a></li>
-    <li><a href="#image" data-toggle="tab">Upload Image</a></li>
-  </ul>
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <!-- SIMPLE POST -->
-    <div class="tab-pane active" id="post">
-      <form action="{% url 'app.views.create_post' %}" method="POST">
-        {% csrf_token %}
-        <div class=text_area>
-          <input type="text" class="form-control" placeholder="Title" id="title" name='title'>
-          <!--<textarea rows="5" cols="20" id="title" name='title'></textarea>-->
-        </div>
-        <textarea class="form-control" rows="3" name='content' placeholder="Content..."></textarea>
-        <!--<textarea rows="5" cols="80" id="content" name='content'></textarea>-->
-        <select class="form-control" name="content_type" style="width:200px;float:left;">
-          <option value="1">Plaintext</option>
-          <option value="2">Markdown</option>
-          <option value="3">HTML</option>
-        </select>
-        <select class="form-control" name="visibility" style="width:200px;float:left;">
-          <option value="1">Public</option>
-          <option value="2">Server Only</option>
-          <option value="3">Friends</option>
-          <option value="4">Private</option>
-        </select>
-
-        <div class=buttons>
-          <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
-        </div>
-
-      </form>
+<!-- Nav tabs -->
+<ul id="myTab" class="nav nav-tabs">
+<li class="active"><a href="#post" data-toggle="tab">Simple</a></li>
+<li><a href="#advanced" data-toggle="tab">Advanced</a></li>
+<li><a href="#image" data-toggle="tab">Upload Image</a></li>
+</ul>
+<!-- Tab panes -->
+<div class="tab-content">
+<!-- SIMPLE POST -->
+<div class="tab-pane active" id="post">
+  <form action="{% url 'app.views.create_post' %}" method="POST">
+    {% csrf_token %}
+    <div class=text_area>
+      <input type="text" class="form-control" placeholder="Title" id="title" name='title'>
+      <!--<textarea rows="5" cols="20" id="title" name='title'></textarea>-->
     </div>
-    <!-- ADVANCED POST -->
-    <div class="tab-pane" id="advanced">
-      <!-- Gets filled in from django generated form by javascript/ajax -->
+    <textarea class="form-control" rows="3" name='content' placeholder="Content..."></textarea>
+    <!--<textarea rows="5" cols="80" id="content" name='content'></textarea>-->
+    <select class="form-control" name="content_type" style="width:200px;float:left;">
+      <option value="1">Plaintext</option>
+      <option value="2">Markdown</option>
+      <option value="3">HTML</option>
+    </select>
+    <select class="form-control" name="visibility" style="width:200px;float:left;">
+      <option value="1">Public</option>
+      <option value="2">Server Only</option>
+      <option value="3">Friends</option>
+      <option value="4">Private</option>
+    </select>
+
+    <div class=buttons>
+      <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
     </div>
 
-    <!-- IMAGE POST -->
-    <div class="tab-pane" id="image">
-      <!-- Gets filled in from django generated form by javascript/ajax -->
-    </div>
-  </div>
+  </form>
+</div>
+<!-- ADVANCED POST -->
+<div class="tab-pane" id="advanced">
+  <!-- Gets filled in from django generated form by javascript/ajax -->
+</div>
+
+<!-- IMAGE POST -->
+<div class="tab-pane" id="image">
+  <!-- Gets filled in from django generated form by javascript/ajax -->
+</div>
+</div>
 </div>
 
 </br>
@@ -140,86 +140,86 @@
 <!-- Post Stream    NEED TO SHOW GITHUB STUFF IN STREAM STILL -->
 {% for post in posts %}
 <div id="w">
-  <div id="container">
-    <ul id="comments">
-      <li class="cmmnt">
+<div id="container">
+<ul id="comments">
+  <li class="cmmnt">
 
 
-      {% if post.description == "MYGITKEY-PushEvent" %}
-      <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
-      {% else %}
-      <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
-      {% endif %}
+  {% if post.description == "MYGITKEY-PushEvent" %}
+  <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
+  {% else %}
+  <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ app_user.avatar }}" width="55" height="55"></a></div>
+  {% endif %}
 
-      <div class="cmmnt-content">
-        {% if post.description == "MYGITKEY-PushEvent" %}
-        <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
-        {% else %}
-        <header>{{ post.author.username }} - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
-        {% endif %}
-        <p>
-        {% if post.content_type == 2 %}
-        <p> {{ post.content|convert_markdown }} </p>
-        {% elif post.content_type == 3 %}
-        <p> {{ post.content|sanitize_html|safe }} </p>
-        {% else %}
-        <p> {{ post.content }} </p>
-        {% endif %}
-        </p>
-      </div>
-
-      {% if post.image %}
-      <div class="post_image_container">
-        {% block content %}
-        <img class="post_image" src="{{ post.image.image.url }}" />
-        {% endblock %}
-      </div>
-      {% endif %}
-
-      {% for comment in comments %}
-      {% if post == comment.parent_post %}
-
-      <ul class="replies">
-        <li class="cmmnt">
-        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
-        <div class="cmmnt-content">
-          <header>{{ comment.author.username }} - <span class="pubdate">Date Published - #TODO</span></header>
-          <p>{{ comment.content }}</p>
-        </div>
-        </li>
-      </ul>
-
-      {% endif %}
-      {% endfor %}
-
-      </li>
-    </ul>
-
-    {% if post.description != "MYGITKEY-PushEvent" %}
-    <div class="row">
-      <div class="stream_buttons">
-        <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
-          {% csrf_token %}
-          {% if post.author == current_user %}
-          <input class="btn btn-sm btn-primary" type="submit" value="Delete"/>
-          {% endif %}
-          <input class="btn btn-sm btn-primary" type="button" value="Comment" id="comment_button"/>
-        </form>
-      </div>
-      {% endif %}
-
-      <div class="comment_area" style="display:none">
-        <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
-          {% csrf_token %}
-          <textarea class="form-control" name='content' id="post_content"></textarea></br>
-          <div class="comment_buttons">
-            <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
-            <input class="btn btn-sm btn-primary" type="button" value="Cancel" id='cancel-button'/>
-          </div>
-        </form>
-      </div>
-    </div>
+  <div class="cmmnt-content">
+    {% if post.description == "MYGITKEY-PushEvent" %}
+    <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
+    {% else %}
+    <header>{{ post.author.username }} - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
+    {% endif %}
+    <p>
+    {% if post.content_type == 2 %}
+    <p> {{ post.content|convert_markdown }} </p>
+    {% elif post.content_type == 3 %}
+    <p> {{ post.content|sanitize_html|safe }} </p>
+    {% else %}
+    <p> {{ post.content }} </p>
+    {% endif %}
+    </p>
   </div>
+
+  {% if post.image %}
+  <div class="post_image_container">
+    {% block content %}
+    <img class="post_image" src="{{ post.image.image.url }}" />
+    {% endblock %}
+  </div>
+  {% endif %}
+
+  {% for comment in comments %}
+  {% if post == comment.parent_post %}
+
+  <ul class="replies">
+    <li class="cmmnt">
+    <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
+    <div class="cmmnt-content">
+      <header>{{ comment.author.username }} - <span class="pubdate">{{ comment.post_date }}</span></header>
+      <p>{{ comment.content }}</p>
+    </div>
+    </li>
+  </ul>
+
+  {% endif %}
+  {% endfor %}
+
+  </li>
+</ul>
+
+{% if post.description != "MYGITKEY-PushEvent" %}
+<div class="row">
+  <div class="stream_buttons">
+    <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
+      {% csrf_token %}
+      {% if post.author == current_user %}
+      <input class="btn btn-sm btn-primary" type="submit" value="Delete"/>
+      {% endif %}
+      <input class="btn btn-sm btn-primary" type="button" value="Comment" id="comment_button"/>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="comment_area" style="display:none">
+    <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
+      {% csrf_token %}
+      <textarea class="form-control" name='content' id="post_content"></textarea></br>
+      <div class="comment_buttons">
+        <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
+        <input class="btn btn-sm btn-primary" type="button" value="Cancel" id='cancel-button'/>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
 </div>
 {% endfor %}
 </br></br>
@@ -229,43 +229,43 @@
 <script type="text/javascript">
 
 
-  $(function () {
+$(function () {
 
-      $(document).on("click", "#comment_button", function() {
-        $(this).closest(".row").find(".comment_area").show();
-        $(this).closest(".row").find(".comment_buttons").show();
-        $(this).closest(".row").find(".stream_buttons").hide();
-        });
+  $(document).on("click", "#comment_button", function() {
+    $(this).closest(".row").find(".comment_area").show();
+    $(this).closest(".row").find(".comment_buttons").show();
+    $(this).closest(".row").find(".stream_buttons").hide();
+    });
 
-      $(document).on("click", "#cancel-button", function() {
-        $(this).closest(".row").find(".comment_area").hide();
-        $(this).closest(".row").find(".comment_buttons").hide();
-        $(this).closest(".row").find(".stream_buttons").show();
-        });
+  $(document).on("click", "#cancel-button", function() {
+    $(this).closest(".row").find(".comment_area").hide();
+    $(this).closest(".row").find(".comment_buttons").hide();
+    $(this).closest(".row").find(".stream_buttons").show();
+    });
 
-      //This doesnt work yet -- still need to finish
-      $(document).on("keyup", "#post_content", function() {
-        //alert($(this).val())
-        if($(this).val() != "") {
-        $(this).closest(".row").find(".post_comment").attr("disabled", false);
-        }
-        });
+  //This doesnt work yet -- still need to finish
+  $(document).on("keyup", "#post_content", function() {
+    //alert($(this).val())
+    if($(this).val() != "") {
+    $(this).closest(".row").find(".post_comment").attr("disabled", false);
+    }
+    });
 
 
-  });
+});
 
 $('#post').click(function(e){
-    e.preventDefault();
+e.preventDefault();
 
-  $.post('/mynode/stream/post/create/', function(data) {
-    $('.result').html(data);
-    });
-  });
+$.post('/mynode/stream/post/create/', function(data) {
+$('.result').html(data);
+});
+});
 
 $('#myTab a[href="#advanced"]').on('click', function(){
-    $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
-      $('#advanced').html(data);
-      });
+$.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
+  $('#advanced').html(data);
+  });
     });  
 /* Can be use to change the ugly pre-made forms
    $('#myTab a[href="#image"]').on('click', function(){
@@ -276,6 +276,6 @@ $('#myTab a[href="#advanced"]').on('click', function(){
    });
    });  
  */
-</script>
+  </script>
 </body>
 </html>
