@@ -219,7 +219,7 @@ def get_remote_public_posts():
 
     servers = RemoteServers.objects.filter(active=True)
 
-    return_json = {}
+    return_json = []
 
     for server in servers:
 
@@ -234,7 +234,7 @@ def get_remote_public_posts():
         except:
             pass
 
-    return return_json
+    return (return_json)
 
 #Is this actually working?
 def post_details(request, post_id):
