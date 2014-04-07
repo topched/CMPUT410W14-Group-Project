@@ -156,28 +156,39 @@ def stream(request):
 
 
     #get public posts from other servers
-    remote_posts = get_remote_public_posts()
-    if remote_posts is not None:
+    servers = RemoteServers.objects.filter(active=True)
+    for server in servers:
 
-        remoteUser = User()
-        remoteUser.username = "RemoteUser"
-        remoteUser.first_name = "Remote"
-        remoteUser.last_name = "User"
+        remoteJson = get_remote_public_posts(server.hostname)
 
-        for x in range (0,len(remote_posts)):
+        if remoteJson is not None:
 
-            val = remote_posts[x]
+            print json.loads(remoteJson)
 
-            #individual post from a server
-            for x in range(0, 10):
 
-                post = Post()
-                post.author = remoteUser
-                post.id = 999999999
 
-                post.content = val['content']
-                post.title = val['title']
-                posts.append(post)
+    # remote_posts = get_remote_public_posts()
+    # if remote_posts is not None:
+    #
+    #     remoteUser = User()
+    #     remoteUser.username = "RemoteUser"
+    #     remoteUser.first_name = "Remote"
+    #     remoteUser.last_name = "User"
+    #
+    #     for x in range (0,len(remote_posts)):
+    #
+    #         val = remote_posts[x]
+    #
+    #         #individual post from a server
+    #         for x in range(0, len(val)):
+    #
+    #             post = Post()
+    #             post.author = remoteUser
+    #             post.id = 999999999
+    #
+    #             post.content = val[x]['content']
+    #             post.title = val[x]['title']
+    #             posts.append(post)
 
 
 
@@ -235,26 +246,18 @@ def github_feed(username):
 
     return None
 
-def get_remote_public_posts():
+def get_remote_public_posts(hostname):
 
-    servers = RemoteServers.objects.filter(active=True)
+    url = hostname + "posts"
 
-    return_json = []
-
-    for server in servers:
-
-        url = server.hostname + "posts"
+    try:
         req = urllib2.Request(url)
-
-        try:
-            resp = urllib2.urlopen(req)
-            posts = resp.read()
-            #print posts
-            return_json.append(posts)
-        except:
-            pass
-
-    return (return_json)
+        resp = urllib2.urlopen(req)
+        post = resp.read()
+        return post
+    except:
+        return None
+        
 
 #Is this actually working?
 def post_details(request, post_id):
