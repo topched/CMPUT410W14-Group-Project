@@ -114,6 +114,7 @@ def stream(request):
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
 
+    #adding github posts
     if gitJson is not None:
 
         vals = json.loads(gitJson)
@@ -152,6 +153,13 @@ def stream(request):
 
                 post.title = gitItem['type']
                 posts.append(post)
+
+
+    #get public posts from other servers
+    remote_posts = get_remote_public_posts()
+    if remote_posts is not None:
+        print json.loads(remote_posts)
+        print "not empty"
 
     # Sorts posts from newest to oldest
     posts.sort(key=lambda y: y.post_date, reverse=True)
@@ -195,7 +203,7 @@ def github_feed(username):
 
     #events received url
     url = "https://api.github.com/users/" + username + "/received_events"
-    print url
+    #print url
     req = urllib2.Request(url)
 
     try:
@@ -207,13 +215,30 @@ def github_feed(username):
 
     return None
 
+def get_remote_public_posts():
+
+    servers = RemoteServers.objects.filter(active=True)
+
+    return_json = {}
+
+    for server in servers:
+
+        url = server.hostname + "/posts"
+        req = urllib2.Request(url)
+
+        try:
+            resp = urllib2.urlopen(req)
+            posts = resp.read()
+            print posts
+            return_json.append(posts)
+        except:
+            pass
+
+    return json.dumps(return_json)
 
 #Is this actually working?
 def post_details(request, post_id):
     context = RequestContext(request)
-    #if request.method == 'POST':
-    # deletin
-    # post.edeskajhdfasf
     if request.method == 'DELETE' or request.POST.get('_method') == 'DELETE':
         return post_delete(request, post_id)
     if request.method == 'PUT':
