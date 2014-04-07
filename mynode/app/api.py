@@ -63,14 +63,25 @@ def get_post(post_id):
     # Fill out the post information
     #TODO: Fix the TODO's in the JSON/below
     posts_json['title'] = post.title
-    posts_json['source'] = "TODO" #TODO
-    posts_json['origin'] = "TODO" #TODO
+    posts_json['source'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
+    posts_json['origin'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
     posts_json['description'] = post.description
     posts_json['content'] = post.content
     posts_json['categories'] = {}
     posts_json['pubDate'] = str(post.post_date)
     posts_json['guid'] = post.uuid
-    posts_json['visibility'] = 'TODO' #TODO
+    visibility = post.visibility
+    if visibility == 1:	
+    	posts_json['visibility'] = 'PUBLIC'
+    elif visibility == 2:
+	posts_json['visibility'] = 'SERVERONLY'
+    elif visibility == 3:
+	posts_json['visibility'] = 'FOAF'
+    elif visibility == 4:
+	posts_json['visibility'] = 'FRIENDS'
+    elif visibility == 5:
+	posts_json['visibility'] = 'PRIVATE'
+
     content_type = post.content_type
     if content_type == 1:
         posts_json['content-type'] = 'text/plain'
