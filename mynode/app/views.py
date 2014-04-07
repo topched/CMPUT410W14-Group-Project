@@ -158,7 +158,19 @@ def stream(request):
     #get public posts from other servers
     remote_posts = get_remote_public_posts()
     if remote_posts is not None:
-        print remote_posts[0]
+
+        remoteUser = User()
+        remoteUser.username = "RemoteUser"
+
+        for x in range (0,len(remote_posts)):
+
+            post = remote_posts[x]
+
+            for x in range(0, 10):
+
+                print "temp"
+
+
 
 
     # Sorts posts from newest to oldest
