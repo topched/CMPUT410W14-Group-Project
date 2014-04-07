@@ -40,8 +40,8 @@ def get_post(post_id):
     # Filling out the post information
     post_author_json['id'] = author.uuid
     post_author_json['displayname'] = author.user.username
-    post_author_json['url'] = "http://cs410.cs.ualberta.ca:41068/service/author/" + author.uuid
-    post_author_json['host'] = "http://cs410.cs.ualberta.ca:41068/"
+    post_author_json['url'] = "http://cs410.cs.ualberta.ca:41068/mynode/author/" + author.uuid
+    post_author_json['host'] = "http://cs410-06/"
 
     # Add the author to the post information
     posts_json['author'] = {}
@@ -73,7 +73,7 @@ def get_post(post_id):
             # Get the comment information
             comment_json = {}
             comment_json['comment'] = comment.content
-            comment_json['PubDate'] = str(comment.post_date)
+            comment_json['pubDate'] = str(comment.post_date)
             comment_json['guid'] = comment.uuid
 
             # Construct the comment author JSON
@@ -82,7 +82,7 @@ def get_post(post_id):
             comment_author = Users.objects.get(user_id=comment.author)
             comment_author_json['id'] = comment_author.uuid
             comment_author_json['displayname'] = comment_author.user.username
-            comment_author_json['host'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
+            comment_author_json['host'] = "http://cs410-06/" #TODO
             comment_json['author'] = comment_author_json
 
             # Add comment to comment array
@@ -338,7 +338,7 @@ def confirm_remote_friend(request, uuid):
         data['query'] = "friendrequest"
 
         author['id'] = (Users.objects.get(user_id=request.user.id)).uuid
-        author['host'] = 'http://cs410.cs.ualberta.ca:41068/'
+        author['host'] = 'http://cs410-06/'
         author['displayname'] = (User.objects.get(id=request.user.id)).username
 
         friend_author['id'] = remote_request.uuid
@@ -352,7 +352,7 @@ def confirm_remote_friend(request, uuid):
 	import os
 	os.environ['http_proxy']=''
 	url_request = remote_request.host + "friendrequest"
-        url_request = "http://cs410.ualberta.ca:41078/friendrequest"
+        #url_request = "http://cs410.ualberta.ca:41078/friendrequest"
 	print url_request
 	req = urllib2.Request(url_request)
         #req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
@@ -361,10 +361,10 @@ def confirm_remote_friend(request, uuid):
 		response = urllib2.urlopen(req)#,# json.dumps(data), 5)
 	except urllib2.HTTPError, e:
     		print(str(e.code))
+		return HttpResponse(json.dumps(data),content_type="application/json")
 	except urllib2.URLError, e:
     		print(str(e.reason))
-	except httplib.HTTPException, e:
-    		print('HTTPException')
+		return HttpResponse(json.dumps(data),content_type="application/json")
 	except:
 		print("OH SHIT")
 		pass

@@ -229,7 +229,7 @@ def create_post(request, post_id=None):
             newPost.save()
             return HttpResponseRedirect('/mynode/stream')
         return render(request, 'create_post.html', {'PostForm': newPostForm})
-        #TODO: update post
+    #TODO: update post
         return redirect('app.views.stream')
 
 
@@ -252,8 +252,7 @@ def friends(request):
     friend_requests = Friend.objects.filter(accepted = 0, receiver=request.user.id)
     followers = Friend.objects.filter(accepted = 2, receiver=request.user.id)
     following = Friend.objects.filter(accepted = 0, requester=request.user.id)
-    friends = Friend.objects.filter(accepted = 1, receiver=request.user.id)
-    print friend_requests;
+    friends = Friend.objects.filter(accepted = 1, requester=request.user.id)
 
     remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
     remote_following = RemoteFriends.objects.filter(local_accepted=True, remote_accepted=False, local_receiver=request.user)
@@ -265,9 +264,30 @@ def friends(request):
             'user': user, 'remote_follower':remote_followers, 'remote_following':remote_following, 'remote_friends':remote_friends}
     return render(request, 'friend_page.html', data)
 
-# Not accepting a friend request that is sent to you
 @login_required
-def delete_friend(request, follower_id):
+def create_friend(request):
+    #@TODO Check if this will make them friends
+    current_user = User.objects.get(id=request.user.id)
+    receiver_name = request.POST['receiver_display_name']
+    #print receiver_name
+
+    #TODO: Fancy up the "Person does not exists" code.
+    try:
+        receiver = User.objects.get(username=receiver_name)
+    except User.DoesNotExist:
+        return redirect('app.views.friends')
+
+    #try:
+    friend = Friend.objects.create(receiver=receiver, requester=current_user)
+    friend.save()
+    #except IntegrityError:
+    #    friendship = Friend.objects.get(requester=current_user, receiver=receiver_name)
+    #    friendship.accepted = 0
+    #    return redirect('app.views.friends')
+    return redirect('app.views.friends')
+
+@login_required
+def deny_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
     sender = User.objects.get(id=follower_id)
     friendship = Friend.objects.get(requester=sender, receiver=current_user)
@@ -302,29 +322,23 @@ def confirm_friend(request, follower_id):
 
     return redirect('app.views.friends')
 
-
 @login_required
-def create_friend(request):
-    #@TODO Check if this will make them friends
+def delete_friend(request, receiver_id):
     current_user = User.objects.get(id=request.user.id)
-    receiver_name = request.POST['receiver_display_name']
-    #print receiver_name
+    receiver = User.objects.get(id=receiver_id)
+    # Delete users half of the friendship
+    friendship = Friend.objects.get(requester=current_user, receiver=receiver)
+    friendship.delete()
 
-    #TODO: Fancy up the "Person does not exists" code.
+    # Set other half of friendship to 'denied', if it exists
     try:
-        receiver = User.objects.get(username=receiver_name)
-    except User.DoesNotExist:
+        friendship2 = Friend.objects.get(requester=receiver, receiver=current_user)
+        friendship2.accepted = 2
+        friendship2.save()
+    except:
         return redirect('app.views.friends')
-        
-    #try:
-    friend = Friend.objects.create(receiver=receiver, requester=current_user)
-    friend.save()
-    #except IntegrityError:
-    #    friendship = Friend.objects.get(requester=current_user, receiver=receiver_name)
-    #    friendship.accepted = 0
-    #    return redirect('app.views.friends')
+    
     return redirect('app.views.friends')
-
 
 def image(request, image_id=None):
     if request.method == 'GET':
