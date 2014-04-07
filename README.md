@@ -4,6 +4,7 @@ CMPUT410W14-Group-Project
 **Required Modules:**<br>
     PIL<br>
     markdown2<br>
+    Requests<br>
     SQLite, but local can work on MySql<br>
   
 **VM Instructions:**
