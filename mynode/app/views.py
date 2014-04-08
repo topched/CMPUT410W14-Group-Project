@@ -142,10 +142,6 @@ def stream(request):
 
     #adding github posts
     if len(vals) > 0:
-
-        
-        print gitJson
-        print "%s vals returned" % len(vals)
         display_count = 10
         if(len(vals) < display_count):
             display_count = len(vals) - 1
