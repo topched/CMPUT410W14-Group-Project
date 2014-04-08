@@ -85,7 +85,10 @@ def author_profile(request, author_id):
     author = User.objects.get(id=author_id)
     app_user = Users.objects.get(user_id=author.id)
 
-    posts = Post.objects.filter(author=author_id, visibility=1)
+    posts = Post.visible_posts.getAllVisibleByAuthor(request.user.id, author=author_id)
+    
+    # Sorts posts from newest to oldest
+    posts.sort(key=lambda y: y.post_date, reverse=True)
 
     if request.method == 'GET':
         return render_to_response('author_profile_page.html', {'author': author, 'app_user': app_user, 'posts': posts}, context)
@@ -133,7 +136,7 @@ def stream(request):
     current_user = User.objects.get(id=request.user.id)
     app_user = Users.objects.get(user_id=current_user.id)
     
-    posts = Post.visible_posts.getAllVisible(request.user.id)
+    posts = Post.visible_posts.getAllFollowing(request.user.id)
     get_comments = Comment.objects.all()
     comments = []
     for comment_object in get_comments:

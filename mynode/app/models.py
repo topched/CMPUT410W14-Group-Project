@@ -31,6 +31,33 @@ class PostManager(models.Manager):
 
         return visiblePosts
     
+    def getAllFollowing(self, requester):
+        posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
+        visiblePosts = list()
+
+        permissionHelper = Permissions()
+
+        for post_id in posts:
+            post = permissionHelper.wantToSeePost(post_id, requester)
+            if(post is not None):
+                visiblePosts.append(post)
+
+        return visiblePosts
+    
+    def getAllVisibleByAuthor(self, requester, author):
+        posts = super(PostManager, self).get_queryset().filter(author=author).values_list('id',flat=True)
+        visiblePosts = list()
+
+        permissionHelper = Permissions()
+
+        for post_id in posts:
+            post = permissionHelper.canSeePost(post_id, requester)
+            if(post is not None):
+                visiblePosts.append(post)
+
+        return visiblePosts
+    
+    
     def getAllVisibleRemote(self, requester):
         posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
         visiblePosts = list()
@@ -194,10 +221,30 @@ class Permissions():
                 return post
             else:
                 return None
-        elif(self.authLevel(post.author.id, requester) >= post.visibility):
+        
+        authLvl = self.authLevel(post.author.id, requester)
+        if( authLvl >= post.visibility):
             return post
         else:
             return None
+    
+    def wantToSeePost(self, post_id, requester):
+        post = Post.objects.get(id=post_id)
+        if(post.recipient is not None):
+            if(post.recipient.id == requester or post.author.id == requester):
+                return post
+            else:
+                return None
+        
+        authLvl = self.authLevel(post.author.id, requester)
+        if( authLvl >= post.visibility):
+            if(authLvl > 2):
+                return post
+            else:
+                if( len(Friend.objects.filter(requester=requester, receiver=post.author.id).exclude(accepted=1)) > 0):
+                    return post
+                else:
+                    return None
 
     def canSeeImage(self, image_id, requester):
         image = Image.objects.get(id=image_id)
