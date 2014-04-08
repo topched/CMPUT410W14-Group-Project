@@ -179,7 +179,8 @@ def stream(request):
                 tmpPost = Post()
                 tmpPost.author = remoteUser
                 tmpPost.id = val['posts'][x]['guid']
-                tmpPost.content = val['posts'][x]['content']
+                tmpPost.description = "MYREMOTEKEY"
+		tmpPost.content = val['posts'][x]['content']
 
                 tmpComments = val['posts'][x]['comments']
 
