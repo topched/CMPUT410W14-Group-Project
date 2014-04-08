@@ -121,7 +121,6 @@ def stream(request):
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
     vals = json.loads(gitJson)
-    print "getting github stuff %s" % gitJson
 
     #adding github posts
     if len(vals) > 0:
