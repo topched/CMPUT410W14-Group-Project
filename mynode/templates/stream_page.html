@@ -201,7 +201,7 @@ $('#myTab a[href="#image"]').tab('show');
 
 {% if post.description != "MYGITKEY-PushEvent" %}
 <div class="row">
-  <div class="stream_buttons">
+  <div class="stream_buttons buttons">
     <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
       {% csrf_token %}
       {% if post.author == current_user %}
@@ -216,7 +216,7 @@ $('#myTab a[href="#image"]').tab('show');
     <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
       {% csrf_token %}
       <textarea class="form-control" name='content' id="post_content"></textarea></br>
-      <div class="comment_buttons">
+      <div class="comment_buttons buttons">
         <input class="btn btn-sm btn-primary" type="button" value="Cancel" id='cancel-button'/>
         <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Comment"/>
       </div>
