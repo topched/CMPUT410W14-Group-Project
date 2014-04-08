@@ -147,6 +147,8 @@
 
   {% if post.description == "MYGITKEY-PushEvent" %}
   <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
+  {% elif post.description == "MYREMOTEKEY" %}
+  <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
   {% else %}
   <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ app_user.avatar }}" width="55" height="55"></a></div>
   {% endif %}
@@ -181,7 +183,12 @@
 
   <ul class="replies">
     <li class="cmmnt">
-    <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
+    {% if post.description == "MYREMOTEKEY" %}
+        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
+    {% else %}
+        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
+    {% endif %}
+
     <div class="cmmnt-content">
       <header>{{ comment.author.username }} - <span class="pubdate">{{ comment.post_date }}</span></header>
       <p>{{ comment.content }}</p>
@@ -227,7 +234,7 @@
 
 <!-- Dynamic Comments -->
 <script type="text/javascript">
-$.ajaxSetup({ 
+$.ajaxSetup({
      beforeSend: function(xhr, settings) {
          function getCookie(name) {
              var cookieValue = null;
@@ -248,7 +255,7 @@ $.ajaxSetup({
              // Only send the token to relative URLs i.e. locally.
              xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
          }
-     } 
+     }
 });
 
 $(function () {
@@ -288,12 +295,12 @@ $('#myTab a[href="#advanced"]').on('click', function(){
 $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
   $('#advanced').html(data);
   });
-    });  
+    });
 $('#myTab a[href="#image"]').on('click', function(){
 $.get('/mynode/stream/image/', $(this).serialize(), function(data){
   $('#image').html(data);
   });
-    });  
+    });
 /* Can be use to change the ugly pre-made forms
    $('#myTab a[href="#image"]').on('click', function(){
    $.get('/mynode/stream/image/', $(this).serialize(), function(data){
@@ -301,7 +308,7 @@ $.get('/mynode/stream/image/', $(this).serialize(), function(data){
        $(this).addClass('form-control');
    });
    });
-   });  
+   });
  */
   </script>
 </body>
