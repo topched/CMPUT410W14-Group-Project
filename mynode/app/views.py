@@ -109,7 +109,10 @@ def stream(request):
     app_user = Users.objects.get(user_id=current_user.id)
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
-    comments = Comment.objects.all()
+    get_comments = Comment.objects.all()
+    comments = []
+    for comment_object in get_comments:
+	comments.append(comment_object)
     #print comments
 
     #get the github json
@@ -175,27 +178,28 @@ def stream(request):
 
                 tmpPost = Post()
                 tmpPost.author = remoteUser
-                tmpPost.id = 99999999999
+                tmpPost.id = val[x]['guid']
                 tmpPost.content = val[x]['content']
 
-                comments = val[x]['comments']
+                tmpComments = val[x]['comments']
 
-                for y in range(0, len(comments)):
+                for y in range(0, len(tmpComments)):
 
                     tmpComment = Comment()
                     tmpComment.parent_post = tmpPost
                     tmpComment.author = remoteUser
-                    tmpComment.content = comments[y]['comment']
-                    comments.apped(tmpComment)
+                    tmpComment.content = tmpComments[y]['comment']
+		    print tmpComment.content
+                    comments.append(tmpComment)
 
-                posts.append(post)
+                posts.append(tmpPost)
 
 
 
     # Sorts posts from newest to oldest
-    posts.sort(key=lambda y: y.post_date, reverse=True)
+    #posts.sort(key=lambda y: y.post_date, reverse=True)
 
-
+    print comments
     data = {'posts': posts, 'comments': comments, 'current_user': current_user, 'app_user': app_user}
     return render_to_response('stream_page.html', data, context)
 
@@ -253,7 +257,7 @@ def get_remote_public_posts(hostname):
         req = urllib2.Request(url)
         resp = urllib2.urlopen(req)
         post = resp.read()
-        return post
+        return post['posts']
     except:
         return None
 
