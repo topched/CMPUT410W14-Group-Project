@@ -118,7 +118,7 @@
     </select>
 
     <div class=buttons>
-      <input type="submit" class="btn btn-primary" id="post" name="post" value="Post"/>
+      <input type="submit" class="btn btn-primary" id="simple_post" name="post" value="Post"/>
     </div>
 
   </form>
@@ -195,7 +195,7 @@
   </li>
 </ul>
 
-{% if post.description != "MYGITKEY-PushEvent" %}
+{% if post.description != "MYGITKEY-PushEvent" and post.description != "MYREMOTEKEY" %}
 <div class="row">
   <div class="stream_buttons">
     <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
@@ -206,7 +206,6 @@
       <input class="btn btn-sm btn-primary" type="button" value="Comment" id="comment_button"/>
     </form>
   </div>
-  {% endif %}
 
   <div class="comment_area" style="display:none">
     <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
@@ -218,6 +217,7 @@
       </div>
     </form>
   </div>
+  {% endif %}
 </div>
 </div>
 </div>
@@ -227,7 +227,29 @@
 
 <!-- Dynamic Comments -->
 <script type="text/javascript">
-
+$.ajaxSetup({ 
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                     // Does this cookie string begin with the name we want?
+                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                 }
+             }
+         }
+         return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             // Only send the token to relative URLs i.e. locally.
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     } 
+});
 
 $(function () {
 
@@ -265,6 +287,11 @@ $('.result').html(data);
 $('#myTab a[href="#advanced"]').on('click', function(){
 $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
   $('#advanced').html(data);
+  });
+    });  
+$('#myTab a[href="#image"]').on('click', function(){
+$.get('/mynode/stream/image/', $(this).serialize(), function(data){
+  $('#image').html(data);
   });
     });  
 /* Can be use to change the ugly pre-made forms

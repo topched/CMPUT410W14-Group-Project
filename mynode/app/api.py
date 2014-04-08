@@ -63,19 +63,30 @@ def get_post(post_id):
     # Fill out the post information
     #TODO: Fix the TODO's in the JSON/below
     posts_json['title'] = post.title
-    posts_json['source'] = "TODO" #TODO
-    posts_json['origin'] = "TODO" #TODO
+    posts_json['source'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
+    posts_json['origin'] = "http://cs410.cs.ualberta.ca:41068/" #TODO
     posts_json['description'] = post.description
     posts_json['content'] = post.content
     posts_json['categories'] = {}
     posts_json['pubDate'] = str(post.post_date)
     posts_json['guid'] = post.uuid
-    posts_json['visibility'] = 'TODO' #TODO
+    visibility = post.visibility
+    if visibility == 1:	
+    	posts_json['visibility'] = 'PUBLIC'
+    elif visibility == 2:
+	posts_json['visibility'] = 'SERVERONLY'
+    elif visibility == 3:
+	posts_json['visibility'] = 'FOAF'
+    elif visibility == 4:
+	posts_json['visibility'] = 'FRIENDS'
+    elif visibility == 5:
+	posts_json['visibility'] = 'PRIVATE'
+
     content_type = post.content_type
     if content_type == 1:
         posts_json['content-type'] = 'text/plain'
     elif content_type == 2:
-        posts_json['content-type'] = 'text/markdown'
+        posts_json['content-type'] = 'text/x-markdown'
     elif content_type == 3:
         posts_json['content-type'] = 'text/html'
 
@@ -362,27 +373,29 @@ def confirm_remote_friend(request, uuid):
         data['author'] = author
         data['friend'] = friend
 
-	import os
-	os.environ['http_proxy']=''
+	#import os
+	#os.environ['http_proxy']=''
 	url_request = remote_request.host + "friendrequest"
         #url_request = "http://cs410.ualberta.ca:41078/friendrequest"
 	print url_request
-	req = urllib2.Request(url_request)
+	#req = urllib2.Request(url_request)
         #req = urllib2.Request("http://127.0.0.1:8001/service/friendrequest")
 #        req.add_header('Content-Type', 'application/json')
-	try:
-		response = urllib2.urlopen(req)#,# json.dumps(data), 5)
-	except urllib2.HTTPError, e:
-    		print(str(e.code))
-		return HttpResponse(json.dumps(data),content_type="application/json")
-	except urllib2.URLError, e:
-    		print(str(e.reason))
-		return HttpResponse(json.dumps(data),content_type="application/json")
-	except:
-		print("OH SHIT")
-		pass
+	headers = {'Content-Type':'application/json'}
+	r = requests.post(url_request,data=json.dumps(data),headers=headers)
+#	try:
+#		response = urllib2.urlopen(req)#,# json.dumps(data), 5)
+#	except urllib2.HTTPError, e:
+#    		print(str(e.code))
+#		return HttpResponse(json.dumps(data),content_type="application/json")
+#	except urllib2.URLError, e:
+#    		print(str(e.reason))
+#		return HttpResponse(json.dumps(data),content_type="application/json")
+#	except:
+#		print("OH SHIT")
+#		pass
  
-        if response.getcode() == 200:
+        if r.status_code == 200 or r.status_code ==201:
              remote_request.local_accepted = True
              remote_request.save()
 
@@ -390,8 +403,8 @@ def confirm_remote_friend(request, uuid):
 #	r = requests.get(url_request,data=json.dumps(data),headers=headers)
 #	print r.response
 
-        return HttpResponse(json.dumps(data), content_type="application/json")
-        #return redirect('app.views.friends')
+#        return HttpResponse(json.dumps(data), content_type="application/json")
+        return redirect('app.views.friends')
     #except:
     #    # Do something here
     #    return redirect('app.views.friends')

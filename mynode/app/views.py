@@ -110,11 +110,17 @@ def stream(request):
     app_user = Users.objects.get(user_id=current_user.id)
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
+    get_comments = Comment.objects.all()
+    comments = []
+    for comment_object in get_comments:
+	comments.append(comment_object)
+    #print comments
 
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
 
+    #adding github posts
     if gitJson is not None:
 
         vals = json.loads(gitJson)
@@ -154,11 +160,47 @@ def stream(request):
                 post.title = gitItem['type']
                 posts.append(post)
 
+
+    #get public posts from other servers
+    servers = RemoteServers.objects.filter(active=True)
+    remoteUser = User()
+    remoteUser.username = "Remote User"
+    remoteUser.first_name = "Remote"
+    remoteUser.last_name = "User"
+    for server in servers:
+
+        remoteJson = get_remote_public_posts(server.hostname)
+        if remoteJson is not None:
+
+            val = json.loads(remoteJson)
+            for x in range(0, len(val['posts'])):
+
+                #print val['posts'][x]['content']
+
+                tmpPost = Post()
+                tmpPost.author = remoteUser
+                tmpPost.id = val['posts'][x]['guid']
+                tmpPost.description = "MYREMOTEKEY"
+                tmpPost.content = val['posts'][x]['content']
+                tmpPost.post_date = datetime.datetime.strptime(val['posts'][x]['pubDate'])
+                tmpComments = val['posts'][x]['comments']
+
+                for y in range(0, len(tmpComments)):
+
+                    tmpComment = Comment()
+                    tmpComment.parent_post = tmpPost
+                    tmpComment.author = remoteUser
+                    tmpComment.content = tmpComments[y]['comment']
+                    comments.append(tmpComment)
+
+                posts.append(tmpPost)
+
+
+
     # Sorts posts from newest to oldest
     posts.sort(key=lambda y: y.post_date, reverse=True)
-    comments = Comment.objects.all()
-    #print comments
 
+    #print comments
     data = {'posts': posts, 'comments': comments, 'current_user': current_user, 'app_user': app_user}
     return render_to_response('stream_page.html', data, context)
 
@@ -196,7 +238,7 @@ def github_feed(username):
 
     #events received url
     url = "https://api.github.com/users/" + username + "/received_events"
-    print url
+    #print url
     req = urllib2.Request(url)
 
     try:
@@ -208,13 +250,22 @@ def github_feed(username):
 
     return None
 
+def get_remote_public_posts(hostname):
+
+    url = hostname + "posts"
+
+    try:
+        req = urllib2.Request(url)
+        resp = urllib2.urlopen(req)
+        post = resp.read()
+        return post
+    except:
+        return None
+
 
 #Is this actually working?
 def post_details(request, post_id):
     context = RequestContext(request)
-    #if request.method == 'POST':
-    # deletin
-    # post.edeskajhdfasf
     if request.method == 'DELETE' or request.POST.get('_method') == 'DELETE':
         return post_delete(request, post_id)
     if request.method == 'PUT':
