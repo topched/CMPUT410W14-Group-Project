@@ -172,27 +172,26 @@ def stream(request):
         if remoteJson is not None:
 
             val = json.loads(remoteJson)
-	    #print val
             for x in range(0, len(val['posts'])):
-                print val['posts'][x]['content']
-		print "============\n"
-		#tmpPost = Post()
-                #tmpPost.author = remoteUser
-                #tmpPost.id = val[x]['guid']
-                #tmpPost.content = val[x]['content']
 
-                #tmpComments = val[x]['comments']
+                #print val['posts'][x]['content']
 
-                #for y in range(0, len(tmpComments)):
+                tmpPost = Post()
+                tmpPost.author = remoteUser
+                tmpPost.id = val['posts'][x]['guid']
+                tmpPost.content = val['posts'][x]['content']
 
-                 #   tmpComment = Comment()
-                 #   tmpComment.parent_post = tmpPost
-                 #   tmpComment.author = remoteUser
-                 #   tmpComment.content = tmpComments[y]['comment']
-		 #   print tmpComment.content
-                 #   comments.append(tmpComment)
+                tmpComments = val['posts'][x]['comments']
 
-                #posts.append(tmpPost)
+                for y in range(0, len(tmpComments)):
+
+                    tmpComment = Comment()
+                    tmpComment.parent_post = tmpPost
+                    tmpComment.author = remoteUser
+                    tmpComment.content = tmpComments[y]['comment']
+                    comments.append(tmpComment)
+
+                posts.append(tmpPost)
 
 
 
