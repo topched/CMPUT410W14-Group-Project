@@ -78,6 +78,24 @@ def register(request):
 # POST: Updates any changed data for the user
 @login_required
 @user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
+def author_profile(request, author_id):
+    context = RequestContext(request)
+    if request.user.is_authenticated():
+        auth_user = request.user
+
+    author = User.objects.get(id=author_id)
+    app_user = Users.objects.get(user_id=author.id)
+
+    posts = Post.objects.filter(author=author_id, visibility=1)
+
+    if request.method == 'GET':
+        return render_to_response('author_profile_page.html', {'author': author, 'app_user': app_user, 'posts': posts}, context)
+
+# Profile View for modifying your profile
+# GET: Renders the profile page with the data from the logged in user
+# POST: Updates any changed data for the user
+@login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def profile(request):
     context = RequestContext(request)
     if request.user.is_authenticated():

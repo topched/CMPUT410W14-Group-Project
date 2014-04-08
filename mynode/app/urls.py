@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^stream/post/(\d+)/comments/', views.create_comment),
     url(r'^stream/image/(\d+)$',views.image),
     url(r'^stream/image/?$',views.image),
+    url(r'^author/(?P<author_id>\w+)/$', views.author_profile),
 
     url(r'^friends/$', views.friends),
     url(r'^friends/friend/create/$', views.create_friend),

@@ -98,7 +98,7 @@
       <div class="row">
         <div class="col-md-2 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-          <strong>{{ follower_request.requester.username }}</strong>
+          <a href="{% url 'app.views.author_profile' follower_request.requester.id %}"><strong>{{ follower_request.requester.username }}</strong></a>
         </div>
         <div class="col-md-1 col-md-offset-2">
 
@@ -159,7 +159,7 @@
           {% csrf_token %}
           <div class="col-md-2 col-md-offset-3">
             <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-            <strong>{{ follow.receiver.username }}</strong>
+              <a href="{% url 'app.views.author_profile' follow.receiver.id %}"><strong>{{ follow.receiver.username }}</strong></a>
           </div>
           <div class="col-md-1 col-md-offset-2">
             <button type="submit" name=delete class="btn btn-xs btn-warning follow_button">Unfollow</button>
@@ -177,7 +177,10 @@
       <div class="row">
         <div class="col-md-2 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-          <strong>{{ follow.displayname }} - {{ follow.host }}</strong>
+          <form action="{% url 'app.views.author_profile_page' %}" method="POST">
+            <a id="author"> <strong>{{ follow.displayname }}</strong></a>
+            <strong> - {{ follow.host }}</strong>
+          </form>
         </div>
         <div class="col-md-1 col-md-offset-2">
           <button type="submit" name=delete class="btn btn-xs btn-warning follow_button">Unfollow</button>
@@ -199,7 +202,7 @@
     <div class="row">
       <div class="col-md-2 col-md-offset-3">
         <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-        <strong>{{ follow.requester.username }}</strong>
+        <a href="{% url 'app.views.author_profile' follow.receiver.id %}"><strong>{{ follow.requester.username }}</strong></a>
       </div>
     </div>
     <!-- </form> -->
@@ -215,9 +218,6 @@
     <div class="col-md-2 col-md-offset-3">
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
       <strong>{{ follow.displayname }} - {{ follow.host }}</strong>
-    </div>
-    <div class="col-md-1 col-md-offset-2">
-      <button type="submit" name=delete class="btn btn-xs btn-warning">Unfollow</button>
     </div>
   </div>
   <!-- </form> -->
@@ -238,7 +238,7 @@
     {% csrf_token %}
     <div class="col-md-2 col-md-offset-3">
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
-      <strong>{{ friend.receiver.username }}</strong>
+      <a href="{% url 'app.views.author_profile' friend.receiver.id %}"><strong>{{ friend.receiver.username }}</strong></a>
     </div>
     <div class="col-md-1 col-md-offset-2">
       <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
@@ -267,5 +267,11 @@
 {% endfor %}
  </div>
 </div>
+<script>
+  $('#author').on('click', function(){
+    $.get('/mynode/author/', $(this).serialize(), function(data){
+    });
+  });  
+</script>
 </body>
 </html>
