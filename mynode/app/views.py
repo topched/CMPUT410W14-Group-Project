@@ -109,6 +109,8 @@ def stream(request):
     app_user = Users.objects.get(user_id=current_user.id)
     #print "getting posts visible to %s" % request.user.id
     posts = Post.visible_posts.getAllVisible(request.user.id)
+    comments = Comment.objects.all()
+    #print comments
 
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
@@ -171,18 +173,28 @@ def stream(request):
 
             for x in range(0, len(val)):
 
-                post = Post()
-                post.author = remoteUser
-                post.id = 99999999999
-                post.content = val[x]['content']
-                posts(append)
+                tmpPost = Post()
+                tmpPost.author = remoteUser
+                tmpPost.id = 99999999999
+                tmpPost.content = val[x]['content']
+
+                comments = val[x]['comments']
+
+                for y in range(0, len(comments)):
+
+                    tmpComment = Comment()
+                    tmpComment.parent_post = tmpPost
+                    tmpComment.author = remoteUser
+                    tmpComment.content = comments[y]['comment']
+                    comments.apped(tmpComment)
+
+                posts.append(post)
 
 
 
     # Sorts posts from newest to oldest
     posts.sort(key=lambda y: y.post_date, reverse=True)
-    comments = Comment.objects.all()
-    #print comments
+
 
     data = {'posts': posts, 'comments': comments, 'current_user': current_user, 'app_user': app_user}
     return render_to_response('stream_page.html', data, context)
