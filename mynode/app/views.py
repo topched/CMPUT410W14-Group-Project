@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, logout
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from app.models import *
 from app.modelforms import *
@@ -406,13 +407,19 @@ def delete_friend(request, receiver_id):
 
     return redirect('app.views.friends')
 
+@login_required
 def image(request, image_id=None):
     if request.method == 'GET':
         if (image_id is None):
             imageForm = ImageForm()
             return render(request, 'image_upload.html', {'ImageForm': imageForm})
         else:
-            return render(request, 'view_image.html', {'Image': Image.objects.get(id=image_id)})
+            print request.user
+            img = Image.visibile_images.get(image_id, request.user.id)
+            if(img is not None):
+                return render(request, 'view_image.html', {'Image': img})
+            else:
+                raise PermissionDenied
     elif request.method == 'POST':
         newImageForm = ImageForm(request.POST, request.FILES)
         if (newImageForm.is_valid()):

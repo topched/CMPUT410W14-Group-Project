@@ -14,6 +14,10 @@ from PIL import Image
     ##############
 
 class PostManager(models.Manager):
+    def get(self, post_id, requester):
+        permissionHelper = Permissions()
+        return permissionHelper.canSeePost(post_id, requester)
+    
     def getAllVisible(self, requester):
         posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
         visiblePosts = list()
@@ -28,12 +32,16 @@ class PostManager(models.Manager):
         return visiblePosts
 
 class ImageManager(models.Manager):
+    def get(self, image_id, requester):
+        permissionHelper = Permissions()
+        return permissionHelper.canSeeImage(image_id, requester)
+        
     def getAllVisible(self, requester):
         images = super(ImageManager, self).get_queryset().values_list('id',flat=True)
         visibleImages = list()
-
+        
         permissionHelper = Permissions()
-
+        
         for image_id in images:
             image = permissionHelper.canSeeImage(image_id, requester)
             if(image is not None):
@@ -90,7 +98,10 @@ class Image(models.Model):
     author = models.ForeignKey(User, db_column='author')
     image = models.ImageField(upload_to='images')
     name = models.CharField(blank=False, null=False, max_length=256)
-    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    visibility = models.IntegerField(blank=False, null=False, default=1, choices=VISIBILITY_CHOICES)
+    
+    objects = models.Manager()
+    visibile_images = ImageManager()
 
     class Meta:
         app_label = 'app'
@@ -128,8 +139,8 @@ class Post(models.Model):
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
     content = models.TextField(blank=True)
-    content_type = models.IntegerField(blank=True, null=True, choices=CONTENT_CHOICES)
-    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    content_type = models.IntegerField(blank=False, null=False, default=1, choices=CONTENT_CHOICES)
+    visibility = models.IntegerField(blank=False, null=False, default=1, choices=VISIBILITY_CHOICES)
     uuid = UUIDField(version=4, unique=True)
     post_date = models.DateTimeField(auto_now_add=True)
 
@@ -177,7 +188,7 @@ class Permissions():
     def canSeeImage(self, image_id, requester):
         image = Image.objects.get(id=image_id)
 
-        if(self.authLevel(image.author, requester) >= image.visibility):
+        if(self.authLevel(image.author.id, requester) >= image.visibility):
             return image
         else:
             return None
