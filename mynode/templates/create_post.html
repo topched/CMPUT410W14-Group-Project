@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-     {% if ModelForm.errors %}
+    {% if ModelForm.errors %}
     {% for field in ModelForm %}
     {% for error in field.errors %}
     <div class="alert alert-error">
@@ -27,9 +27,9 @@
             {{ PostForm.recipient }}
             {{ PostForm.visibility }}
             {{ PostForm.content_type}}
-        <div class=buttons>
-        <input type="submit" class="btn btn-primary" id="post" value="Post"/>
-        </div>
+            <div class=buttons>
+                <input type="submit" class="btn btn-primary" id="post" value="Post"/>
+            </div>
         </div>
     </form>
 </html>

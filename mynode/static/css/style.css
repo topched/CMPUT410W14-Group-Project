@@ -22,6 +22,14 @@ textarea {
     float: right;
     margin: 5px 0px 0px 0px;
 }
+.horizontalcenter {
+    margin-left:auto;
+    margin-right:auto;
+    width:60%;
+}
+.imagebutton{
+    float:left;
+}
 /* Special class on .container surrounding .navbar, used for positioning it into place. */
 .navbar-wrapper {
     position: absolute;
@@ -73,12 +81,7 @@ img.post_image {
 .follow_button {
     margin-top: 6.5px;
 }
-table tr:nth-child(4){
-    display: none;
-}
 .profile-pic-box {
-
-
   background: #FFF;
   padding: 14px 20px;
   -webkit-border-radius: 4px;
@@ -87,14 +90,11 @@ table tr:nth-child(4){
   -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
   -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
   box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-
 }
 
 .profile-details{
-
   display: block;
   padding-left: 10px;
-
 }
 
 
@@ -112,7 +112,6 @@ table tr:nth-child(4){
 .penguinAvatar{background-image:url(/static/img/penguinAvatar.png);}
 .cowAvatar{background-image:url(/static/img/cowAvatar.png);}
 .bunnyAvatar{background-image:url(/static/img/bunnyAvatar.png);}
-
 
 .avatar-selector input:active +.come-to-life{opacity: .9;}
 .avatar-selector input:checked +.come-to-life{

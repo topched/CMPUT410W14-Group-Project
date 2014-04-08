@@ -15,11 +15,20 @@
     </div>
     {% endfor %}
     {% endif %}
-    <form enctype="multipart/form-data" method="post" action="/mynode/stream/image">
-        {% csrf_token %}
-        <table>
-            {{ ImageForm }}
-        </table>
-        <input type="submit" class="btn btn-primary" value="Upload"/>
-    </form>
+    </br>
+    <div class="horizontalcenter">
+        <form method="post" action="/mynode/stream/image" enctype="multipart/form-data" >
+            {% csrf_token %}
+                <div class="imagebutton">
+                    {{ ImageForm.image }}
+                </div>
+            <div class="form-inline">
+                <div class="form-group">
+                    {{ ImageForm.name }}
+                    {{ ImageForm.visibility}}
+                    <input type="submit" class="btn btn-primary" style="width:100px;" value="Upload"/>
+                </div>
+            </div>
+        </form>
+    </div>
 </html>

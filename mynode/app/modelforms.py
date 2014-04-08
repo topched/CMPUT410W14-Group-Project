@@ -6,6 +6,9 @@ from app.models import *
 attrs_dict = {'class': 'required'}
 
 class ImageForm(ModelForm):
+    name = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows':1, 'placeholder':'Image name'}))
+    image = forms.ImageField(widget=forms.FileInput(attrs={'style':'padding-top=15px'}))
+    visibility = forms.ChoiceField(choices=Image.VISIBILITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control', 'style':'width:150px;',}))
     class Meta:
         model = Image
         exclude = ('author',)
