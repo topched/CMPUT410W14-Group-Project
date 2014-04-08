@@ -156,9 +156,9 @@ $('#myTab a[href="#image"]').tab('show');
 
   <div class="cmmnt-content">
     {% if post.description == "MYGITKEY-PushEvent" %}
-    <header> {{ post.author.username }} - <span class="pubdate">{{ post.title }}</span></header>
+    <header>  <a href="{% url 'app.views.author_profile' post.author.id %}">{{ post.author.username }}</a> - <span class="pubdate">{{ post.title }}</span></header>
     {% else %}
-    <header>{{ post.author.username }} - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
+    <header><a href="{% url 'app.views.author_profile' post.author.id %}">{{ post.author.username }}</a> - <span class="pubdate">{{ post.title }} - {{post.post_date }}</span></header>
     {% endif %}
     <p>
     {% if post.content_type == 2 %}
@@ -186,7 +186,7 @@ $('#myTab a[href="#image"]').tab('show');
     <li class="cmmnt">
     <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
     <div class="cmmnt-content">
-      <header>{{ comment.author.username }} - <span class="pubdate">{{ comment.post_date }}</span></header>
+      <header> <a href="{% url 'app.views.author_profile' comment.author.id %}">{{ comment.author.username }}</a> - <span class="pubdate">{{ comment.post_date }}</span></header>
       <p>{{ comment.content }}</p>
     </div>
     </li>
@@ -216,8 +216,8 @@ $('#myTab a[href="#image"]').tab('show');
       {% csrf_token %}
       <textarea class="form-control" name='content' id="post_content"></textarea></br>
       <div class="comment_buttons">
-        <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Post"/>
         <input class="btn btn-sm btn-primary" type="button" value="Cancel" id='cancel-button'/>
+        <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Comment"/>
       </div>
     </form>
   </div>
@@ -228,7 +228,6 @@ $('#myTab a[href="#image"]').tab('show');
 </br></br>
 
 
-<!-- Dynamic Comments -->
 <script type="text/javascript">
 $.ajaxSetup({ 
      beforeSend: function(xhr, settings) {
@@ -254,14 +253,19 @@ $.ajaxSetup({
      } 
 });
 
+/* Comment show */
+$(document).on("click", "#comment_button", function() {
+    $(this).closest(".row").find(".comment_area").show();
+    $(this).closest(".row").find(".comment_buttons").show();
+    $(this).closest(".row").find(".stream_buttons").hide();
+});
 
-
-/* Comment show/hide */
+/* Comment hide */
 $(document).on("click", "#cancel-button", function() {
     $(this).closest(".row").find(".comment_area").hide();
     $(this).closest(".row").find(".comment_buttons").hide();
     $(this).closest(".row").find(".stream_buttons").show();
-    });
+});
 
 //This doesnt work yet -- still need to finish
 $(document).on("keyup", "#post_content", function() {
