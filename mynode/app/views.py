@@ -136,7 +136,7 @@ def stream(request):
     current_user = User.objects.get(id=request.user.id)
     app_user = Users.objects.get(user_id=current_user.id)
     
-    posts = Post.visible_posts.getAllFollowing(request.user.id)
+    posts = Post.visible_posts.getAllVisible(request.user.id)
     get_comments = Comment.objects.all()
     comments = []
     for comment_object in get_comments:
