@@ -25,6 +25,19 @@ class PostManager(models.Manager):
         permissionHelper = Permissions()
 
         for post_id in posts:
+            post = permissionHelper.canSeePostRemote(post_id, requester)
+            if(post is not None):
+                visiblePosts.append(post)
+
+        return visiblePosts
+    
+    def getAllVisibleRemote(self, requester):
+        posts = super(PostManager, self).get_queryset().values_list('id',flat=True)
+        visiblePosts = list()
+
+        permissionHelper = Permissions()
+
+        for post_id in posts:
             post = permissionHelper.canSeePost(post_id, requester)
             if(post is not None):
                 visiblePosts.append(post)
@@ -223,3 +236,17 @@ class Permissions():
             return True
         else:
             return False
+    
+    def canSeePostRemote(self, post_id, requester):
+        post = Post.objects.get(id=post_id)
+        if (post.visibility == Post.PRIVATE):
+            return None
+        elif(post.visibility == Post.PUBLIC):
+            return post
+        
+        try:
+            RemoteFriends.objects.get(uuid=requester, local_receiver=post.author.id, local_accepted=True, remote_accepted=True)
+        except RemoteFriends.DoesNotExist:
+            return None;
+        
+        return post

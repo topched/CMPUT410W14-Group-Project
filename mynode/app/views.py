@@ -119,6 +119,7 @@ def stream(request):
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
+    print "getting github stuff from %s" % tmpUser.git_url
 
     #adding github posts
     if gitJson is not None:
