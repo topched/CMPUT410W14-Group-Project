@@ -175,12 +175,17 @@ def posts(request):
     return HttpResponse(status=403)
 
 # Get all the posts visible to the current authenticated user
+@csrf_exempt
 def author_posts(request):
     if request.method == 'GET':
-        response_json = []
+        try:
+	    remote_uuid = request.GET['id']
+	except: 
+	    return HttpResponse(status=403)
+	response_json = []
         return_json = {}
         # Only posts visible for this user
-        post_set = Post.visible_posts.getAllVisible(request.user.id)
+        post_set = Post.visible_posts.getAllVisibleRemote(remote_uuid)
         # For each post create the JSON object
         if post_set:
             for post in post_set:
@@ -192,12 +197,18 @@ def author_posts(request):
     return HttpResponse(status=403)
 
 # Get all the posts visible to the current authenticated user for a specific author
+@csrf_exempt
 def specific_author_posts(request, author_id):
     if request.method == 'GET':
-        response_json = []
+        try:
+	    remote_uuid = request.GET['id']
+	except:
+	    return HttpResponse(status=403)
+	
+	response_json = []
         return_json = {}
         # Only posts visible for this user
-        post_set = Post.visible_posts.getAllVisible(request.user.id)
+        post_set = Post.visible_posts.getAllVisibleRemote(remote_uuid)
         # For each post create the JSON object
         if post_set:
             for post in post_set:
@@ -215,6 +226,7 @@ def specific_author_posts(request, author_id):
 #    "friends": [uuidA, uuidB],
 #    "friends": YES or NO }
 #TODO - friends listed twice -- deal with this
+@csrf_exempt
 def friendship(request, uuidA, uuidB):
     context = RequestContext(request)
     if request.method == 'GET':
