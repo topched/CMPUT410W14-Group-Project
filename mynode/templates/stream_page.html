@@ -272,7 +272,7 @@ $(document).on("keyup", "#post_content", function() {
    This grabs the html for the corresponding page and injects it into the tab
    This is pretty gross, but didnt have time to rewrite the view 
 */
-$('#post').click(function(e){
+$('#tab_post').click(function(e){
     e.preventDefault();
 
     $.post('/mynode/stream/post/create/', function(data) {
