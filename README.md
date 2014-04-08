@@ -95,4 +95,8 @@ http://cs410-06/global/authors
 which returns
 
     [{'displayname' = 'Jerry', 'id' = 'f2efsdfF54520Oidf0aS'}, ....]
+    
+** Credit **
+Navbar is from http://getbootstrap.com/components/#navbar
+
 
