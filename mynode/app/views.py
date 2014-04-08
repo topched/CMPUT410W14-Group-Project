@@ -359,7 +359,7 @@ def friends(request):
     #TODO: friend stuff
     friend_requests = Friend.objects.filter(accepted = 0, receiver=request.user.id)
     followers = Friend.objects.filter(accepted = 2, receiver=request.user.id)
-    following = Friend.objects.filter(accepted = 0, requester=request.user.id)
+    following = Friend.objects.filter(requester=request.user.id).exclude(accepted = 1)
     friends = Friend.objects.filter(accepted = 1, requester=request.user.id)
 
     remote_followers = RemoteFriends.objects.filter(local_accepted=False, remote_accepted=True,blocked=False, local_receiver=request.user)
