@@ -157,38 +157,25 @@ def stream(request):
 
     #get public posts from other servers
     servers = RemoteServers.objects.filter(active=True)
+    remoteUser = User()
+    remoteUser.username = "Remote User"
+    remoteUser.first_name = "Remote"
+    remoteUser.last_name = "User"
     for server in servers:
 
         remoteJson = get_remote_public_posts(server.hostname)
 
         if remoteJson is not None:
 
-            print json.loads(remoteJson)
+            val = json.loads(remoteJson)
 
+            for x in range(0, len(val)):
 
-
-    # remote_posts = get_remote_public_posts()
-    # if remote_posts is not None:
-    #
-    #     remoteUser = User()
-    #     remoteUser.username = "RemoteUser"
-    #     remoteUser.first_name = "Remote"
-    #     remoteUser.last_name = "User"
-    #
-    #     for x in range (0,len(remote_posts)):
-    #
-    #         val = remote_posts[x]
-    #
-    #         #individual post from a server
-    #         for x in range(0, len(val)):
-    #
-    #             post = Post()
-    #             post.author = remoteUser
-    #             post.id = 999999999
-    #
-    #             post.content = val[x]['content']
-    #             post.title = val[x]['title']
-    #             posts.append(post)
+                post = Post()
+                post.author = remoteUser
+                post.id = 99999999999
+                post.content = val[x]['content']
+                posts(append)
 
 
 
@@ -257,7 +244,7 @@ def get_remote_public_posts(hostname):
         return post
     except:
         return None
-        
+
 
 #Is this actually working?
 def post_details(request, post_id):
