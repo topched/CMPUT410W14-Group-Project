@@ -79,8 +79,6 @@ def register(request):
 @login_required
 def author_profile(request, author_id):
     context = RequestContext(request)
-    if request.user.is_authenticated():
-        auth_user = request.user
 
     author = User.objects.get(id=author_id)
     app_user = Users.objects.get(user_id=author.id)
@@ -361,7 +359,7 @@ def create_friend(request):
     #@TODO Check if this will make them friends
     current_user = User.objects.get(id=request.user.id)
     receiver_name = request.POST['receiver_display_name']
-    #print receiver_name
+    print receiver_name
 
     #TODO: Fancy up the "Person does not exists" code.
     try:

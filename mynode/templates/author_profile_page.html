@@ -78,22 +78,22 @@
         </div>
 
         <br><br>
-
-        <div class="col-md-1"></div>
-        <div class="col-md-2">
-            <div class="profile-pic-box">
-                <img class="img-thumbnail" src="/static/img/{{ app_user.avatar }}" >
-                <div class="profile-details namecenter">
-                    <h4>{{ user.username }}</h4>
-                </div>
-                <form  action="{% url 'app.views.create_friend'  %}" method="POST" class="buttoncenter">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-xs btn-success">Follow</button>
-                 </form
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <div class="profile-pic-box">
+                    <img class="img-thumbnail" src="/static/img/{{ app_user.avatar }}" >
+                    <div class="profile-details namecenter">
+                        <h4>{{ author.username }}</h4>
+                    </div>
+                    <form  action="{% url 'app.views.create_friend' %}" method="POST" class="buttoncenter">
+                        <input name="receiver_display_name" type="hidden" value="{{ author.username }}" /> 
+                        {% csrf_token %}
+                        <button type="submit" id="post" name="create" class="btn btn-xs btn-success">Follow</button>
+                    </form>
                 </div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-9">
 
                 <div id="profile-posts">
                     {% for post in posts %}
@@ -131,7 +131,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                </div>
             </div>
-        </body>
-    </html>
+        </div>
+    </body>
+</html>

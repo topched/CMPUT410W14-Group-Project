@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^author/(?P<author_id>\w+)/$', views.author_profile),
 
     url(r'^friends/$', views.friends),
+    #url(r'^friends/friend/(\d+)/create/$', views.create_friend),
+    # Only used for manual friend requests
     url(r'^friends/friend/create/$', views.create_friend),
     url(r'^friends/(\d+)/confirm/$', views.confirm_friend),
     url(r'^friends/(\d+)/deny/$', views.deny_friend),
