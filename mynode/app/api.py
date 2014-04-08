@@ -86,7 +86,7 @@ def get_post(post_id):
     if content_type == 1:
         posts_json['content-type'] = 'text/plain'
     elif content_type == 2:
-        posts_json['content-type'] = 'text/markdown'
+        posts_json['content-type'] = 'text/x-markdown'
     elif content_type == 3:
         posts_json['content-type'] = 'text/html'
 
