@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 from app import api
 from mynode import settings
+from app import views
 
 admin.autodiscover()
 
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^friendrequest$', api.friendrequest),
     # INSECURE - DO NOT USE UNLESS YOU ARE TESTING! USE STREAM/IMAGE/<IMAGE_ID> INSTEAD.
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+    #url(r'^media/images/(?P<image_id>[\d]*)$', views.image),
     url(r'^global/authors$', api.get_all_users),
     url(r'^.*$', RedirectView.as_view(url='/mynode/', permanent=False)),
 )

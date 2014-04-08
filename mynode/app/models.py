@@ -98,7 +98,7 @@ class Image(models.Model):
     author = models.ForeignKey(User, db_column='author')
     image = models.ImageField(upload_to='images')
     name = models.CharField(blank=False, null=False, max_length=256)
-    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    visibility = models.IntegerField(blank=False, null=False, default=1, choices=VISIBILITY_CHOICES)
     
     objects = models.Manager()
     visibile_images = ImageManager()
@@ -139,8 +139,8 @@ class Post(models.Model):
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
     content = models.TextField(blank=True)
-    content_type = models.IntegerField(blank=True, null=True, choices=CONTENT_CHOICES)
-    visibility = models.IntegerField(blank=True, null=True, choices=VISIBILITY_CHOICES)
+    content_type = models.IntegerField(blank=False, null=False, default=1, choices=CONTENT_CHOICES)
+    visibility = models.IntegerField(blank=False, null=False, default=1, choices=VISIBILITY_CHOICES)
     uuid = UUIDField(version=4, unique=True)
     post_date = models.DateTimeField(auto_now_add=True)
 
