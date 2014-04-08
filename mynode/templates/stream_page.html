@@ -77,16 +77,19 @@
 </div>
 {% csrf_token %}
 <script type="text/javascript">
-  $('#myTab a').click(function (e) {
-      $(this).tab('show')
-  });
+   </script>
 
-  $('#myTab a[href="#post"]').tab('show');
-  $('#myTab a[href="#image"]').tab('show');
-  $('#myTab a[href="#advanced"]').tab('show');
-  </script>
+   <div class=container>
+     <script>
+       /* Bootstrap Tab Switching */
+$('#myTab a').click(function (e) {
+    $(this).tab('show')
+});
 
-<div class=container>
+$('#myTab a[href="#post"]').tab('show');
+$('#myTab a[href="#advanced"]').tab('show');
+$('#myTab a[href="#image"]').tab('show');
+</script>
 <!-- Nav tabs -->
 <ul id="myTab" class="nav nav-tabs">
 <li class="active"><a href="#post" data-toggle="tab">Simple</a></li>
@@ -148,8 +151,6 @@
 
   {% if post.description == "MYGITKEY-PushEvent" %}
   <div class="avatar"><img src="/static/img/GitHub-Mark-64px.png" width="55" height="55"></div>
-  {% elif post.description == "MYREMOTEKEY" %}
-  <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
   {% else %}
   <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ app_user.avatar }}" width="55" height="55"></a></div>
   {% endif %}
@@ -184,12 +185,7 @@
 
   <ul class="replies">
     <li class="cmmnt">
-    {% if post.description == "MYREMOTEKEY" %}
-        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/DefaultProfile.jpg" width="55" height="55"></a></div>
-    {% else %}
-        <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
-    {% endif %}
-
+    <div class="avatar"><a href="javascript:void(0);"><img src="/static/img/{{ comment.author.users.avatar }}" width="55" height="55"></a></div>
     <div class="cmmnt-content">
       <header>{{ comment.author.username }} - <span class="pubdate">{{ comment.post_date }}</span></header>
       <p>{{ comment.content }}</p>
@@ -203,7 +199,7 @@
   </li>
 </ul>
 
-{% if post.description != "MYGITKEY-PushEvent" and post.description != "MYREMOTEKEY" %}
+{% if post.description != "MYGITKEY-PushEvent" %}
 <div class="row">
   <div class="stream_buttons">
     <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
@@ -214,6 +210,7 @@
       <input class="btn btn-sm btn-primary" type="button" value="Comment" id="comment_button"/>
     </form>
   </div>
+  {% endif %}
 
   <div class="comment_area" style="display:none">
     <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
@@ -225,7 +222,6 @@
       </div>
     </form>
   </div>
-  {% endif %}
 </div>
 </div>
 </div>
@@ -235,7 +231,7 @@
 
 <!-- Dynamic Comments -->
 <script type="text/javascript">
-$.ajaxSetup({
+$.ajaxSetup({ 
      beforeSend: function(xhr, settings) {
          function getCookie(name) {
              var cookieValue = null;
@@ -256,61 +252,49 @@ $.ajaxSetup({
              // Only send the token to relative URLs i.e. locally.
              xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
          }
-     }
+     } 
 });
 
-$(function () {
 
-  $(document).on("click", "#comment_button", function() {
-    $(this).closest(".row").find(".comment_area").show();
-    $(this).closest(".row").find(".comment_buttons").show();
-    $(this).closest(".row").find(".stream_buttons").hide();
-    });
 
-  $(document).on("click", "#cancel-button", function() {
+/* Comment show/hide */
+$(document).on("click", "#cancel-button", function() {
     $(this).closest(".row").find(".comment_area").hide();
     $(this).closest(".row").find(".comment_buttons").hide();
     $(this).closest(".row").find(".stream_buttons").show();
     });
 
-  //This doesnt work yet -- still need to finish
-  $(document).on("keyup", "#post_content", function() {
+//This doesnt work yet -- still need to finish
+$(document).on("keyup", "#post_content", function() {
     //alert($(this).val())
     if($(this).val() != "") {
     $(this).closest(".row").find(".post_comment").attr("disabled", false);
     }
-    });
-
-
 });
 
-$('#post').click(function(e){
-e.preventDefault();
+/* 
+   This grabs the html for the corresponding page and injects it into the tab
+   This is pretty gross, but didnt have time to rewrite the view 
+*/
+$('#tab_post').click(function(e){
+    e.preventDefault();
 
-$.post('/mynode/stream/post/create/', function(data) {
-$('.result').html(data);
-});
+    $.post('/mynode/stream/post/create/', function(data) {
+      $('.result').html(data);
+      });
 });
 
 $('#myTab a[href="#advanced"]').on('click', function(){
-$.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
-  $('#advanced').html(data);
-  });
-    });
+    $.get('/mynode/stream/post/create/', $(this).serialize(), function(data){
+      $('#advanced').html(data);
+      });
+});  
+
 $('#myTab a[href="#image"]').on('click', function(){
-$.get('/mynode/stream/image/', $(this).serialize(), function(data){
-  $('#image').html(data);
-  });
-    });
-/* Can be use to change the ugly pre-made forms
-   $('#myTab a[href="#image"]').on('click', function(){
-   $.get('/mynode/stream/image/', $(this).serialize(), function(data){
-   $('#image').html(data).find(', textarea').each(function(){
-       $(this).addClass('form-control');
-   });
-   });
-   });
- */
-  </script>
+    $.get('/mynode/stream/image/', $(this).serialize(), function(data){
+      $('#image').html(data);
+      });
+});  
+</script>
 </body>
 </html>

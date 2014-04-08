@@ -19,4 +19,19 @@ CMPUT410W14-Group-Project
   To hit the admin page: http://{ ngrok addy }/admin
   
   To hit the main page: http://{ ngrok addy }/mynode
+  
+**API**
+
+ Our API will respond according to the specifications for the following actions:
+ 
+ http://service/author/posts (posts that are visible to the currently authenticated user) 
+ To authenticate pass the users ID as a parameter in the URL for example:     http://cs410.cs.ualberta.ca:41061/authors/posts?id=f7s0923kU8d8dD
+ 
+ http://service/posts (all posts marked as public on the server)
+ This will retrieve all posts marked as public on our server.
+ 
+ http://service/author/{AUTHOR_ID}/posts (all posts made by {AUTHOR_ID} visible to the currently authenticated user)
+ To authenticate use the method described above.
+ 
+ http://service/posts/{POST_ID} access to a single post with id = {POST_ID}
 

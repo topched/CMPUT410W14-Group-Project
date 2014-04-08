@@ -100,7 +100,7 @@
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
           <strong>{{ follower_request.requester.username }}</strong>
         </div>
-        <div class="col-md-1 ">
+        <div class="col-md-1 col-md-offset-2">
 
           <form action="{% url 'app.views.confirm_friend' follower_request.requester.id %}" method="POST">
             {% csrf_token %}
@@ -121,12 +121,13 @@
 
       {% for follower_request in remote_follower %}
       <div class="row">
-        <div class="col-md-12 col-md-offset-4 ">
+        <div class="col-md-2 col-md-offset-3">
           {% if not remote_follower.local_accepted %}
           <div class="col-md-2 col-md-offset-3">
             <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
             <strong>{{ follower_request.displayname }} - follower_request.host</strong>
           </div>
+        <div class="col-md-1 col-md-offset-2">
 
           <form action="{% url 'app.api.delete_remote_friend' follower_request.uuid %}" method="POST">
             {% csrf_token %}
@@ -136,6 +137,7 @@
             {% csrf_token %}
             <button type="submit" name="update" value="Confirm" class="btn btn-xs btn-success">Confirm</button>
           </form>
+        </div>
           {% endif %}
         </div>
       </div>
@@ -159,7 +161,7 @@
             <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
             <strong>{{ follow.receiver.username }}</strong>
           </div>
-          <div class="col-md-1 ">
+          <div class="col-md-1 col-md-offset-2">
             <button type="submit" name=delete class="btn btn-xs btn-warning follow_button">Unfollow</button>
           </div>
         </form> 
@@ -177,7 +179,7 @@
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
           <strong>{{ follow.displayname }} - {{ follow.host }}</strong>
         </div>
-        <div class="col-md-1 ">
+        <div class="col-md-1 col-md-offset-2">
           <button type="submit" name=delete class="btn btn-xs btn-warning follow_button">Unfollow</button>
         </div>
       </div>
@@ -214,7 +216,7 @@
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
       <strong>{{ follow.displayname }} - {{ follow.host }}</strong>
     </div>
-    <div class="col-md-1 ">
+    <div class="col-md-1 col-md-offset-2">
       <button type="submit" name=delete class="btn btn-xs btn-warning">Unfollow</button>
     </div>
   </div>
@@ -238,7 +240,7 @@
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
       <strong>{{ friend.receiver.username }}</strong>
     </div>
-    <div class="col-md-1 ">
+    <div class="col-md-1 col-md-offset-2">
       <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
     </div>
   </form> 
@@ -257,7 +259,7 @@
     <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
     <strong>{{ friend.displayname }} - {{ friend.host }}</strong>
   </div>
-  <div class="col-md-1 ">
+  <div class="col-md-1 col-md-offset-2">
     <button type="submit" name=delete class="btn btn-xs btn-warning">Unfriend</button>
   </div>
 </div>
