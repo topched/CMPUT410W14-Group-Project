@@ -176,12 +176,22 @@ def stream(request):
             for x in range(0, len(val['posts'])):
 
                 tmpPost = Post()
-                remoteUser.username = val['posts'][x]['author']['displayname'] + " - " + val['posts'][x]['author']['host'] 
+                remoteUser.username = val['posts'][x]['author']['displayname'] + " - " + val['posts'][x]['author']['host']
                 tmpPost.author = remoteUser
                 tmpPost.id = val['posts'][x]['guid']
                 tmpPost.description = "MYREMOTEKEY"
                 tmpPost.content = val['posts'][x]['content']
                 tmpPost.post_date = datetime.datetime.strptime(val['posts'][x]['pubDate'], '%Y-%m-%d %H:%M:%S')
+                contentType = val['posts'][x]['content-type']
+
+                if contentType == "text/html":
+                    tmpPost.content_type = 3
+                if contentType == "text/x-markdown":
+                    tmpPost.content_type = 2
+                if contentType == "text/plain":
+                    tmpPost.content_type = 1
+
+
                 tmpComments = val['posts'][x]['comments']
 
                 for y in range(0, len(tmpComments)):
