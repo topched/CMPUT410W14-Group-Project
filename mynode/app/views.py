@@ -180,8 +180,8 @@ def stream(request):
                 tmpPost.author = remoteUser
                 tmpPost.id = val['posts'][x]['guid']
                 tmpPost.description = "MYREMOTEKEY"
-		tmpPost.content = val['posts'][x]['content']
-
+                tmpPost.content = val['posts'][x]['content']
+                tmpPost.post_date = datetime.datetime.strptime(val['posts'][x]['pubDate'])
                 tmpComments = val['posts'][x]['comments']
 
                 for y in range(0, len(tmpComments)):
@@ -197,9 +197,9 @@ def stream(request):
 
 
     # Sorts posts from newest to oldest
-    #posts.sort(key=lambda y: y.post_date, reverse=True)
+    posts.sort(key=lambda y: y.post_date, reverse=True)
 
-    print comments
+    #print comments
     data = {'posts': posts, 'comments': comments, 'current_user': current_user, 'app_user': app_user}
     return render_to_response('stream_page.html', data, context)
 
