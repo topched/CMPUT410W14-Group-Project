@@ -79,7 +79,17 @@
 <script type="text/javascript">
    </script>
 
-<div class=container>
+   <div class=container>
+     <script>
+       /* Bootstrap Tab Switching */
+$('#myTab a').click(function (e) {
+    $(this).tab('show')
+});
+
+$('#myTab a[href="#post"]').tab('show');
+$('#myTab a[href="#advanced"]').tab('show');
+$('#myTab a[href="#image"]').tab('show');
+</script>
 <!-- Nav tabs -->
 <ul id="myTab" class="nav nav-tabs">
 <li class="active"><a href="#post" data-toggle="tab">Simple</a></li>
@@ -244,14 +254,7 @@ $.ajaxSetup({
      } 
 });
 
-/* Bootstrap Tab Switching */
-$('#myTab a').click(function (e) {
-    $(this).tab('show')
-});
 
-$('#myTab a[href="#post"]').tab('show');
-$('#myTab a[href="#advanced"]').tab('show');
-$('#myTab a[href="#image"]').tab('show');
 
 /* Comment show/hide */
 $(document).on("click", "#cancel-button", function() {
