@@ -65,14 +65,14 @@ def register(request):
                                         last_name=request.POST['lastname'])
         user.save()
         app_user = Users.objects.create(user=user, git_url=request.POST['git'])
-        app_user.approved = not settings.ADMIN_REG_APPROVAL_REQ
+        app_user.approved = False
         app_user.save()
-
+        return redirect(login)
         # Login user if registration went okay.
-        auth_user = authenticate(username=request.POST['username'], password=request.POST['pwd'])
-        auth_login(request, auth_user)
-        if request.user.is_authenticated():
-            return redirect(stream)
+        #auth_user = authenticate(username=request.POST['username'], password=request.POST['pwd'])
+        #auth_login(request, auth_user)
+        #if request.user.is_authenticated():
+        #    return redirect(stream)
 
 # Profile View for modifying your profile
 # GET: Renders the profile page with the data from the logged in user
@@ -127,6 +127,11 @@ def profile(request):
 @user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def stream(request):
     context = RequestContext(request)
+
+    if Users.objects.get(user_id=request.user.id).approved == False:
+        return render(request, 'wait.html')
+
+
     current_user = User.objects.get(id=request.user.id)
     app_user = Users.objects.get(user_id=current_user.id)
     
@@ -139,49 +144,51 @@ def stream(request):
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
-    vals = json.loads(gitJson)
+    try:
+        vals = json.loads(gitJson)
 
-    #adding github posts
-    if len(vals) > 0:
-        display_count = 10
-        if(len(vals) < display_count):
-            display_count = len(vals) - 1
+        #adding github posts
+        if len(vals) > 0:
+            display_count = 10
+            if(len(vals) < display_count):
+                display_count = len(vals) - 1
 
-        #create a temp user for github posts
-        gitUser = User()
-        gitUser.username = "GitHub"
-        gitUser.email = "temp@temp.com"
-        gitUser.password = "password"
-        gitUser.first_name = "git"
-        gitUser.last_name = "user"
+            #create a temp user for github posts
+            gitUser = User()
+            gitUser.username = "GitHub"
+            gitUser.email = "temp@temp.com"
+            gitUser.password = "password"
+            gitUser.first_name = "git"
+            gitUser.last_name = "user"
 
-        #how many github entries to show in the stream -- Usually 100 results in vals
-        for x in range(0, 10):
-            gitItem = vals[x]
-            #tmpUsername = gitItem['actor']['login']
+            #how many github entries to show in the stream -- Usually 100 results in vals
+            for x in range(0, 10):
+                gitItem = vals[x]
+                #tmpUsername = gitItem['actor']['login']
 
-            #handle a push event
-            if gitItem['type'] == "PushEvent":
-                #itemContent = gitItem['payload']['commits']
+                #handle a push event
+                if gitItem['type'] == "PushEvent":
+                    #itemContent = gitItem['payload']['commits']
 
-                post = Post()
-                post.author = gitUser
-                #pretty sure this number doesnt matter not actually a object for deletion
-                post.id = 999999
+                    post = Post()
+                    post.author = gitUser
+                    #pretty sure this number doesnt matter not actually a object for deletion
+                    post.id = 999999
 
-                #post.content contains a html item
-                post.content = get_git_html_content(gitItem)
+                    #post.content contains a html item
+                    post.content = get_git_html_content(gitItem)
 
-                post.visibility = 1
-                #post content is html
-                post.content_type = 3
-                time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-                post.post_date = time
-                post.description = "MYGITKEY-PushEvent"
+                    post.visibility = 1
+                    #post content is html
+                    post.content_type = 3
+                    time = datetime.datetime.strptime(gitItem['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+                    post.post_date = time
+                    post.description = "MYGITKEY-PushEvent"
 
-                post.title = gitItem['type']
-                posts.append(post)
-
+                    post.title = gitItem['type']
+                    posts.append(post)
+    except:
+        pass
 
     #get public posts from other servers
     servers = RemoteServers.objects.filter(active=True)
