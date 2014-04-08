@@ -24,6 +24,7 @@ from django.contrib.auth import authenticate, logout
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from app.models import *
+from app.modelforms import *
 from django.conf import settings
 import json
 import urllib2
