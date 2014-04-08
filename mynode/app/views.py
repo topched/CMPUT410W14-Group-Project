@@ -169,30 +169,30 @@ def stream(request):
     for server in servers:
 
         remoteJson = get_remote_public_posts(server.hostname)
-
         if remoteJson is not None:
 
             val = json.loads(remoteJson)
+	    #print val
+            for x in range(0, len(val['posts'])):
+                print val['posts'][x]['content']
+		print "============\n"
+		#tmpPost = Post()
+                #tmpPost.author = remoteUser
+                #tmpPost.id = val[x]['guid']
+                #tmpPost.content = val[x]['content']
 
-            for x in range(0, len(val)):
+                #tmpComments = val[x]['comments']
 
-                tmpPost = Post()
-                tmpPost.author = remoteUser
-                tmpPost.id = val[x]['guid']
-                tmpPost.content = val[x]['content']
+                #for y in range(0, len(tmpComments)):
 
-                tmpComments = val[x]['comments']
+                 #   tmpComment = Comment()
+                 #   tmpComment.parent_post = tmpPost
+                 #   tmpComment.author = remoteUser
+                 #   tmpComment.content = tmpComments[y]['comment']
+		 #   print tmpComment.content
+                 #   comments.append(tmpComment)
 
-                for y in range(0, len(tmpComments)):
-
-                    tmpComment = Comment()
-                    tmpComment.parent_post = tmpPost
-                    tmpComment.author = remoteUser
-                    tmpComment.content = tmpComments[y]['comment']
-		    print tmpComment.content
-                    comments.append(tmpComment)
-
-                posts.append(tmpPost)
+                #posts.append(tmpPost)
 
 
 
@@ -257,7 +257,7 @@ def get_remote_public_posts(hostname):
         req = urllib2.Request(url)
         resp = urllib2.urlopen(req)
         post = resp.read()
-        return post['posts']
+        return post
     except:
         return None
 
