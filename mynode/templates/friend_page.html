@@ -96,7 +96,7 @@
       {% for follower_request in friend_requests %}
       {% if not follower.accepted %}
       <div class="row">
-        <div class="col-md-2 col-md-offset-3">
+        <div class="col-md-3 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
           <a href="{% url 'app.views.author_profile' follower_request.requester.id %}"><strong>{{ follower_request.requester.username }}</strong></a>
         </div>
@@ -121,7 +121,7 @@
 
       {% for follower_request in remote_follower %}
       <div class="row">
-        <div class="col-md-2 col-md-offset-3">
+        <div class="col-md-3 col-md-offset-3">
           {% if not remote_follower.local_accepted %}
           <div class="col-md-2 col-md-offset-3">
             <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
@@ -157,7 +157,7 @@
       <div class="row">
         <form action="{% url 'app.views.delete_friend' follow.receiver.id %}" method="POST">
           {% csrf_token %}
-          <div class="col-md-2 col-md-offset-3">
+          <div class="col-md-3 col-md-offset-3">
             <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
               <a href="{% url 'app.views.author_profile' follow.receiver.id %}"><strong>{{ follow.receiver.username }}</strong></a>
           </div>
@@ -175,7 +175,7 @@
       <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
       {% for follow in remote_following %}
       <div class="row">
-        <div class="col-md-2 col-md-offset-3">
+        <div class="col-md-3 col-md-offset-3">
           <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
           <form action="{% url 'app.views.author_profile_page' %}" method="POST">
             <a id="author"> <strong>{{ follow.displayname }}</strong></a>
@@ -200,7 +200,7 @@
     {% for follow in followers %}
 
     <div class="row">
-      <div class="col-md-2 col-md-offset-3">
+      <div class="col-md-3 col-md-offset-3">
         <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
         <a href="{% url 'app.views.author_profile' follow.receiver.id %}"><strong>{{ follow.requester.username }}</strong></a>
       </div>
@@ -215,7 +215,7 @@
   <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
   {% for follow in remote_following %}
   <div class="row">
-    <div class="col-md-2 col-md-offset-3">
+    <div class="col-md-3 col-md-offset-3">
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
       <strong>{{ follow.displayname }} - {{ follow.host }}</strong>
     </div>
@@ -236,7 +236,7 @@
 <div class="row">
   <form action="{% url 'app.views.delete_friend' friend.receiver.id %}" method="POST">
     {% csrf_token %}
-    <div class="col-md-2 col-md-offset-3">
+    <div class="col-md-3 col-md-offset-3">
       <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
       <a href="{% url 'app.views.author_profile' friend.receiver.id %}"><strong>{{ friend.receiver.username }}</strong></a>
     </div>
@@ -255,7 +255,7 @@
 {% for friend in remote_friends%}
 <div class="row">
   <!-- This needs to be a form once delete_remote_friend is update to work with friends, and delete_friend_request is created -->
-  <div class="col-md-2 col-md-offset-3">
+  <div class="col-md-3 col-md-offset-3">
     <img class="img-rounded" src="/static/img/DefaultProfile.jpg" width="35" height="35">
     <strong>{{ friend.displayname }} - {{ friend.host }}</strong>
   </div>
