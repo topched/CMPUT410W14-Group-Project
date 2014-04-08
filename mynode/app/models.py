@@ -25,7 +25,6 @@ class PostManager(models.Manager):
         permissionHelper = Permissions()
 
         for post_id in posts:
-            print "about to check %s" % post_id
             post = permissionHelper.canSeePost(post_id, requester)
             if(post is not None):
                 visiblePosts.append(post)
@@ -252,7 +251,3 @@ class Permissions():
             return None;
         
         return post
-    
-    def user_approved(self, user):
-        app_user = Users.objects.get(user_id=user.id)
-        return app_user.approved

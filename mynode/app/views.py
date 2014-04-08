@@ -24,7 +24,7 @@ from django.contrib.auth import authenticate, logout
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from app.models import *
-from app.modelforms import *
+from django.conf import settings
 import json
 import urllib2
 import datetime
@@ -64,7 +64,7 @@ def register(request):
                                         last_name=request.POST['lastname'])
         user.save()
         app_user = Users.objects.create(user=user, git_url=request.POST['git'])
-        app_user.approved = not ADMIN_REG_APPROVAL_REQ
+        app_user.approved = not settings.ADMIN_REG_APPROVAL_REQ
         app_user.save()
 
         # Login user if registration went okay.
@@ -77,6 +77,7 @@ def register(request):
 # GET: Renders the profile page with the data from the logged in user
 # POST: Updates any changed data for the user
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def profile(request):
     context = RequestContext(request)
     if request.user.is_authenticated():
@@ -84,7 +85,6 @@ def profile(request):
 
     user = User.objects.get(id=auth_user.id)
     app_user = Users.objects.get(user_id=auth_user.id)
-
     posts = Post.objects.filter(author=auth_user.id)
 
     if request.method == 'GET':
@@ -105,6 +105,7 @@ def profile(request):
 
 #The stream contains posts, so although it doesn't look restful, it is.
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def stream(request):
     context = RequestContext(request)
     current_user = User.objects.get(id=request.user.id)
@@ -119,12 +120,18 @@ def stream(request):
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
     gitJson = github_feed(tmpUser.git_url)
-    print "getting github stuff from %s" % tmpUser.git_url
+    vals = json.loads(gitJson)
+    print "getting github stuff %s" % gitJson
 
     #adding github posts
-    if gitJson is not None:
+    if len(vals) > 0:
 
-        vals = json.loads(gitJson)
+        
+        print gitJson
+        print "%s vals returned" % len(vals)
+        display_count = 10
+        if(len(vals) < display_count):
+            display_count = len(vals) - 1
 
         #create a temp user for github posts
         gitUser = User()
@@ -272,6 +279,8 @@ def get_remote_public_posts(hostname):
 
 
 #Is this actually working?
+@login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def post_details(request, post_id):
     context = RequestContext(request)
     if request.method == 'DELETE' or request.POST.get('_method') == 'DELETE':
@@ -279,13 +288,16 @@ def post_details(request, post_id):
     if request.method == 'PUT':
         return post_put(request)
 
-
+@login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def delete_post(request, post_id):
     context = RequestContext(request)
     Post.objects.get(id=post_id).delete()
     #TODO: Should delete all related COMMENTS as well
     return redirect('app.views.stream')
 
+@login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def create_post(request, post_id=None):
     if request.method == 'GET':
         postForm = PostForm(user=request.user.id)
@@ -307,7 +319,8 @@ def create_post(request, post_id=None):
     #TODO: update post
         return redirect('app.views.stream')
 
-
+@login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def create_comment(request, parent_post):
     context = RequestContext(request)
     current_user = User.objects.get(id=request.user.id)
@@ -322,6 +335,7 @@ def create_comment(request, parent_post):
 # Following = People who you are following but they haven't accepted you yet
 # Friends = People who follow eachother
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def friends(request):
     #TODO: friend stuff
     friend_requests = Friend.objects.filter(accepted = 0, receiver=request.user.id)
@@ -340,6 +354,7 @@ def friends(request):
     return render(request, 'friend_page.html', data)
 
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def create_friend(request):
     #@TODO Check if this will make them friends
     current_user = User.objects.get(id=request.user.id)
@@ -362,6 +377,7 @@ def create_friend(request):
     return redirect('app.views.friends')
 
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def deny_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
     sender = User.objects.get(id=follower_id)
@@ -381,6 +397,7 @@ def deny_friend(request, follower_id):
 # If you are already following them it will make you friends
 # If you are not following them it will follow them and make you friends
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def confirm_friend(request, follower_id):
     current_user = User.objects.get(id=request.user.id)
     sender = User.objects.get(id=follower_id)
@@ -398,6 +415,7 @@ def confirm_friend(request, follower_id):
     return redirect('app.views.friends')
 
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def delete_friend(request, receiver_id):
     current_user = User.objects.get(id=request.user.id)
     receiver = User.objects.get(id=receiver_id)
@@ -416,6 +434,7 @@ def delete_friend(request, receiver_id):
     return redirect('app.views.friends')
 
 @login_required
+@user_passes_test(lambda u: Users.objects.get(user_id=u.id).approved, login_url='/mynode/approval_needed')
 def image(request, image_id=None):
     if request.method == 'GET':
         if (image_id is None):
@@ -441,6 +460,10 @@ def image(request, image_id=None):
         return redirect('app.views.stream')
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
+
+@login_required
+def approval_needed(request):
+    return render(request, 'wait.html')
 
 def user_approved(user):
     app_user = Users.objects.get(user_id=user.id)
