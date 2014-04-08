@@ -18,6 +18,7 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import PermissionDenied
@@ -63,6 +64,7 @@ def register(request):
                                         last_name=request.POST['lastname'])
         user.save()
         app_user = Users.objects.create(user=user, git_url=request.POST['git'])
+        app_user.approved = not ADMIN_REG_APPROVAL_REQ
         app_user.save()
 
         # Login user if registration went okay.
@@ -122,16 +124,14 @@ def profile(request):
 @login_required
 def stream(request):
     context = RequestContext(request)
-    #TODO: narrow this down to show only allowed posts, not all posts, I think this is done
     current_user = User.objects.get(id=request.user.id)
     app_user = Users.objects.get(user_id=current_user.id)
-    #print "getting posts visible to %s" % request.user.id
+    
     posts = Post.visible_posts.getAllVisible(request.user.id)
     get_comments = Comment.objects.all()
     comments = []
     for comment_object in get_comments:
-	comments.append(comment_object)
-    #print comments
+        comments.append(comment_object)
 
     #get the github json
     tmpUser = Users.objects.get(user_id=request.user.id)
@@ -458,3 +458,7 @@ def image(request, image_id=None):
         return redirect('app.views.stream')
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
+
+def user_approved(user):
+    app_user = Users.objects.get(user_id=user.id)
+    return app_user.approved

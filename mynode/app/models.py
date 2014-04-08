@@ -25,7 +25,8 @@ class PostManager(models.Manager):
         permissionHelper = Permissions()
 
         for post_id in posts:
-            post = permissionHelper.canSeePostRemote(post_id, requester)
+            print "about to check %s" % post_id
+            post = permissionHelper.canSeePost(post_id, requester)
             if(post is not None):
                 visiblePosts.append(post)
 
@@ -38,7 +39,7 @@ class PostManager(models.Manager):
         permissionHelper = Permissions()
 
         for post_id in posts:
-            post = permissionHelper.canSeePost(post_id, requester)
+            post = permissionHelper.canSeePostRemote(post_id, requester)
             if(post is not None):
                 visiblePosts.append(post)
 
@@ -170,6 +171,7 @@ class Users(models.Model):
     user = models.OneToOneField(User, primary_key=True, parent_link=True)
     uuid = UUIDField(version=4, unique=True)
     avatar = models.CharField(max_length=256, default="DefaultProfile.jpg")
+    
     class Meta:
         app_label='app'
 
@@ -250,3 +252,7 @@ class Permissions():
             return None;
         
         return post
+    
+    def user_approved(self, user):
+        app_user = Users.objects.get(user_id=user.id)
+        return app_user.approved

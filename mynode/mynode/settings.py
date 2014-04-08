@@ -60,6 +60,9 @@ AUTH_PROFILE_MODULE = 'mynode.user'
 
 LOGIN_REDIRECT_URL = 'stream/'
 
+# Whether or not users require administrator approval to register
+ADMIN_REG_APPROVAL_REQ = False
+
 DEFAULT_INDEX_TABLESPACE = 'mynode'
 
 DEFAULT_TABLESPACE = 'mynode'
