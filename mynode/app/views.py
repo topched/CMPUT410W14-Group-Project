@@ -181,7 +181,7 @@ def stream(request):
                 tmpPost.id = val['posts'][x]['guid']
                 tmpPost.description = "MYREMOTEKEY"
                 tmpPost.content = val['posts'][x]['content']
-                tmpPost.post_date = datetime.datetime.strptime(val['posts'][x]['pubDate'])
+                tmpPost.post_date = datetime.datetime.strptime(val['posts'][x]['pubDate'], '%Y-%m-%d %H:%M:%S')
                 tmpComments = val['posts'][x]['comments']
 
                 for y in range(0, len(tmpComments)):
