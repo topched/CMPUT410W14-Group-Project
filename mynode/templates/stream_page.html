@@ -199,7 +199,7 @@ $('#myTab a[href="#image"]').tab('show');
   </li>
 </ul>
 
-{% if post.description != "MYGITKEY-PushEvent" %}
+{% if post.description != "MYGITKEY-PushEvent" and post.description != "MYREMOTEKEY" %}
 <div class="row">
   <div class="stream_buttons buttons">
     <form action="{% url 'app.views.delete_post' post.id %}" method="POST">
@@ -210,7 +210,6 @@ $('#myTab a[href="#image"]').tab('show');
       <input class="btn btn-sm btn-primary" type="button" value="Comment" id="comment_button"/>
     </form>
   </div>
-  {% endif %}
 
   <div class="comment_area" style="display:none">
     <form action="{% url 'app.views.create_comment' post.id %}" method="POST">
@@ -221,6 +220,8 @@ $('#myTab a[href="#image"]').tab('show');
         <input class="btn btn-sm btn-primary" type="submit" id="post_comment" name="post" value="Comment"/>
       </div>
     </form>
+
+  {% endif %}
   </div>
 </div>
 </div>
